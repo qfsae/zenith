@@ -2,6 +2,8 @@
 
 Zenith is the repository where all QFSAE software projects related to the car can be found. Projects are organized by folders which contain both their production code and testing utilities. Documentation can be found both on the team's internal [Wiki](http://wiki.qfsae.ca) as well as in a README file found in the folder of each project. See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution instructions.
 
+## Status
+[![CANBus](https://travis-ci.org/)]
 ## Scope
 
 The scope of project zenith is to design, implement and test all custom hardware and software pertaining to the Queen's Formula Q21 car.
@@ -22,6 +24,15 @@ The team has implemented Agile Methodologies for working on these projects. Week
 - Development
 - Testing 
 - Implementation
+
+## Tools
+
+Several software suites are used throughout development. 
+- Visual Studio Code (IDE)
+    - PlatformIO Extension
+    - Arduino Extension
+- Arduino IDE
+- Altium Designer
 
 ## Authors
 - Brent Champion
