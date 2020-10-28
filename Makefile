@@ -1,4 +1,4 @@
 CC=g++
 
 all:
-  ${CC} helloworld.cpp -o main
+	${CC} helloworld.cpp -o main
