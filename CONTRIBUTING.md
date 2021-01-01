@@ -31,8 +31,10 @@ getting started with PlatformIO. If you run into any problems with the steps bel
 
 ### Running Code
 
-With the installation of PlatformIO complete, you are ready to 
-start work on software projects with the team. This example, will be running code on an STM32 Nucleo F446RE development board using a project template available in the Zenith repository.
+With the installation of PlatformIO complete, you are ready to start work on
+software projects with the team. In this example, will be running code on an STM32
+Nucleo F446RE development board using a project template available in the Zenith
+repository.
 
 
 ## Submitting Changes on GitHub & Code Review
