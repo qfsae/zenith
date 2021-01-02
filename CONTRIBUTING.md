@@ -32,10 +32,30 @@ getting started with PlatformIO. If you run into any problems with the steps bel
 ### Running Code
 
 With the installation of PlatformIO complete, you are ready to start work on
-software projects with the team. In this example, will be running code on an STM32
-Nucleo F446RE development board using a project template available in the Zenith
-repository.
+software projects with the team. In this example, will be running code on an
+STM32 Nucleo F446RE development board using a project template available in the
+Zenith repository. The step by step process is given below. Note that in order
+to run the example code, you will need a Nucleo development board connected to
+your computer via USB. Please contact Ethan or Logan with technical questions or issues.
 
+1. Start by cloning a copy of the Zenith repository if you do not already have a
+   copy. 
+    - If you do not have git installed, please download it
+      [here](https://git-scm.com/downloads).
+    - Clone the repository using the git command line interface (CLI) by typing
+      the command `https://github.com/qfsae/zenith.git`.
+    - Alternatively to the CLI, you can install [GitHub
+      Desktop](https://desktop.github.com/). Cloning the repository with GitHub
+      Desktop will automatically download the sub modules.
+    - For a full picture of Git and its various functions, check out this Git
+      and GitHub
+      [handbook](https://www.notion.so/Git-GitHub-61bc81766b2e4c7d9a346db3078ce833).
+
+1. With Zenith cloned, open a new VSCode window and select `File -> Open
+   Folder`. Navigate to the templates folder of the Zenith repository and open
+   the `nucleo-f446re` folder. The result should be that VSCode detects a PlatformIO project has been opened and the window should look similar to the screenshot below.
+
+1. ^ include screenshots above, List out the code and indicate how to build and how to debug.
 
 
 ## Submitting Changes on GitHub & Code Review
