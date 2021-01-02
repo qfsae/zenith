@@ -88,6 +88,21 @@ for this purpose. To get started with debugging code, take a look at the
 PlatformIO documentation on using the debugger within VSCode
 [here](https://docs.platformio.org/en/latest/plus/debugging.html#).
 
+### Starting a New Project
+
+1. In order to start a new QFSAE project, navigate to the templates folder of
+   the zenith repository.
+
+2. Select a project template corresponding to the hardware that is needed.
+   Contact Ethan or Logan to discuss the hardware requirements for the project.
+   If there is no existing matching template, we will help you in configuring a
+   new PlatformIO project.
+
+3. With the template project selected, copy the folder containing the project to
+   the top level of the Zenith repository and rename the folder to match the
+   name of your project (ex `steering-wheel`). This folder should contain all
+   the project code.
+
 ## Submitting Changes on GitHub & Code Review
 Starting in the Q21 season, the electrical team has decided to implement a code
 review process to ensure that the master branch of this repository has the
