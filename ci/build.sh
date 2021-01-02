@@ -13,14 +13,14 @@ do
     directory=`dirname $i`
     file="$directory/platformio.ini"
     # Check if the directory has a platformio.ini file
-    # NOTE: This currently finds the right paths but still has repitions
-    # must strip list of presenting same directory twice
-    if test -e $file; then array+=($file); fi
+    if test -e $file; then array+=(`dirname $file`); fi
 done
 
+# Remove duplicates via sort command with -u for unique
 finalList=($(printf "%s\n" "${array[@]}" | sort -u))
 
 for value in "${finalList[@]}"
 do
-     echo $value
+    echo "Running for Project value $value"
+    pio run -d $value
 done
