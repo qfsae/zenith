@@ -55,6 +55,8 @@ your computer via USB. Please contact Ethan or Logan with technical questions or
    Folder`. Navigate to the templates folder of the Zenith repository and open
    the `nucleo-f446re` folder. The result should be that VSCode detects a PlatformIO project has been opened and the window should look similar to the screenshot below.
 
+![openFolder](assets/open-folder.png)
+
 1. ^ include screenshots above, List out the code and indicate how to build and how to debug.
 
 
