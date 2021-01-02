@@ -51,14 +51,42 @@ your computer via USB. Please contact Ethan or Logan with technical questions or
       and GitHub
       [handbook](https://www.notion.so/Git-GitHub-61bc81766b2e4c7d9a346db3078ce833).
 
-1. With Zenith cloned, open a new VSCode window and select `File -> Open
+2. With Zenith cloned, open a new VSCode window and select `File -> Open
    Folder`. Navigate to the templates folder of the Zenith repository and open
    the `nucleo-f446re` folder. The result should be that VSCode detects a PlatformIO project has been opened and the window should look similar to the screenshot below.
 
 ![openFolder](assets/open-folder.png)
+![pioHome](assets/pio-home.png)
 
-1. ^ include screenshots above, List out the code and indicate how to build and how to debug.
+3. Next, open the `src` folder in the file tree on the left hand side of the
+   editor and open `main.cpp`.
 
+4. The code blinks an LED connected to a certain pin on the Nucleo board and
+   repeatedly prints `Hello World!`. When writing code there are 3 important
+   functions of PlatformIO required. The first is the build button, the second
+   is the upload command and third is the serial monitor to see print statement
+   output. Given below is a screenshot of each button found at the bottom
+   toolbar of the editor highlighted in blue. The check mark builds / compiles
+   the program, The arrow uploads the program to the board and the power outlet
+   icon is the serial monitor.
+
+![pioButton](assets/pio-button.png)
+
+5. Pressing the upload button should result in a success message in the bottom mounted terminal as shown below.
+
+![pioUpload](assets/pio-upload.png)
+
+6. To verify the program is running, click the serial monitor and if the program uploaded successfully you will see the following.
+
+![pioSerial](assets/pio-serial.png)
+
+With PlatformIO configured and tested you are ready to take on QFSAE software
+projects! For debugging, print statements and the serial monitor can be used.
+PlatformIO does provide fully featured debugging on hardware that supports it.
+The nucleo board does have a debugger and QFSAE also has a custom debugger PCB
+for this purpose. To get started with debugging code, take a look at the
+PlatformIO documentation on using the debugger within VSCode
+[here](https://docs.platformio.org/en/latest/plus/debugging.html#).
 
 ## Submitting Changes on GitHub & Code Review
 Starting in the Q21 season, the electrical team has decided to implement a code

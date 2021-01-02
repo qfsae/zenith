@@ -1,6 +1,5 @@
 #include "Arduino.h"
 
-
 void setup() {
     // Initialize the Serial bus at 115.2 kBaud
     Serial.begin(115200);
