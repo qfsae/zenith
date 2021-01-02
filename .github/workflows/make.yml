@@ -30,4 +30,4 @@ jobs:
     - name: Run PlatformIO
       run: |
         cd templates/pmboard/arduino
-        pio run -t build
+        pio run
