@@ -116,38 +116,32 @@ given below:
    checkout -b yourBranchName`. Each branch should be related to an issue in the
    GitHub backlog.
 
-    Please follow this naming convention: `[Zenith-<##>]-branch-name`
+    Please follow this naming convention: `branch-name` (lower case with hyphens to separate each word)
 
-    For example, a branch name could be: `[Zenith-43]-updating-CAN-library`
+    For example, a branch name could be: `updating-CAN-library`
 
-2. When working on an issue / feature and actively writing code, ensure that you
-   are writing unit tests for your code. Not only do unit tests help ensure that
-   the code is working, it also provides the team with accessible tools to
-   troubleshoot software problems on the car. 
-
-3. Once you have finished your work and would like to submit your code for
+1. Once you have finished your work and would like to submit your code for
    review, commit your latest changes using `git add .` and `git commit`. Once
    everything is committed you can push to the main repository with the command
    `git push -u origin yourBranchName`. You will be prompted for your
    credentials to complete the operation.
 
-4. Follow the instructions on the GitHub documentation to [Open a Pull
+1. Follow the instructions on the GitHub documentation to [Open a Pull
    Request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
    
-
-5. Assign 2 team members to review the work. Projects will typically be assigned
+1. Assign 2 team members to review the work. Projects will typically be assigned
    to 2 team members. Please ensure that either Brent, Logan or Ethan are
    assigned as one of the reviewers, and then your teammate as the other
    reviewer. 
 
-6. Upon receiving feedback from the Pull Request, address and resolve any
+1. Upon receiving feedback from the Pull Request, address and resolve any
    comments that are given. If there are comments that you don't understand,
    please use the GitHub conversation feature to ask questions. 
 
-7. Once a senior team member has approved the Pull Request, they will merge the
+1. Once a senior team member has approved the Pull Request, they will merge the
    branch into master and delete it. 
 
-8. Upon merging to master, GitHub Actions will attempt to build the project and
+1. Upon merging to master, GitHub Actions will attempt to build the project and
    run it against our test-suite. If the Continuous Integration pipeline fails,
    check the build logs and fix any issues. All projects on master should ALWAYS
-   be passing our test suite. 
+   be passing our test suite.
