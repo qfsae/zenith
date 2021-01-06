@@ -1,0 +1,25 @@
+{
+	"name": "uGFX",
+	"description": "Portable graphics library",
+	"keywords": "library",
+	"version": "2.9",
+	"repository": {
+		"type": "git",
+		"url": "https://git.ugfx.io/uGFX/uGFX.git"
+	},
+	"build": {
+		"srcDir" : "",
+        "srcFilter": [
+			"+<gfx.h>",
+			"+<src/gfx_mk.c>",
+			"+<src/gdisp/*.h",
+			"+<src/gdisp/*.c",
+            "-<3rdparty/>",
+            "-<boards/>",
+            "-<demos/>",
+            "-<drivers/gdisp/QImage>",
+            "-<drivers/ginput/touch/Linux-Event>",
+            "-<drivers/>"
+        ] 
+    }
+}
