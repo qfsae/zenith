@@ -1,0 +1,12 @@
+{
+    "name" : "QFSAE-SPI",
+    "version": "0.1",
+    "build" : {
+        "srcDir" : "src",
+        "srcFilter": [
+            "+<*.c>",
+            "+<*.cpp>",
+            "+<*.h>"
+        ]
+    }
+}
