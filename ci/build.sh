@@ -28,7 +28,7 @@ for value in "${pioProjects[@]}"; do
     diff=`git --no-pager diff --name-only master $BR $value/`
     # if diff is not an empty string run the build
     if [[ $diff ]]; then
-        echo $diff
+        echo $value
         pio run -d $value
     fi
 done
