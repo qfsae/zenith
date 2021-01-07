@@ -5,7 +5,6 @@
 #define LED_DDR GPIOB
 #define LED 1
 
-
 void delay() {
     for (volatile long long i = 0; i < 500000; i++);
 }
