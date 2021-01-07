@@ -23,30 +23,12 @@ for d in `find . -type d`; do
     
 done
 
+BR=`git branch --show-current`
 for value in "${pioProjects[@]}"; do
-    echo $value
-    git status $value/ --short
-    if [[ $? -eq 0 ]]; then
+    diff=`git --no-pager diff --name-only master $BR $value/`
+    # if diff is not an empty string run the build
+    if [[ $diff ]]; then
+        echo $diff
         pio run -d $value
     fi
 done
-
-# buildDirs=()
-# # now determine which pio projects have git modified changes in them
-# for i in `git diff --name-only`; do
-#     for j in "${pioProjects[@]}"; do
-#         echo $j
-#         # [[$i =~ ${j}/*]] && echo $j
-#     done
-# done
-
-# Remove duplicates via sort command with -u for unique
-
-# finalList=($(printf "%s\n" "${pioProjects[@]}" | sort -u))
-
-
-# for value in "${finalList[@]}"
-# do
-#     echo "Running for Project value $value"
-#     pio run -d $value
-# done
