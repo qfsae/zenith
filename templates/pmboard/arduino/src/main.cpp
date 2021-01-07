@@ -6,7 +6,6 @@
 // Thus, all the low level code we write will be directly portable to the Arduino environment in platformio
 #define LED A8
 
-
 int ledState = 0;
 
 void setup() {
