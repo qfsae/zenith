@@ -9,12 +9,12 @@
 int ledState = 0;
 
 void setup() {
-	Serial2.begin(115200);
+	Serial.begin(9600);
 	pinMode(LED, OUTPUT);
 }
 
 void loop() {
-	Serial2.write('A');
+	Serial.println("Hello World!");
 	delay(100);
 	ledState = !ledState;
 	digitalWrite(LED, ledState);
