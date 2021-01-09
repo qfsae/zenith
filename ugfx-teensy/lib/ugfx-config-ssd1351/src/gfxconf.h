@@ -44,6 +44,8 @@
 /* Features for the GDISP sub-system. */
 #define GDISP_NEED_VALIDATION	TRUE
 #define GDISP_NEED_CLIP			TRUE
+//#define GDISP_NEED_AUTOFLUSH    TRUE
+
 
 #endif /* _GFXCONF_H */
 

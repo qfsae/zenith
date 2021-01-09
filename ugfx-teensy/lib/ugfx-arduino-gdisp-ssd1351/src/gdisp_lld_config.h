@@ -14,9 +14,14 @@
 /* Driver hardware support.                                                  */
 /*===========================================================================*/
 
-#define GDISP_HARDWARE_STREAM_WRITE		TRUE
+#define GDISP_HARDWARE_FLUSH                GFXON
+#define GDISP_HARDWARE_DRAWPIXEL            GFXON
+
 //#define GDISP_HARDWARE_STREAM_READ		TRUE
 //#define GDISP_HARDWARE_CONTROL			TRUE
+
+// Any other support comes from the board file
+#include "board_FT813.h"
 
 #define GDISP_LLD_PIXELFORMAT			GDISP_PIXELFORMAT_RGB565
 
