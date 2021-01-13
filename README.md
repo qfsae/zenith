@@ -7,12 +7,6 @@ team's internal [Wiki](http://wiki.qfsae.ca) as well as in a README file found
 in the folder of each project. See [CONTRIBUTING.md](./CONTRIBUTING.md) for
 contribution instructions.
 
-## Status
-CAN Bus Library
-
-[![CANBus](https://travis-ci.com/qfsae/zenith.svg?branch=master)](https://travis-ci.com/qfsae/zenith)
-
-
 ## Scope
 
 The scope of project zenith is to design, implement and test all custom hardware
