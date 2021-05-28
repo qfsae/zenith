@@ -8,8 +8,7 @@ void setup() {
   pinMode(STEERING_STATUS_LED, OUTPUT);           // status LED output
 }
 
-void loop()
-{
+void loop() {
   ledState = !ledState;
   digitalWrite(STEERING_STATUS_LED, ledState);
   delay(200);
