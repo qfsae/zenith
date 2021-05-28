@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include "steering_io.h"
 
 #define LED 29        // status LED
 
