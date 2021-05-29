@@ -1,7 +1,7 @@
 name: Build PlatformIO Projects
 
 on: 
-  pull_request:
+  pull_request
   
 jobs:
   build:
