@@ -1,10 +1,10 @@
-name: Build Affected Projects
+name: Build Steering Project
 
 on: 
-  push:
-    branches:
-      - master
-
+  pull_request:
+    paths:
+      - '/steering' # Only run on changes in steering directory
+  
 jobs:
   build:
 
@@ -38,5 +38,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install --upgrade platformio
 
-    - name: Test affected projects
-      run: ci/build.sh
+    - name: Build Steering Project
+      run: pio run -e genericSTM32F446RE
+      working-directory: steering/
