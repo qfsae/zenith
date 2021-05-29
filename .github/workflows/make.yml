@@ -1,6 +1,9 @@
 name: Build Affected Projects
 
-on: push
+on: 
+  push:
+    branches:
+      - master
 
 jobs:
   build:
