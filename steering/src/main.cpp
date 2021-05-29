@@ -1,17 +1,15 @@
 #include "Arduino.h"
-
-#define LED 29        // status LED
+#include "steering_io.h"
 
 int ledState = 0;
 
 void setup() {
   Serial2.begin(115200);
-  pinMode(LED, OUTPUT);           // status LED output
+  pinMode(STEERING_STATUS_LED, OUTPUT);           // status LED output
 }
 
-void loop()
-{
+void loop() {
   ledState = !ledState;
-  digitalWrite(LED, ledState);
+  digitalWrite(STEERING_STATUS_LED, ledState);
   delay(200);
 }
