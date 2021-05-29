@@ -1,4 +1,3 @@
-
 This directory is intended for PlatformIO Unit Testing and project tests.
 
 Unit Testing is a software testing method by which individual units of
@@ -9,3 +8,9 @@ in the development cycle.
 
 More information about PlatformIO Unit Testing:
 - https://docs.platformio.org/page/plus/unit-testing.html
+
+Unit tests can be run using the following command: 
+
+```
+pio test -e genericSTM32F446RE --verbose
+```

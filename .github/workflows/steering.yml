@@ -1,9 +1,12 @@
 name: Build Steering Project
 
 on: 
+  push:
+    paths:
+      - 'steering/**'
   pull_request:
     paths:
-      - '/steering' # Only run on changes in steering directory
+      - 'steering/**'
   
 jobs:
   build:
