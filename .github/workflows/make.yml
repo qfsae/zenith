@@ -1,8 +1,7 @@
-name: Build PlatformIO Projects
+name: Build Affected Projects
 
-on: 
-  pull_request
-  
+on: push
+
 jobs:
   build:
 
@@ -36,5 +35,5 @@ jobs:
         python -m pip install --upgrade pip
         pip install --upgrade platformio
 
-    - name: Build PlatformIO Projects
+    - name: Test affected projects
       run: ci/build.sh

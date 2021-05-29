@@ -1,0 +1,43 @@
+name: Build Steering Project
+
+on: 
+  pull_request:
+    paths:
+      - '/steering' # Only run on changes in steering directory
+  
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.head_ref }}
+
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Cache PlatformIO
+      uses: actions/cache@v2
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+
+    - name: Install PlatformIO
+      run: |
+        python -m pip install --upgrade pip
+        pip install --upgrade platformio
+
+    - name: Build Steering Project
+      run: pio run -e genericSTM32F446RE
+      working-directory: steering/
