@@ -1,12 +1,12 @@
-name: Build Dash Project
+name: Build Q19 Dash Project
 
 on: 
   push:
     paths:
-      - 'legacy/dash/**'
+      - 'legacy/q19-dash/**'
   pull_request:
     paths:
-      - 'legacy/dash/**'
+      - 'legacy/q19-dash/**'
   
 jobs:
   build:
@@ -43,4 +43,4 @@ jobs:
 
     - name: Build Dash Project
       run: pio run -e uno
-      working-directory: legacy/dash/SIM/
+      working-directory: legacy/q19-dash/SIM/
