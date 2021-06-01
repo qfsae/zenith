@@ -9,7 +9,7 @@ on:
       - 'legacy/q19-dash/**'
   
 jobs:
-  build:
+  build-dashq19:
 
     runs-on: ubuntu-latest
 
