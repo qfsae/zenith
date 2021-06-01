@@ -1,12 +1,12 @@
-name: Build Steering Project
+name: Build Q19 Dash Project
 
 on: 
   push:
     paths:
-      - 'steering/**'
+      - 'legacy/q19-dash/**'
   pull_request:
     paths:
-      - 'steering/**'
+      - 'legacy/q19-dash/**'
   
 jobs:
   build:
@@ -41,6 +41,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install --upgrade platformio
 
-    - name: Build Steering Project
+    - name: Build Dash Project
       run: pio run
-      working-directory: steering/
+      working-directory: legacy/q19-dash/SIM/
