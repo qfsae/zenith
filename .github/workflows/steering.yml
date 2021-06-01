@@ -9,7 +9,7 @@ on:
       - 'steering/**'
   
 jobs:
-  build-steering:
+  build:
 
     runs-on: ubuntu-latest
 
