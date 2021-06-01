@@ -42,4 +42,5 @@ jobs:
         pip install --upgrade platformio
 
     - name: Build Steering Project
-      run: pio run -d steering/
+      run: pio run
+      working-directory: steering/
