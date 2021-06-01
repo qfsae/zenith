@@ -42,5 +42,4 @@ jobs:
         pip install --upgrade platformio
 
     - name: Build Steering Project
-      run: pio run -e genericSTM32F446RE
-      working-directory: steering/
+      run: pio run -d steering/
