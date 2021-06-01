@@ -1,6 +1,8 @@
 name: Auto Format Documentation
 
 on:
+  push:
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
