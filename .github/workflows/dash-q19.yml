@@ -42,5 +42,5 @@ jobs:
         pip install --upgrade platformio
 
     - name: Build Dash Project
-      run: pio run -e uno
+      run: pio run
       working-directory: legacy/q19-dash/SIM/
