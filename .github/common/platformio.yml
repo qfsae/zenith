@@ -1,19 +1,14 @@
-name: Build Steering Project
+name: 'Build Platform IO Project'
+description: 'Workflow to build a given platformIO project.'
+inputs:
+  platform:
+    description: 'The board platform the action is running on.'
+    required: true
+  directory: 
+    description: 'The directory the platformIO project is in.'
 
-on: 
-  push:
-    paths:
-      - 'steering/**'
-  pull_request:
-    paths:
-      - 'steering/**'
-  
-jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
-    steps:
+runs:
+  steps:
     - name: Checkout
       uses: actions/checkout@v2
       with:
@@ -41,6 +36,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install --upgrade platformio
 
-    - name: Build Steering Project
-      run: pio run
-      working-directory: steering/
+    - name: Build Project
+      run: pio run -e ${{ inputs.platform }}
+      working-directory: ${{ inputs.directory }}
