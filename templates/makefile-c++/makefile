@@ -25,7 +25,7 @@ OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 ##############################
 CXX=g++
 CPPFLAGS := -Iinclude -MMD -MP
-CFLAGS   := -Wall 
+CFLAGS   := -Wall -g
 LDFLAGS  := -Llib 
 LDLIBS   := -lm 
 
