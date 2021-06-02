@@ -1,5 +1,4 @@
 # Project Zenith
-
 Zenith is the repository where all QFSAE software projects related to the car
 can be found. Projects are organized by folders which contain both their
 production code and testing utilities. Documentation can be found both on the
