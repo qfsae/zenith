@@ -1,0 +1,41 @@
+name: 'Build Platform IO Project'
+description: 'Workflow to build a given platformIO project.'
+inputs:
+  platform:
+    description: 'The board platform the action is running on.'
+    required: true
+  directory: 
+    description: 'The directory the platformIO project is in.'
+
+runs:
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.head_ref }}
+
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Cache PlatformIO
+      uses: actions/cache@v2
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+
+    - name: Install PlatformIO
+      run: |
+        python -m pip install --upgrade pip
+        pip install --upgrade platformio
+
+    - name: Build Project
+      run: pio run -e ${{ inputs.platform }}
+      working-directory: ${{ inputs.directory }}
