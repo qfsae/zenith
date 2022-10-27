@@ -138,8 +138,7 @@ void TFT_touch(void) {
  */
 void TFT_display(void) {
     if(tft_active != 0) {
-        if(EVE_IS_BUSY == EVE_busy()) /* is EVE still processing the last display list? */
-        {
+        if(EVE_IS_BUSY == EVE_busy()) { // Is EVE still processing the last display list?
             return;
         }
 
@@ -162,10 +161,10 @@ void TFT_display(void) {
     
         /* DYNAMIC DISPLAY CODE HERE */
         
-        EVE_cmd_dl_burst(DL_DISPLAY); /* instruct the co-processor to show the list */
-        EVE_cmd_dl_burst(CMD_SWAP); /* make this list active */
+        EVE_cmd_dl_burst(DL_DISPLAY); // Instruct the co-processor to show the list 
+        EVE_cmd_dl_burst(CMD_SWAP); // Make this list active
 
-        EVE_end_cmd_burst(); /* stop writing to the cmd-fifo, the cmd-FIFO will be executed automatically after this or when DMA is done */
+        EVE_end_cmd_burst(); // Stop writing to the cmd-fifo, the cmd-FIFO will be executed automatically after this or when DMA is done
     }
 }
 
@@ -187,7 +186,7 @@ void TFT_splash() {
 
         EVE_start_cmd_burst();
         EVE_cmd_dl_burst(CMD_DLSTART);
-        EVE_cmd_dl_burst(DL_CLEAR_RGB | 0x221f5e);
+        EVE_cmd_dl_burst(DL_CLEAR_RGB | RED);
         EVE_cmd_dl_burst(DL_CLEAR | CLR_COL | CLR_STN | CLR_TAG);
         EVE_cmd_dl_burst(TAG(0));
 

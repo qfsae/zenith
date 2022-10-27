@@ -20,7 +20,7 @@ void setup() {
     pinMode(EVE_PDN, OUTPUT);
     digitalWrite(EVE_PDN, LOW);
 
-    SPI.begin(); /* sets up the SPI to run in Mode 0 and 8 MHz */
+    SPI.begin(); // Set up the SPI to run in Mode 0 and 8 MHz
     SPI.beginTransaction(SPISettings(8000000, MSBFIRST, SPI_MODE0));
 
     TFT_init();
