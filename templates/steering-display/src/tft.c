@@ -101,6 +101,7 @@ void TFT_init(void) {
         tft_active = 1;
 
         EVE_memWrite8(REG_PWM_DUTY, 0x10);  // Set up backlight, range is from 0 = off to 0x80 = max
+        EVE_memWrite16(REG_PWM_HZ, 0x2710); // Set backlight hz to maximum (10000hz)
 
         touch_calibrate();
 
