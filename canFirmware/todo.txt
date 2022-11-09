@@ -1,0 +1,11 @@
+Todo:
+
+Assign address and buffIndex to each message from ECU.
+Uncomment that.
+
+For each datat point in if statement, manipulate the data before assignment. 
+Currently, its only storing the hex of the incoming data as an unsigned char, so 
+you havt to cnage that too depending on what type of manipulated data you are 
+assigning.
+
+Confused about status field, more work has to be done for those parameters.
