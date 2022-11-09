@@ -26,11 +26,13 @@ namespace CAL
      * 
      * @param can_recv CAN Message Recieved
      */
-    void parse(CAN_msg_t can_recv);
+    //void parse(CAN_msg_t can_recv);
 
     class ECU
     {
         public:
+
+            ECU();
 
             /**
              * @brief Update ECU Container Values
@@ -38,7 +40,7 @@ namespace CAL
              * @param can_recv CAN Message Recieved
              * @returns 0 if no id match
              */
-            int update(CAN_msg_t can_recv);
+            int update(CAN_msg_t &can_recv);
 
             // Engine RPM (rpm/100)
             uint8_t eSpeed;
@@ -87,8 +89,6 @@ namespace CAL
             // Driver Rotary Switch 2 (-1 = 255)
             uint8_t d2Rotary;
 
-        private:
-            ECU();
     };
     
 } // namespace CAL
