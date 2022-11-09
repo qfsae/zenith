@@ -3,6 +3,13 @@
 #include <mcp2515_can.h>
 #include <SPI.h>
 
+// THIS IS JUST FOR TESTING
+/**
+ * The actual libraries are under cal.hpp and cal_ecu.cpp
+ * this file is an example/test implementation of the abstraction layer
+ * 
+ */
+
 CAL::ECU ecu;
 mcp2515_can can(9);
 
