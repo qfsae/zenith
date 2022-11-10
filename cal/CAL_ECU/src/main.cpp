@@ -17,13 +17,15 @@ CAL::ECU ecu;
 mcp2515_can can(9);
 
 void setup() {
-  Serial.begin(9600);
-  while(can.begin(CAN_500KBPS) != CAN_OK){
+  Serial.begin(9600); // 115200
+  while(can.begin(CAN_1000KBPS) != CAN_OK){
     Serial.println("Can Init Error\nTrying Again..\n");
     delay(100);
   }
   Serial.println("Can Bus Initialized\n");
 }
+
+bool last = true;
 
 void loop() {
 
@@ -41,15 +43,33 @@ void loop() {
     ecu.update(can_recv);
 
     // Debug
-    if(debug == 1){
-      Serial.print("Transmisson Recieved from ID: ");
-      Serial.print(can_recv.id, HEX);
+      //Serial.print("Transmisson Recieved from ID: ");
+      //Serial.print(can_recv.id, HEX);
+      //Serial.print("\t");
+      //Serial.print("Throttle Position: ");
+      //Serial.print("\n");
+    /**
+    if(can_recv.id == CAL::MOTEC_ID::ECU_2){
+      Serial.print(can_recv.data[4], BIN);
+      Serial.print("\t");
+      Serial.print(can_recv.data[5], BIN);
       Serial.print("\n");
-    }
-    if(debug == 2){
-      Serial.print("Throttle Position: ");
-      Serial.print(ecu.tPos);
-      Serial.print("\n");
-    }
+    }*/
   }
+  
+  Serial.print(ecu.cTemp);
+  Serial.print("\t");
+  Serial.print(ecu.dTemp);  
+  Serial.print("\t");
+  Serial.print(ecu.eTemp);
+  Serial.print("\t");
+  Serial.print(ecu.fTemp);
+  Serial.print("\t");
+  Serial.print(ecu.tTemp);
+  Serial.print("\n");
+  //Serial.println(ecu.tPos);
+  
+  
+  
+  //delay(100);
 }
