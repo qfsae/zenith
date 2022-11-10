@@ -70,7 +70,7 @@ namespace CAL
             // Brake State (True == ON)
             bool bState;
             // Gear Neutral Switch (True == ON)
-            bool neutral;
+            bool gnSwitch;
             // Clutch Switch (True == ON)
             bool cSwitch;
             // Clutch State (True = Disengaged)
