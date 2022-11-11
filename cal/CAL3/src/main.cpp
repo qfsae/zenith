@@ -24,7 +24,7 @@ void setup() {
   Serial.println("Can Bus Initialized\n");
 }
 
-bool last = true;
+int updatertn = 0;
 
 void loop() {
 
@@ -39,9 +39,13 @@ void loop() {
     can_recv.id = can.getCanId();
 
     // Run applicable update methods (only ecu for now)
-    //ecu.update(can_recv);
+    updatertn = CAL::update(can_recv, &CAL::DATA_ECU::ThrottlePosition);
   }
 
+  Serial.print(updatertn);
+  Serial.print("\t");
+  Serial.print(CAL::DATA_ECU::ThrottlePosition.data);
+  Serial.print("\n");
   
   
   
