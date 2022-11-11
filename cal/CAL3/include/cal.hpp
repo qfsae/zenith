@@ -443,6 +443,12 @@ namespace CAL
             0
         };
 
-    };
+    } // namespace DATA_ECU
+
+    namespace DATA_PDM
+    {
+        
+    } // namespace DATA_PDM
+    
     
 } // namespace CAL
