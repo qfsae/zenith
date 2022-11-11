@@ -1,5 +1,16 @@
 #pragma once
 
+/**
+ * @file cal.hpp
+ * @author Jacob Chisholm (jchisholm204)
+ * @brief CAL (CAN Abstraction Layer)
+ * @version 3.2
+ * @date 2022-11-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include <stdint.h>
 
 typedef struct

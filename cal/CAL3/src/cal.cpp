@@ -1,3 +1,14 @@
+/**
+ * @file cal.cpp
+ * @author Jacob Chisholm (jchisholm204)
+ * @brief CAL (CAN Abstraction Layer)
+ * @version 3.2
+ * @date 2022-11-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include "cal.hpp"
 
 using namespace CAL;
