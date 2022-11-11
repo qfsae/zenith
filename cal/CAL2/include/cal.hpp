@@ -184,10 +184,12 @@ namespace CAL
             int get();
 
         private:
-            DATA_ECU frame;
+            int frame;
+            int frame2;
             uint32_t ID;
             uint8_t bitmask;
             int dataLast;
+            int bitdepth;
 
 
 
