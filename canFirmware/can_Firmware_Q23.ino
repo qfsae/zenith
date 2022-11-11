@@ -40,21 +40,22 @@ typedef struct{
 } IDTuple;
 
 typedef struct {
-    unsigned char battVolt
-    unsigned char fPCurr
-    unsigned char fPVolt
-    unsigned char fpStatusField
-    unsigned char kSState
-    unsigned char tBCurr
-    unsigned char tBVolt
-    unsigned char tBStatusFault
-    unsigned char tBStatusField
-    unsigned char cF1Status
-    unsigned char cF2Status
-    unsigned char fICurr
-    unsigned char fIVolt
-    unsigned char fIStatusField
-    unsigned char sRStatus
+    float tPVolt;
+    float battVolt;
+    float fPCurr;
+    float fPVolt;
+    float fpStatusField;
+    float kSState;
+    float tBCurr;
+    float tBVolt;
+    unsigned char tBStatusFault;
+    unsigned char tBStatusField;
+    unsigned char cF1Status;
+    unsigned char cF2Status;
+    float fICurr;
+    float fIVolt;
+    unsigned char fIStatusField;
+    unsigned char sRStatus;
 } PDM;
 
 typedef struct {
@@ -73,6 +74,7 @@ typedef struct {
 CANData can;
 
 // PDM:
+IDTuple tPVolt;
 IDTuple battVolt;
 IDTuple fPCurr;
 IDTuple fPVolt;
@@ -97,23 +99,24 @@ IDTuple bSE;
 
 void setup() {
     //PDM:
-    // MESSAGE:0x600
-    battVolt.address = 0x600; battVolt.channel = 1;
-    fPCurr.address = 0x600; fPCurr.channel = 2; 
-    fPVolt.address = 0x600; fPVolt.channel = 3; 
-    fpStatusField.address = 0x600; fpStatusField.channel = 4; 
-    kSState.address = 0x600; kSState.channel = 5; 
-    tBCurr.address = 0x600; tBCurr.channel = 6;
-    tBVolt.address = 0x600; tBVolt.channel = 7;
-    // MESSAGE: x601
-    tBStatusFault.address = 0x601; tBStatusFault.channel = 0;
-    tBStatusField.address = 0x601; tBStatusField.channel = 1;
-    cF1Status.address = 0x601; cF1Status.channel = 2;
-    cF2Status.address = 0x601; cF2Status.channel = 3;
-    fICurr.address = 0x601; fICurr.channel = 4;
-    fIVolt.address = 0x601; fIVolt.channel = 5;
-    fIStatusField.address = 0x601; fIStatusField.channel = 6;
-    sRStatus.address = 0x601; sRStatus.channel = 7;
+    // MESSAGE:0x7F0
+    tPVolt.address = 0x7F0; tPVolt.channel = 0;
+    battVolt.address = 0x7F0; battVolt.channel = 1;
+    fPCurr.address = 0x7F0; fPCurr.channel = 2; 
+    fPVolt.address = 0x7F0; fPVolt.channel = 3; 
+    fpStatusField.address = 0x7F0; fpStatusField.channel = 4; 
+    kSState.address = 0x7F0; kSState.channel = 5; 
+    tBCurr.address = 0x7F0; tBCurr.channel = 6;
+    tBVolt.address = 0x7F0; tBVolt.channel = 7;
+    // MESSAGE: 0x7F1
+    tBStatusFault.address = 0x7F1; tBStatusFault.channel = 0;
+    tBStatusField.address = 0x7F1; tBStatusField.channel = 1;
+    cF1Status.address = 0x7F1; cF1Status.channel = 2;
+    cF2Status.address = 0x7F1; cF2Status.channel = 3;
+    fICurr.address = 0x7F1; fICurr.channel = 4;
+    fIVolt.address = 0x7F1; fIVolt.channel = 5;
+    fIStatusField.address = 0x7F1; fIStatusField.channel = 6;
+    sRStatus.address = 0x7F1; sRStatus.channel = 7;
 
     //ECU:
     // MESSAGE: XXX
@@ -142,51 +145,62 @@ void loop() {
         unsigned long canId = CAN.getCanId();         // read canID
         
         //PDM:
+        if (canId == tPVolt.address) {
+          can.pdm.tPVolt = buf[tPVolt.channel] * 0.2;  
+          // can.pdm.battVolt = buf[battVolt.channel];  
+        }
         if (canId == battVolt.address) {
-          // can.pdm.battVolt = buf[battVolt.channel] * 0.1216;  
-          can.pdm.battVolt = buf[battVolt.channel];  
+          can.pdm.battVolt = buf[battVolt.channel] * 0.1216;  
+          // can.pdm.battVolt = buf[battVolt.channel];  
         }
         if (canId == fPCurr.address) {
-          can.pdm.fPCurr = buf[fPCurr.channel];  
+          can.pdm.fPCurr = buf[fPCurr.channel] * 0.5;  
         }
         if (canId == fPVolt.address) {
-          can.pdm.fPVolt = buf[fPVolt.channel];  
+          can.pdm.fPVolt = buf[fPVolt.channel] * 0.2;  
         }
         if (canId == fpStatusField.address) {
-          can.pdm.fpStatusField = buf[fpStatusField.channel];  
+          can.pdm.fpStatusField = buf[fpStatusField.channel] * 0.2;  
         }
         if (canId == kSState.address) {
-          can.pdm.kSState = buf[kSState.channel];  
+          can.pdm.kSState = buf[kSState.channel] * 0.2;
+          // 0 = Output off1 = Output on2 = Output Fault Error4 = Output Over-Current Error8 = Output reached maximum number of retries   
         }
         if (canId == tBCurr.address) {
-          can.pdm.tBCurr = buf[tBCurr.channel];  
+          can.pdm.tBCurr = buf[tBCurr.channel] * 0.2;  
         }
         if (canId == tBVolt.address) {
-          can.pdm.tBVolt = buf[tBVolt.channel];  
+          can.pdm.tBVolt = buf[tBVolt.channel] * 0.2;  
         }
         if (canId == tBStatusFault.address) {
-          can.pdm.tBStatusFault = buf[tBStatusFault.channel];  
+          can.pdm.tBStatusFault = buf[tBStatusFault.channel];
+          // 0 = Output off1 = Output on2 = Output Fault Error4 = Output Over-Current Error8 = Output reached maximum number of retries   
         }
         if (canId == tBStatusField.address) {
-          can.pdm.tBStatusField = buf[tBStatusField.channel];  
+          can.pdm.tBStatusField = buf[tBStatusField.channel];
+          //0 = Output off1 = Output on2 = Output Fault Error4 = Output Over-Current Error8 = Output reached maximum number of retries             
         }
         if (canId == cF1Status.address) {
           can.pdm.cF1Status = buf[cF1Status.channel];  
+          // 0 = Output off1 = Output on2 = Output Fault Error4 = Output Over-Current Error8 = Output reached maximum number of retries 
         }
         if (canId == cF2Status.address) {
-          can.pdm.cF2Status = buf[cF2Status.channel];  
+          can.pdm.cF2Status = buf[cF2Status.channel];
+          // 0 = Output off1 = Output on2 = Output Fault Error4 = Output Over-Current Error8 = Output reached maximum number of retries 
         }
         if (canId == fICurr.address) {
-          can.pdm.fICurr = buf[fICurr.channel];  
+          can.pdm.fICurr = buf[fICurr.channel] * 0.2;  
         }
         if (canId == fIVolt.address) {
-          can.pdm.fIVolt = buf[fIVolt.channel];  
+          can.pdm.fIVolt = buf[fIVolt.channel] * 0.2;  
         }
         if (canId == fIStatusField.address) {
-          can.pdm.fIStatusField = buf[fIStatusField.channel];  
+          can.pdm.fIStatusField = buf[fIStatusField.channel];
+          // 0 = Output off1 = Output on2 = Output Fault Error4 = Output Over-Current Error8 = Output reached maximum number of retries   
         }
         if (canId == sRStatus.address) {
           can.pdm.sRStatus = buf[sRStatus.channel];  
+          // 0 = Output off1 = Output on2 = Output Fault Error4 = Output Over-Current Error8 = Output reached maximum number of retries 
         }
 
         // ECU:
@@ -208,6 +222,8 @@ void loop() {
 void printData(){
     SERIAL_PORT_MONITOR.println("========================");
     //PDM
+    SERIAL_PORT_MONITOR.print("tPVolt: ");
+    SERIAL_PORT_MONITOR.println(can.pdm.tPVolt);
     SERIAL_PORT_MONITOR.print("battVolt: ");
     SERIAL_PORT_MONITOR.println(can.pdm.battVolt);
     SERIAL_PORT_MONITOR.print("fPCurr: ");
