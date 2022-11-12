@@ -114,6 +114,44 @@ namespace CAL
     }data_bool;
     
 
+    /**
+     * @brief CAN Data Packet Structure for 16 bit integers
+     * @param id The CAN ID that the Data is found in
+     * @param byte1 The data's position within the CAN data
+     * @param byte2 The position of the second half of the data
+     * @param bitmask The Data's Bitmask
+     * @param multiplier The Data's Multiplier
+     * @param data The Data Itself (stored as float) -> This can be updated with the update method
+     * 
+     */
+    typedef struct
+    {
+        const uint32_t id;
+        const int byte;
+        const int bitmask;
+        const float multiplier;
+        float data;
+    } data_double8;
+
+    /**
+     * @brief CAN Data Packet Structure for 16 bit integers
+     * @param id The CAN ID that the Data is found in
+     * @param byte1 The data's position within the CAN data
+     * @param byte2 The position of the second half of the data
+     * @param bitmask The Data's Bitmask
+     * @param data The Data Itself (stored as float) -> This can be updated with the update method
+     * 
+     */
+    typedef struct
+    {
+        const uint32_t id;
+        const int byte1;
+        const int byte2;
+        const int bitmask;
+        const float multiplier;
+        float data;
+    } data_double16;
+
     // MOTEC CAN ID's
     namespace MOTEC_ID
     {
@@ -129,7 +167,7 @@ namespace CAL
      * 
      * @returns 0 Success || 1 Incorrect ID
      */
-    int update(CAN_msg_t &msg, data_uint8 *data);
+    extern int update(CAN_msg_t &msg, data_uint8 *data);
 
     /**
      * @brief CAN Data Update Method
@@ -149,7 +187,7 @@ namespace CAL
      * 
      * @returns 0 Success || 1 Incorrect ID
      */
-    int update(CAN_msg_t &msg, data_uint16 *data);
+    extern int update(CAN_msg_t &msg, data_uint16 *data);
 
     /**
      * @brief CAN Data Update Method
@@ -159,7 +197,7 @@ namespace CAL
      * 
      * @returns 0 Success || 1 Incorrect ID
      */
-    int update(CAN_msg_t &msg, data_int16 *data);
+    extern int update(CAN_msg_t &msg, data_int16 *data);
 
     /**
      * @brief CAN Data Update Method
@@ -169,7 +207,27 @@ namespace CAL
      * 
      * @returns 0 Success || 1 Incorrect ID
      */
-    int update(CAN_msg_t &msg, data_bool *data);
+    extern int update(CAN_msg_t &msg, data_bool *data);
+
+    /**
+     * @brief CAN Data Update Method
+     * 
+     * @param msg The CAN Message to update the data from
+     * @param data The Data Packet to update
+     * 
+     * @returns 0 Success || 1 Incorrect ID
+     */
+    extern int update(CAN_msg_t &msg, data_double8 *data);
+
+    /**
+     * @brief CAN Data Update Method
+     * 
+     * @param msg The CAN Message to update the data from
+     * @param data The Data Packet to update
+     * 
+     * @returns 0 Success || 1 Incorrect ID
+     */
+    extern int update(CAN_msg_t &msg, data_double16 *data);
 
 
     /**
@@ -183,265 +241,154 @@ namespace CAL
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 0 | Mask 0xFF
          */
-        data_uint8 EngineRPM = {
-           MOTEC_ID::ECU_1, // ID
-           0, // Byte
-           0xff, // Bit Mask
-           0, // Data Initializer
-        };
+        extern data_uint8 EngineRPM;
 
         /**
          * @brief Throttle Position(%): 
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 1 | Mask 0xFF
          */
-        data_uint8 ThrottlePosition = {
-            MOTEC_ID::ECU_1,
-            1,
-            0xff,
-            0
-        };
+        extern data_uint8 ThrottlePosition;
 
         /**
          * @brief Vehicle Speed(km/h): 
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 2 | Mask 0xFF
          */
-        data_uint8 VehicleSpeed = {
-           MOTEC_ID::ECU_1, // ID
-           2, // Byte
-           0xff, // Bit Mask
-           0, // Data Initializer
-        };
+        extern data_uint8 VehicleSpeed;
 
         /**
          * @brief Engine Coolant Temperature(°C):
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 3 | Mask 0xFF
          */
-        data_uint8 CoolantTemp = {
-            MOTEC_ID::ECU_1, //ID
-            3, // Byte
-            0xff, // Bit Mask
-            0
-        };
+        extern data_uint8 CoolantTemp;
 
         /**
          * @brief Engine Temperature(°C):
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 4 | Mask 0xFF
          */
-        data_uint8 EngineTemp = {
-            MOTEC_ID::ECU_1, // ID
-            4, // Byte
-            0xff, // Bit Mask
-            0
-        };
+        extern data_uint8 EngineTemp;
 
         /**
          * @brief Fuel Temperature(°C):
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 5 | Mask 0xFF
          */
-        data_uint8 FuelTemp = {
-            MOTEC_ID::ECU_1, // ID
-            5, // Byte
-            0xff, // Bit Mask
-            0
-        };
+        extern data_uint8 FuelTemp;
 
         /**
          * @brief Transmission Temperature(°C):
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 6 | Mask 0xFF
          */
-        data_uint8 TransmissionTemp = {
-            MOTEC_ID::ECU_1, // ID
-            6, // Byte
-            0xff, // Bit Mask
-            0
-        };
+        extern data_uint8 TransmissionTemp;
 
         /**
          * @brief Differential Transmission Temperature(°C):
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 7 | Mask 0xFF
          */
-        data_uint8 DifferentialTemp = {
-            MOTEC_ID::ECU_1, // ID
-            7, // Byte
-            0xff, // Bit Mask
-            0
-        };
+        extern data_uint8 DifferentialTemp;
 
         /**
          * @brief Fuel Pressure(10 delta-kPa):
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x119 | Byte 0 | Mask 0xFF
          */
-        data_uint8 FuelPressure = {
-            MOTEC_ID::ECU_2, // ID
-            0, // Byte
-            0xff, // Bit Mask
-            0
-        };
+        extern data_uint8 FuelPressure;
 
         /**
          * @brief Steering Wheel Angle(0.1°):
          * Contained as signed 16-bit Integer,
          * Accessed at: ID 0x119 | Byte 2+3 | Mask 0xFF
          */
-        data_int16 SteeringAngle = {
-            MOTEC_ID::ECU_2, // ID
-            2, // Byte 1
-            3, // Byte 2
-            0xff, // Bit Mask
-            0
-        };
+        extern data_int16 SteeringAngle;
 
         /**
          * @brief Engine State(True == RUN):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x80
          */
-        data_bool EngineState = {
-            MOTEC_ID::ECU_2, // ID
-            4, // Byte
-            0x80, // Bit Mask
-            0
-        };
+        extern data_bool EngineState;
 
         /**
          * @brief Warning Source(True == Warning):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x40
          */
-        data_bool WarningSource {
-            MOTEC_ID::ECU_2, // ID
-            4, // Byte
-            0x40, // Bit Mask
-            0
-        };
+        extern data_bool WarningSource;
 
         /**
          * @brief Brake State(True == ON):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x20
          */
-        data_bool BrakeState = {
-            MOTEC_ID::ECU_2, // ID
-            4, // Byte
-            0x20, // Bit Mask
-            0
-        };
+        extern data_bool BrakeState;
 
         /**
          * @brief Gear Neutral Switch(True == ON):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x10
          */
-        data_bool GearNeutralSwitch = {
-            MOTEC_ID::ECU_2, // ID
-            4, // Byte
-            0x10, // Bit Mask
-            0
-        };
+        extern data_bool GearNeutralSwitch;
 
         /**
          * @brief Clutch Switch(True == ON):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x08
          */
-        data_bool ClutchSwitch = {
-            MOTEC_ID::ECU_2, // ID
-            4, // Byte
-            0x08, // Bit Mask
-            0
-        };
+        extern data_bool ClutchSwitch;
 
         /**
          * @brief Clutch State(True == Disengaged):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x04
          */
-        data_bool ClutchState = {
-            MOTEC_ID::ECU_2, // ID
-            4, // Byte
-            0x04, // Bit Mask
-            0
-        };
+        extern data_bool ClutchState;
 
         /**
          * @brief Driver Pit Switch(True == ON):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x02
          */
-        data_bool DriverPitSwitch = {
-            MOTEC_ID::ECU_2, // ID
-            4, // Byte
-            0x02, // Bit Mask
-            0
-        };
+        extern data_bool DriverPitSwitch;
 
         /**
          * @brief Engine Run Switch(True == ON):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x01
          */
-        data_bool EngineRunSwitch = {
-            MOTEC_ID::ECU_2, // ID
-            4, // Byte
-            0x01, // Bit Mask
-            0
-        };
+        extern data_bool EngineRunSwitch;
 
         /**
          * @brief Driver 1 Switch(True == ON):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 5 | Mask 0x80
          */
-        data_bool Driver1Switch = {
-            MOTEC_ID::ECU_2, // ID
-            5, // Byte
-            0x80, // Bit Mask
-            0
-        };
+        extern data_bool Driver1Switch;
 
         /**
          * @brief Driver 2 Switch(True == ON):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 5 | Mask 0x40
          */
-        data_bool Driver2Switch = {
-            MOTEC_ID::ECU_2, // ID
-            5, // Byte
-            0x40, // Bit Mask
-            0
-        };
+        extern data_bool Driver2Switch;
 
         /**
          * @brief Driver 1 Rotary Switch:
          * Contained as unsigned 8-bit integer,
          * Accessed at: ID 0x119 | Byte 6 | Mask 0xFF
          */
-        data_uint8 Driver1RotarySwitch = {
-            MOTEC_ID::ECU_2, // ID
-            6, // Byte
-            0xff, // Bit Mask
-            0
-        };
+        extern data_uint8 Driver1RotarySwitch;
 
         /**
          * @brief Driver 2 Rotary Switch:
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x119 | Byte 7 | Mask 0xFF
          */
-        data_uint8 Driver2RotarySwitch = {
-            MOTEC_ID::ECU_2, // ID
-            7, // Byte
-            0xff, // Bit Mask
-            0
-        };
+        extern data_uint8 Driver2RotarySwitch;
 
     } // namespace DATA_ECU
 
