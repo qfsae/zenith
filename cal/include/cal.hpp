@@ -131,7 +131,7 @@ namespace CAL
         const int bitmask;
         const float multiplier;
         float data;
-    } data_double8;
+    } data_float8;
 
     /**
      * @brief CAN Data Packet Structure for 16 bit integers
@@ -150,7 +150,7 @@ namespace CAL
         const int bitmask;
         const float multiplier;
         float data;
-    } data_double16;
+    } data_float16;
 
     // MOTEC CAN ID's
     namespace MOTEC_ID
@@ -217,7 +217,7 @@ namespace CAL
      * 
      * @returns 0 Success || 1 Incorrect ID
      */
-    extern int update(CAN_msg_t &msg, data_double8 *data);
+    extern int update(CAN_msg_t &msg, data_float8 *data);
 
     /**
      * @brief CAN Data Update Method
@@ -227,7 +227,7 @@ namespace CAL
      * 
      * @returns 0 Success || 1 Incorrect ID
      */
-    extern int update(CAN_msg_t &msg, data_double16 *data);
+    extern int update(CAN_msg_t &msg, data_float16 *data);
 
 
     /**
