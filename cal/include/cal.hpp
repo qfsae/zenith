@@ -4,8 +4,8 @@
  * @file cal.hpp
  * @author Jacob Chisholm (jchisholm204)
  * @brief CAL (CAN Abstraction Layer)
- * @version 3.2
- * @date 2022-11-11
+ * @version 3.5
+ * @date 2022-11-13
  * 
  * @copyright Copyright (c) 2022
  * 
@@ -26,120 +26,20 @@ typedef struct
 namespace CAL
 {
 
-    /**
-     * @brief CAN Data Packet Structure for unsigned 8 bit integers
-     * @param id The CAN ID that the Data is found in
-     * @param byte The data's position within the CAN data
-     * @param bitmask The Data's Bitmask
-     * @param data The Data Itself -> This can be updated with the update method
-     * 
-     */
-    typedef struct
-    {
-        const uint32_t id;
-        const int byte;
-        const int bitmask;
-        uint8_t data;
-    } data_uint8;
+    enum DataType{
+        uint8,
+        int16,
+        boolean,
+        Float
+    };
 
     /**
-     * @brief CAN Data Packet Structure for signed 8 bit integers
-     * @param id The CAN ID that the Data is found in
-     * @param byte The data's position within the CAN data
-     * @param bitmask The Data's Bitmask
-     * @param data The Data Itself -> This can be updated with the update method
-     * 
-     */
-    /*
-    typedef struct
-    {
-        const int32_t id;
-        const int byte;
-        const int bitmask;
-        uint8_t data;
-    } data_int8;*/
-    
-
-    /**
-     * @brief CAN Data Packet Structure for unsigned 16 bit integers
+     * @brief CAN Data Packet Structure
      * @param id The CAN ID that the Data is found in
      * @param byte1 The data's position within the CAN data
      * @param byte2 The position of the second half of the data
      * @param bitmask The Data's Bitmask
-     * @param data The Data Itself -> This can be updated with the update method
-     * 
-     */
-    typedef struct
-    {
-        const uint32_t id;
-        const int byte1;
-        const int byte2;
-        const int bitmask;
-        uint16_t data;
-    } data_uint16;
-
-    /**
-     * @brief CAN Data Packet Structure for 16 bit integers
-     * @param id The CAN ID that the Data is found in
-     * @param byte1 The data's position within the CAN data
-     * @param byte2 The position of the second half of the data
-     * @param bitmask The Data's Bitmask
-     * @param data The Data Itself -> This can be updated with the update method
-     * 
-     */
-    typedef struct
-    {
-        const uint32_t id;
-        const int byte1;
-        const int byte2;
-        const int bitmask;
-        int16_t data;
-    } data_int16;
-
-
-    /**
-     * @brief CAN Data Packet Structure for boolean data extracted from uint8_t
-     * @param id The CAN ID that the Data is found in
-     * @param byte The data's position within the CAN data
-     * @param bitmask The Data's Bitmask
-     * @param data The Data Itself -> This can be updated with the update method
-     * 
-     */
-    typedef struct
-    {
-        const uint32_t id;
-        const int byte;
-        const int bitmask;
-        bool data;
-    }data_bool;
-    
-
-    /**
-     * @brief CAN Data Packet Structure for 16 bit integers
-     * @param id The CAN ID that the Data is found in
-     * @param byte1 The data's position within the CAN data
-     * @param byte2 The position of the second half of the data
-     * @param bitmask The Data's Bitmask
-     * @param multiplier The Data's Multiplier
-     * @param data The Data Itself (stored as float) -> This can be updated with the update method
-     * 
-     */
-    typedef struct
-    {
-        const uint32_t id;
-        const int byte;
-        const int bitmask;
-        const float multiplier;
-        float data;
-    } data_float8;
-
-    /**
-     * @brief CAN Data Packet Structure for 16 bit integers
-     * @param id The CAN ID that the Data is found in
-     * @param byte1 The data's position within the CAN data
-     * @param byte2 The position of the second half of the data
-     * @param bitmask The Data's Bitmask
-     * @param data The Data Itself (stored as float) -> This can be updated with the update method
+     * @param dataType The MoTec Defined Data Type
      * 
      */
     typedef struct
@@ -149,8 +49,8 @@ namespace CAL
         const int byte2;
         const int bitmask;
         const float multiplier;
-        float data;
-    } data_float16;
+        DataType dataType;
+    } data;
 
     // MOTEC CAN ID's
     namespace MOTEC_ID
@@ -163,71 +63,34 @@ namespace CAL
      * @brief CAN Data Update Method
      * 
      * @param msg The CAN Message to update the data from
-     * @param data The Data Packet to update
+     * @param CANdata The Search Data
+     * @param data pointer for user defined data
      * 
      * @returns 0 Success || 1 Incorrect ID
      */
-    extern int update(CAN_msg_t &msg, data_uint8 *data);
+    extern int update(CAN_msg_t &msg, const CAL::data &CANdata, int *data);
 
     /**
      * @brief CAN Data Update Method
      * 
      * @param msg The CAN Message to update the data from
-     * @param data The Data Packet to update
+     * @param CANdata The Search Data
+     * @param data pointer for user defined data
      * 
      * @returns 0 Success || 1 Incorrect ID
      */
-    //int update(CAN_msg_t &msg, data_int8 *data);
+    extern int update(CAN_msg_t &msg, const CAL::data &CANdata, float *data);
 
     /**
      * @brief CAN Data Update Method
      * 
      * @param msg The CAN Message to update the data from
-     * @param data The Data Packet to update
+     * @param CANdata The Search Data
+     * @param data pointer for user defined data
      * 
      * @returns 0 Success || 1 Incorrect ID
      */
-    extern int update(CAN_msg_t &msg, data_uint16 *data);
-
-    /**
-     * @brief CAN Data Update Method
-     * 
-     * @param msg The CAN Message to update the data from
-     * @param data The Data Packet to update
-     * 
-     * @returns 0 Success || 1 Incorrect ID
-     */
-    extern int update(CAN_msg_t &msg, data_int16 *data);
-
-    /**
-     * @brief CAN Data Update Method
-     * 
-     * @param msg The CAN Message to update the data from
-     * @param data The Data Packet to update
-     * 
-     * @returns 0 Success || 1 Incorrect ID
-     */
-    extern int update(CAN_msg_t &msg, data_bool *data);
-
-    /**
-     * @brief CAN Data Update Method
-     * 
-     * @param msg The CAN Message to update the data from
-     * @param data The Data Packet to update
-     * 
-     * @returns 0 Success || 1 Incorrect ID
-     */
-    extern int update(CAN_msg_t &msg, data_float8 *data);
-
-    /**
-     * @brief CAN Data Update Method
-     * 
-     * @param msg The CAN Message to update the data from
-     * @param data The Data Packet to update
-     * 
-     * @returns 0 Success || 1 Incorrect ID
-     */
-    extern int update(CAN_msg_t &msg, data_float16 *data);
+    extern int update(CAN_msg_t &msg, const CAL::data &CANdata, bool *data);
 
 
     /**
@@ -241,154 +104,307 @@ namespace CAL
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 0 | Mask 0xFF
          */
-        extern data_uint8 EngineRPM;
+        constexpr data EngineRPM = {
+            MOTEC_ID::ECU_1,
+            0,
+            0,
+            0xFF,
+            1,
+            DataType::uint8
+        };
 
         /**
          * @brief Throttle Position(%): 
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 1 | Mask 0xFF
          */
-        extern data_uint8 ThrottlePosition;
+        constexpr data ThrottlePosition = {
+            MOTEC_ID::ECU_1,
+            1,
+            0,
+            0xFF,
+            1,
+            DataType::uint8
+        };
 
         /**
          * @brief Vehicle Speed(km/h): 
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 2 | Mask 0xFF
          */
-        extern data_uint8 VehicleSpeed;
+        constexpr data VehicleSpeed = {
+            MOTEC_ID::ECU_1,
+            2,
+            0,
+            0xFF,
+            1,
+            DataType::uint8
+        };
 
         /**
          * @brief Engine Coolant Temperature(°C):
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 3 | Mask 0xFF
          */
-        extern data_uint8 CoolantTemp;
+        constexpr data CoolantTemp = {
+            MOTEC_ID::ECU_1,
+            3,
+            0,
+            0xFF,1,
+            DataType::uint8
+        };
 
         /**
          * @brief Engine Temperature(°C):
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 4 | Mask 0xFF
          */
-        extern data_uint8 EngineTemp;
+        constexpr data EngineTemp = {
+            MOTEC_ID::ECU_1,
+            4,
+            0,
+            0xFF,
+            1,
+            DataType::uint8
+        };
 
         /**
          * @brief Fuel Temperature(°C):
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 5 | Mask 0xFF
          */
-        extern data_uint8 FuelTemp;
+        constexpr data FuelTemp = {
+            MOTEC_ID::ECU_1,
+            5,
+            0,
+            0xFF,
+            1,
+            DataType::uint8
+        };
 
         /**
          * @brief Transmission Temperature(°C):
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 6 | Mask 0xFF
          */
-        extern data_uint8 TransmissionTemp;
+        constexpr data TransmissionTemp = {
+            MOTEC_ID::ECU_1,
+            6,
+            0,
+            0xFF,
+            1,
+            DataType::uint8
+        };
 
         /**
          * @brief Differential Transmission Temperature(°C):
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x118 | Byte 7 | Mask 0xFF
          */
-        extern data_uint8 DifferentialTemp;
+        constexpr data DifferentialTemp = {
+            MOTEC_ID::ECU_1,
+            7,
+            0,
+            0xFF,
+            1,
+            DataType::uint8
+        };
 
         /**
          * @brief Fuel Pressure(10 delta-kPa):
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x119 | Byte 0 | Mask 0xFF
          */
-        extern data_uint8 FuelPressure;
+        constexpr data FuelPressure = {
+            MOTEC_ID::ECU_2,
+            0,
+            0,
+            0xFF,
+            1,
+            DataType::uint8
+        };
 
         /**
          * @brief Steering Wheel Angle(0.1°):
          * Contained as signed 16-bit Integer,
          * Accessed at: ID 0x119 | Byte 2+3 | Mask 0xFF
          */
-        extern data_int16 SteeringAngle;
+        constexpr data SteeringAngle = {
+            MOTEC_ID::ECU_2,
+            2,
+            3,
+            0xFF,
+            1,
+            DataType::int16
+        };
 
         /**
          * @brief Engine State(True == RUN):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x80
          */
-        extern data_bool EngineState;
+        constexpr data EngineState = {
+            MOTEC_ID::ECU_2,
+            4,
+            0,
+            0x80,
+            1,
+            DataType::boolean
+        };
 
         /**
          * @brief Warning Source(True == Warning):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x40
          */
-        extern data_bool WarningSource;
+        constexpr data WarningSource = {
+            MOTEC_ID::ECU_2,
+            4,
+            0,
+            0x40,
+            1,
+            DataType::boolean
+        };
 
         /**
          * @brief Brake State(True == ON):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x20
          */
-        extern data_bool BrakeState;
+        constexpr data BrakeState = {
+            MOTEC_ID::ECU_2,
+            4,
+            0,
+            0x20,
+            1,
+            DataType::boolean
+        };
 
         /**
          * @brief Gear Neutral Switch(True == ON):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x10
          */
-        extern data_bool GearNeutralSwitch;
+        constexpr data GearNeutralSwitch = {
+            MOTEC_ID::ECU_2,
+            4,
+            0,
+            0x10,
+            1,
+            DataType::boolean
+        };
 
         /**
          * @brief Clutch Switch(True == ON):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x08
          */
-        extern data_bool ClutchSwitch;
+        constexpr data ClutchSwitch = {
+            MOTEC_ID::ECU_2,
+            4,
+            0,
+            0x08,
+            1,
+            DataType::boolean
+        };
 
         /**
          * @brief Clutch State(True == Disengaged):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x04
          */
-        extern data_bool ClutchState;
+        constexpr data ClutchState = {
+            MOTEC_ID::ECU_2,
+            4,
+            0,
+            0x04,
+            1,
+            DataType::boolean
+        };
 
         /**
          * @brief Driver Pit Switch(True == ON):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x02
          */
-        extern data_bool DriverPitSwitch;
+        constexpr data DriverPitSwitch = {
+            MOTEC_ID::ECU_2,
+            4,
+            0,
+            0x02,
+            1,
+            DataType::boolean
+        };
 
         /**
          * @brief Engine Run Switch(True == ON):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 4 | Mask 0x01
          */
-        extern data_bool EngineRunSwitch;
+        constexpr data EngineRunSwitch = {
+            MOTEC_ID::ECU_2,
+            4,
+            0,
+            0x01,
+            1,
+            DataType::boolean
+        };
 
         /**
          * @brief Driver 1 Switch(True == ON):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 5 | Mask 0x80
          */
-        extern data_bool Driver1Switch;
+        constexpr data Driver1Switch = {
+            MOTEC_ID::ECU_2,
+            5,
+            0,
+            0x80,
+            1,
+            DataType::boolean
+        };
 
         /**
          * @brief Driver 2 Switch(True == ON):
          * Contained as a boolean,
          * Accessed at: ID 0x119 | Byte 5 | Mask 0x40
          */
-        extern data_bool Driver2Switch;
+        constexpr data Driver2Switch = {
+            MOTEC_ID::ECU_2,
+            5,
+            0,
+            0x40,
+            1,
+            DataType::boolean
+        };
 
         /**
          * @brief Driver 1 Rotary Switch:
          * Contained as unsigned 8-bit integer,
          * Accessed at: ID 0x119 | Byte 6 | Mask 0xFF
          */
-        extern data_uint8 Driver1RotarySwitch;
+        constexpr data Driver1RotarySwitch = {
+            MOTEC_ID::ECU_2,
+            6,
+            0,
+            0xFF,
+            1,
+            DataType::uint8
+        };
 
         /**
          * @brief Driver 2 Rotary Switch:
          * Contained as unsigned 8-bit Integer,
          * Accessed at: ID 0x119 | Byte 7 | Mask 0xFF
          */
-        extern data_uint8 Driver2RotarySwitch;
+        constexpr data Driver2RotarySwitch = {
+            MOTEC_ID::ECU_2,
+            7,
+            0,
+            0xFF,
+            1,
+            DataType::uint8
+        };
 
     } // namespace DATA_ECU
 

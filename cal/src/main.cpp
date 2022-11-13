@@ -25,6 +25,7 @@ void setup() {
 }
 
 int updatertn = 0;
+int throtpot;
 
 void loop() {
 
@@ -39,12 +40,12 @@ void loop() {
     can_recv.id = can.getCanId();
 
     // Run applicable update methods (only ecu for now)
-    updatertn = CAL::update(can_recv, &CAL::DATA_ECU::ThrottlePosition);
+    updatertn = CAL::update(can_recv, CAL::DATA_ECU::ThrottlePosition, &throtpot);
   }
 
   Serial.print(updatertn);
   Serial.print("\t");
-  Serial.print(CAL::DATA_ECU::ThrottlePosition.data);
+  Serial.print(throtpot);
   Serial.print("\n");
   
   
