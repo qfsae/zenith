@@ -2,7 +2,7 @@
  * @file cal.cpp
  * @author Jacob Chisholm (jchisholm204)
  * @brief CAL (CAN Abstraction Layer)
- * @version 3.5
+ * @version 3.6
  * @date 2022-11-13
  * 
  * @copyright Copyright (c) 2022
@@ -13,7 +13,7 @@
 
 int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, int *data){
     if(msg.id == CANdata.id){
-        if(CANdata.dataType == DataType::uint8){
+        if(CANdata.dataType == DataType::uint8 || CANdata.dataType == DataType::Float){
             *data = (msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
         }
         else if(CANdata.dataType == DataType::int16){
@@ -31,7 +31,7 @@ int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, int *data){
 
 int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, float *data){
     if(msg.id == CANdata.id){
-        if(CANdata.dataType == DataType::uint8){
+        if(CANdata.dataType == DataType::uint8 || CANdata.dataType == DataType::Float){
             *data = (msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
         }
         else if(CANdata.dataType == DataType::int16){
@@ -49,7 +49,7 @@ int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, float *data){
 
 int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, bool *data){
     if(msg.id == CANdata.id){
-        if(CANdata.dataType == DataType::uint8){
+        if(CANdata.dataType == DataType::uint8 || CANdata.dataType == DataType::Float){
             *data = (msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
         }
         else if(CANdata.dataType == DataType::int16){

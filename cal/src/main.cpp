@@ -43,8 +43,8 @@ void loop() {
     updatertn = CAL::update(can_recv, CAL::DATA_ECU::ThrottlePosition, &throtpot);
   }
 
-  Serial.print(updatertn);
-  Serial.print("\t");
+  //Serial.print(updatertn);
+  //Serial.print("\t");
   Serial.print(throtpot);
   Serial.print("\n");
   

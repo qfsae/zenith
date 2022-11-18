@@ -4,7 +4,7 @@
  * @file cal.hpp
  * @author Jacob Chisholm (jchisholm204)
  * @brief CAL (CAN Abstraction Layer)
- * @version 3.5
+ * @version 3.6
  * @date 2022-11-13
  * 
  * @copyright Copyright (c) 2022
