@@ -64,3 +64,15 @@ int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, bool *data){
         return 1;
     }
 }
+
+int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, StatusField *data){
+    if(msg.id == CANdata.id){
+        if(CANdata.dataType == DataType::statusField){
+            *data = (StatusField)(msg.data[CANdata.start_idx] & CANdata.bitmask);
+        }
+        return 0;
+    }
+    else{
+        return 1;
+    }
+}

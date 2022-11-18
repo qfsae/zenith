@@ -25,12 +25,20 @@ typedef struct
 
 namespace CAL
 {
+    enum StatusField{
+        OutputOff = 0,
+        OutputOn = 1,
+        OutputFault = 2,
+        OutputOverCurrent = 4,
+        OutputMaxRetries = 8
+    };
 
     enum DataType{
         uint8,
         int16,
         boolean,
-        Float
+        Float,
+        statusField
     };
 
     /**
@@ -95,6 +103,17 @@ namespace CAL
      * @returns 0 Success || 1 Incorrect ID
      */
     extern int update(CAN_msg_t &msg, const CAL::data &CANdata, bool *data);
+
+    /**
+     * @brief CAN Data Update Method
+     * 
+     * @param msg The CAN Message to update the data from
+     * @param CANdata The Search Data
+     * @param data pointer for user defined data
+     * 
+     * @returns 0 Success || 1 Incorrect ID
+     */
+    extern int update(CAN_msg_t &msg, const CAL::data &CANdata, StatusField *data);
 
 
     /**
@@ -465,13 +484,13 @@ namespace CAL
         //     DataType::Float
         // };
 
-        // constexpr data  tBStatusField = {
-        //     PDM_ID::PDM_2,
-        //     1,
-        //     0xFF,
-        //     ,
-        //     DataType::Float
-        // };
+        constexpr data  tBStatusField = {
+            PDM_ID::PDM_2,
+            1,
+            0xFF,
+            1,
+            DataType::statusField
+        };
 
         // constexpr data cF1Status = {
         //     PDM_ID::PDM_2,
