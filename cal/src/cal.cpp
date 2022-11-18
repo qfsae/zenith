@@ -32,7 +32,7 @@ int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, int *data){
 int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, float *data){
     if(msg.id == CANdata.id){
         if(CANdata.dataType == DataType::uint8 || CANdata.dataType == DataType::Float){
-            *data = (msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
+            *data = (float)((msg.data[CANdata.start_idx] & CANdata.bitmask))*CANdata.multiplier;
         }
         else if(CANdata.dataType == DataType::int16){
             *data = ((((int16_t)msg.data[CANdata.start_idx + 1] << 8) | msg.data[CANdata.start_idx]) & CANdata.bitmask)*CANdata.multiplier;
