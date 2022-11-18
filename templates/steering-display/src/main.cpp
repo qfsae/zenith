@@ -48,4 +48,19 @@ void loop() {
             TFT_display();
         }
     }
+
+    	uint8_t recv_ch =1 ;/*
+	if(CANMsgAvail(recv_ch)){
+		CANReceive(recv_ch, &CAN_RX_msg);
+		Serial2.print("ID: ");
+		Serial2.println(CAN_RX_msg.id, HEX);
+		for (int i = 0; i < CAN_RX_msg.len; i++)
+		{
+			Serial2.print(CAN_RX_msg.data[i]);
+			Serial2.print("\t");
+		}
+		Serial2.print("\n");
+		
+		
+	}*/
 }
