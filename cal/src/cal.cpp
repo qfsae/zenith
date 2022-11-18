@@ -14,13 +14,13 @@
 int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, int *data){
     if(msg.id == CANdata.id){
         if(CANdata.dataType == DataType::uint8){
-            *data = (msg.data[CANdata.byte1] & CANdata.bitmask)*CANdata.multiplier;
+            *data = (msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
         }
         else if(CANdata.dataType == DataType::int16){
-            *data = ((((int16_t)msg.data[CANdata.byte2] << 8) | msg.data[CANdata.byte1]) & CANdata.bitmask)*CANdata.multiplier;
+            *data = ((((int16_t)msg.data[CANdata.start_idx + 1] << 8) | msg.data[CANdata.start_idx]) & CANdata.bitmask)*CANdata.multiplier;
         }
         else if(CANdata.dataType == DataType::boolean){
-            *data = (msg.data[CANdata.byte1] & CANdata.bitmask) > 0;
+            *data = (msg.data[CANdata.start_idx] & CANdata.bitmask) > 0;
         }
         return 0;
     }
@@ -32,13 +32,13 @@ int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, int *data){
 int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, float *data){
     if(msg.id == CANdata.id){
         if(CANdata.dataType == DataType::uint8){
-            *data = (msg.data[CANdata.byte1] & CANdata.bitmask)*CANdata.multiplier;
+            *data = (msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
         }
         else if(CANdata.dataType == DataType::int16){
-            *data = ((((int16_t)msg.data[CANdata.byte2] << 8) | msg.data[CANdata.byte1]) & CANdata.bitmask)*CANdata.multiplier;
+            *data = ((((int16_t)msg.data[CANdata.start_idx + 1] << 8) | msg.data[CANdata.start_idx]) & CANdata.bitmask)*CANdata.multiplier;
         }
         else if(CANdata.dataType == DataType::boolean){
-            *data = (msg.data[CANdata.byte1] & CANdata.bitmask) > 0;
+            *data = (msg.data[CANdata.start_idx] & CANdata.bitmask) > 0;
         }
         return 0;
     }
@@ -50,13 +50,13 @@ int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, float *data){
 int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, bool *data){
     if(msg.id == CANdata.id){
         if(CANdata.dataType == DataType::uint8){
-            *data = (msg.data[CANdata.byte1] & CANdata.bitmask)*CANdata.multiplier;
+            *data = (msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
         }
         else if(CANdata.dataType == DataType::int16){
-            *data = ((((int16_t)msg.data[CANdata.byte2] << 8) | msg.data[CANdata.byte1]) & CANdata.bitmask)*CANdata.multiplier;
+            *data = ((((int16_t)msg.data[CANdata.start_idx + 1] << 8) | msg.data[CANdata.start_idx]) & CANdata.bitmask)*CANdata.multiplier;
         }
         else if(CANdata.dataType == DataType::boolean){
-            *data = (msg.data[CANdata.byte1] & CANdata.bitmask) > 0;
+            *data = (msg.data[CANdata.start_idx] & CANdata.bitmask) > 0;
         }
         return 0;
     }

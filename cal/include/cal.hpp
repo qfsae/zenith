@@ -36,8 +36,7 @@ namespace CAL
     /**
      * @brief CAN Data Packet Structure
      * @param id The CAN ID that the Data is found in
-     * @param byte1 The data's position within the CAN data
-     * @param byte2 The position of the second half of the data
+     * @param start_idx Where the data first occurs within the CAN data
      * @param bitmask The Data's Bitmask
      * @param dataType The MoTec Defined Data Type
      * 
@@ -45,11 +44,10 @@ namespace CAL
     typedef struct
     {
         const uint32_t id;
-        const int byte1;
-        const int byte2;
+        const int start_idx;
         const int bitmask;
         const float multiplier;
-        DataType dataType;
+        const DataType dataType;
     } data;
 
     // MOTEC CAN ID's
@@ -107,7 +105,6 @@ namespace CAL
         constexpr data EngineRPM = {
             MOTEC_ID::ECU_1,
             0,
-            0,
             0xFF,
             1,
             DataType::uint8
@@ -121,7 +118,6 @@ namespace CAL
         constexpr data ThrottlePosition = {
             MOTEC_ID::ECU_1,
             1,
-            0,
             0xFF,
             1,
             DataType::uint8
@@ -135,7 +131,6 @@ namespace CAL
         constexpr data VehicleSpeed = {
             MOTEC_ID::ECU_1,
             2,
-            0,
             0xFF,
             1,
             DataType::uint8
@@ -149,7 +144,6 @@ namespace CAL
         constexpr data CoolantTemp = {
             MOTEC_ID::ECU_1,
             3,
-            0,
             0xFF,1,
             DataType::uint8
         };
@@ -162,7 +156,6 @@ namespace CAL
         constexpr data EngineTemp = {
             MOTEC_ID::ECU_1,
             4,
-            0,
             0xFF,
             1,
             DataType::uint8
@@ -176,7 +169,6 @@ namespace CAL
         constexpr data FuelTemp = {
             MOTEC_ID::ECU_1,
             5,
-            0,
             0xFF,
             1,
             DataType::uint8
@@ -190,7 +182,6 @@ namespace CAL
         constexpr data TransmissionTemp = {
             MOTEC_ID::ECU_1,
             6,
-            0,
             0xFF,
             1,
             DataType::uint8
@@ -204,7 +195,6 @@ namespace CAL
         constexpr data DifferentialTemp = {
             MOTEC_ID::ECU_1,
             7,
-            0,
             0xFF,
             1,
             DataType::uint8
@@ -217,7 +207,6 @@ namespace CAL
          */
         constexpr data FuelPressure = {
             MOTEC_ID::ECU_2,
-            0,
             0,
             0xFF,
             1,
@@ -232,7 +221,6 @@ namespace CAL
         constexpr data SteeringAngle = {
             MOTEC_ID::ECU_2,
             2,
-            3,
             0xFF,
             1,
             DataType::int16
@@ -246,7 +234,6 @@ namespace CAL
         constexpr data EngineState = {
             MOTEC_ID::ECU_2,
             4,
-            0,
             0x80,
             1,
             DataType::boolean
@@ -260,7 +247,6 @@ namespace CAL
         constexpr data WarningSource = {
             MOTEC_ID::ECU_2,
             4,
-            0,
             0x40,
             1,
             DataType::boolean
@@ -274,7 +260,6 @@ namespace CAL
         constexpr data BrakeState = {
             MOTEC_ID::ECU_2,
             4,
-            0,
             0x20,
             1,
             DataType::boolean
@@ -288,7 +273,6 @@ namespace CAL
         constexpr data GearNeutralSwitch = {
             MOTEC_ID::ECU_2,
             4,
-            0,
             0x10,
             1,
             DataType::boolean
@@ -302,7 +286,6 @@ namespace CAL
         constexpr data ClutchSwitch = {
             MOTEC_ID::ECU_2,
             4,
-            0,
             0x08,
             1,
             DataType::boolean
@@ -316,7 +299,6 @@ namespace CAL
         constexpr data ClutchState = {
             MOTEC_ID::ECU_2,
             4,
-            0,
             0x04,
             1,
             DataType::boolean
@@ -330,7 +312,6 @@ namespace CAL
         constexpr data DriverPitSwitch = {
             MOTEC_ID::ECU_2,
             4,
-            0,
             0x02,
             1,
             DataType::boolean
@@ -344,7 +325,6 @@ namespace CAL
         constexpr data EngineRunSwitch = {
             MOTEC_ID::ECU_2,
             4,
-            0,
             0x01,
             1,
             DataType::boolean
@@ -358,7 +338,6 @@ namespace CAL
         constexpr data Driver1Switch = {
             MOTEC_ID::ECU_2,
             5,
-            0,
             0x80,
             1,
             DataType::boolean
@@ -372,7 +351,6 @@ namespace CAL
         constexpr data Driver2Switch = {
             MOTEC_ID::ECU_2,
             5,
-            0,
             0x40,
             1,
             DataType::boolean
@@ -386,7 +364,6 @@ namespace CAL
         constexpr data Driver1RotarySwitch = {
             MOTEC_ID::ECU_2,
             6,
-            0,
             0xFF,
             1,
             DataType::uint8
@@ -400,7 +377,6 @@ namespace CAL
         constexpr data Driver2RotarySwitch = {
             MOTEC_ID::ECU_2,
             7,
-            0,
             0xFF,
             1,
             DataType::uint8
