@@ -407,7 +407,10 @@ namespace CAL
 
     } // namespace DATA_ECU
 
-
+    /**
+     * @brief Encases all of the Data Types coming off of the PDM's CAN
+     * 
+     */
     namespace DATA_PDM
     {
         constexpr data tPVolt = {
