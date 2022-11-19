@@ -25,7 +25,7 @@ void setup() {
 }
 
 int updatertn = 0;
-float derta;
+int derta;
 
 void loop() {
 
@@ -40,15 +40,16 @@ void loop() {
     can_recv.id = can.getCanId();
 
     // Run applicable update methods (only ecu for now)
-    updatertn = CAL::update(can_recv, CAL::DATA_PDM::battVolt, &derta);
+    updatertn = CAL::update(can_recv, CAL::DATA_ECU::ThrottlePosition, &derta);
   }
 
-  //Serial.print(updatertn);
-  //Serial.print("\t");
-  Serial.print(derta);
-  Serial.print("\n");
+  if(updatertn == 0){
+    Serial.print(updatertn);
+    Serial.print("\t");
+    Serial.print(derta);
+    Serial.print("\n");
+  }
   
   
-  
-  //delay(100);
+
 }
