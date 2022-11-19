@@ -4,7 +4,7 @@
  * @file cal.hpp
  * @author Jacob Chisholm (jchisholm204)
  * @brief CAL (CAN Abstraction Layer)
- * @version 3.6
+ * @version 3.7
  * @date 2022-11-13
  * 
  * @copyright Copyright (c) 2022
@@ -25,6 +25,7 @@ typedef struct
 
 namespace CAL
 {
+    // ECU Status Fields
     enum StatusField{
         OutputOff = 0,
         OutputOn = 1,
@@ -33,6 +34,7 @@ namespace CAL
         OutputMaxRetries = 8
     };
 
+    // CAN Data Types
     enum DataType{
         uint8,
         int16,
