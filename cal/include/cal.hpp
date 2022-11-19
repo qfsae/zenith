@@ -60,15 +60,11 @@ namespace CAL
         const DataType dataType;
     } data;
 
-    // MOTEC CAN ID's
+    // MOTEC CAN ID's (ECU/PDM)
     namespace MOTEC_ID
     {
         static constexpr uint32_t ECU_1 = 0x118;
         static constexpr uint32_t ECU_2 = 0x119;
-    } // namespace MOTEC_ID
-    
-    namespace PDM_ID
-    {
         static constexpr uint32_t PDM_1 = 0x7F0;
         static constexpr uint32_t PDM_2 = 0x7F1;
     } // namespace MOTEC_ID
@@ -415,7 +411,7 @@ namespace CAL
     namespace DATA_PDM
     {
         constexpr data tPVolt = {
-            PDM_ID::PDM_1,
+            MOTEC_ID::PDM_1,
             0,
             0xFF,
             0.2,
@@ -423,7 +419,7 @@ namespace CAL
         };
 
         constexpr data battVolt = {
-            PDM_ID::PDM_1,
+            MOTEC_ID::PDM_1,
             1,
             0xFF,
             0.1216,
@@ -431,7 +427,7 @@ namespace CAL
         };
 
         constexpr data fPCurr = {
-            PDM_ID::PDM_1,
+            MOTEC_ID::PDM_1,
             2,
             0xFF,
             0.5,
@@ -439,7 +435,7 @@ namespace CAL
         };
 
         constexpr data fPVolt = {
-            PDM_ID::PDM_1,
+            MOTEC_ID::PDM_1,
             3,
             0xFF,
             0.2,
@@ -447,7 +443,7 @@ namespace CAL
         };
 
         constexpr data  fpStatusField = {
-            PDM_ID::PDM_1,
+            MOTEC_ID::PDM_1,
             4,
             0xFF,
             0.2,
@@ -455,7 +451,7 @@ namespace CAL
         };
         //FAULT FLAG
         // constexpr data kSState = {
-        //     PDM_ID::PDM_1,
+        //     MOTEC_ID::PDM_1,
         //     5,
         //     0xFF,
         //     0.2,
@@ -463,7 +459,7 @@ namespace CAL
         // };
 
         constexpr data tBCurr = {
-            PDM_ID::PDM_1,
+            MOTEC_ID::PDM_1,
             6,
             0xFF,
             0.2,
@@ -471,7 +467,7 @@ namespace CAL
         };
 
         constexpr data tBVolt = {
-            PDM_ID::PDM_1,
+            MOTEC_ID::PDM_1,
             7,
             0xFF,
             0.2,
@@ -479,7 +475,7 @@ namespace CAL
         };
         //FAULT FLAGs
         // constexpr data tBStatusFault = {
-        //     PDM_ID::PDM_2,
+        //     MOTEC_ID::PDM_2,
         //     0,
         //     0xFF,
         //     ,
@@ -487,7 +483,7 @@ namespace CAL
         // };
 
         constexpr data  tBStatusField = {
-            PDM_ID::PDM_2,
+            MOTEC_ID::PDM_2,
             1,
             0xFF,
             1,
@@ -495,7 +491,7 @@ namespace CAL
         };
 
         // constexpr data cF1Status = {
-        //     PDM_ID::PDM_2,
+        //     MOTEC_ID::PDM_2,
         //     2,
         //     0xFF,
         //     ,
@@ -503,7 +499,7 @@ namespace CAL
         // };
 
         // constexpr data cF2Status = {
-        //     PDM_ID::PDM_2,
+        //     MOTEC_ID::PDM_2,
         //     3,
         //     0xFF,
         //     ,
@@ -511,7 +507,7 @@ namespace CAL
         // };
 
         constexpr data fICurr = {
-            PDM_ID::PDM_2,
+            MOTEC_ID::PDM_2,
             4,
             0xFF,
             0.2,
@@ -519,7 +515,7 @@ namespace CAL
         };
 
         constexpr data fIVolt = {
-            PDM_ID::PDM_2,
+            MOTEC_ID::PDM_2,
             5,
             0xFF,
             0.2,
@@ -528,7 +524,7 @@ namespace CAL
         //
         //FAULT FLAG
         // constexpr data fIStatusField = {
-        //     PDM_ID::PDM_2,
+        //     MOTEC_ID::PDM_2,
         //     6,
         //     0xFF,
         //     ,
@@ -536,7 +532,7 @@ namespace CAL
         // };
 
         // constexpr data sRStatus = {
-        //     PDM_ID::PDM_2,
+        //     MOTEC_ID::PDM_2,
         //     7,
         //     0xFF,
         //     ,
