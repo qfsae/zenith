@@ -29,6 +29,9 @@
 uint8_t tft_active = 0;
 uint16_t num_profile_a, num_profile_b;
 
+// TPS print test
+uint8_t tps;
+
 #define LAYOUT_Y1 66
 
 void touch_calibrate(void) {
@@ -159,7 +162,8 @@ void TFT_display(void) {
         EVE_cmd_dl_burst(TAG(0));
 
         /* DYNAMIC DISPLAY CODE HERE */
-    
+        EVE_color_rgb(BLACK);
+        EVE_cmd_number(5, 15, 28, 0, tps);
         /* DYNAMIC DISPLAY CODE HERE */
         
         EVE_cmd_dl_burst(DL_DISPLAY); // Instruct the co-processor to show the list 
