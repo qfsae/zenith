@@ -78,6 +78,28 @@ namespace CAL
      * 
      * @returns 0 Success || 1 Incorrect ID
      */
+    extern int update(CAN_msg_t &msg, const CAL::data &CANdata, uint8_t *data);
+
+    /**
+     * @brief CAN Data Update Method
+     * 
+     * @param msg The CAN Message to update the data from
+     * @param CANdata The Search Data
+     * @param data pointer for user defined data
+     * 
+     * @returns 0 Success || 1 Incorrect ID
+     */
+    extern int update(CAN_msg_t &msg, const CAL::data &CANdata, int8_t *data);
+
+    /**
+     * @brief CAN Data Update Method
+     * 
+     * @param msg The CAN Message to update the data from
+     * @param CANdata The Search Data
+     * @param data pointer for user defined data
+     * 
+     * @returns 0 Success || 1 Incorrect ID
+     */
     extern int update(CAN_msg_t &msg, const CAL::data &CANdata, int *data);
 
     /**

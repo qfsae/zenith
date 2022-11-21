@@ -11,6 +11,48 @@
 
 #include "cal.hpp"
 
+int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, uint8_t *data){
+
+    // Return 1 on incorrect CAN ID
+    if(!(msg.id == CANdata.id)) return 1;
+
+    // Return 2 on incorrect Data Type
+    //if(!((CANdata.dataType == DataType::int16) || (CANdata.dataType == DataType::uint8))) return 2;
+
+    if(CANdata.dataType == DataType::uint8){
+        *data = (msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
+        return 0;
+    }
+    else if(CANdata.dataType == DataType::int16){
+        *data = ((((int16_t)msg.data[CANdata.start_idx + 1] << 8) | msg.data[CANdata.start_idx]) & CANdata.bitmask)*CANdata.multiplier;
+        return 0;
+    }
+
+    return 2;
+
+}
+
+int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, int8_t *data){
+
+    // Return 1 on incorrect CAN ID
+    if(!(msg.id == CANdata.id)) return 1;
+
+    // Return 2 on incorrect Data Type
+    //if(!((CANdata.dataType == DataType::int16) || (CANdata.dataType == DataType::uint8))) return 2;
+
+    if(CANdata.dataType == DataType::uint8){
+        *data = (msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
+        return 0;
+    }
+    else if(CANdata.dataType == DataType::int16){
+        *data = ((((int16_t)msg.data[CANdata.start_idx + 1] << 8) | msg.data[CANdata.start_idx]) & CANdata.bitmask)*CANdata.multiplier;
+        return 0;
+    }
+
+    return 2;
+
+}
+
 int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, int *data){
 
     // Return 1 on incorrect CAN ID
