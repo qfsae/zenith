@@ -536,13 +536,13 @@ namespace CAL
             DataType::Float
         };
         //FAULT FLAGs
-        // constexpr data tBStatusFault = {
-        //     MOTEC_ID::PDM_2,
-        //     0,
-        //     0xFF,
-        //     ,
-        //     DataType::Float
-        // };
+        constexpr data tBStatusFault = {
+            MOTEC_ID::PDM_2,
+            0,
+            0xFF,
+            1,
+            DataType::statusField
+        };
 
         // constexpr data  tBStatusField = {
         //     MOTEC_ID::PDM_2,

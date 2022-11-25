@@ -109,7 +109,7 @@ int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, StatusField *data){
     // Return 2 on Incorrect Data Type
     if(!(CANdata.dataType == DataType::statusField)) return 2;
 
-    *data = (StatusField)(msg.data[CANdata.start_idx] & CANdata.bitmask);
+    *data = (StatusField)(msg.data[CANdata.start_idx]);
     
     return 0;
 
