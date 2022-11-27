@@ -1,6 +1,9 @@
-#include "Arduino.h"
+#include <Arduino.h>
+#include <SPI.h>
+
 #include "steering_io.h"
-#include "cal.h"
+#include "cal.hpp"
+#include "can.hpp"
 
 int ledState = 0;
 
