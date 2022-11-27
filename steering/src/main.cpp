@@ -20,10 +20,9 @@ void setup() {
 
     pinMode(STEERING_CAN_OE, OUTPUT);
     digitalWrite(STEERING_CAN_OE, LOW);
+
     bool ret = CANInit(CAN_1000KBPS, 0, 2);
-    if (!ret)
-        while (true)
-            ;
+    if (!ret) while (true);
 
     SPI.begin(); // Set up the SPI to run in Mode 0 and 8 MHz
     SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
@@ -64,6 +63,7 @@ void loop() {
             Serial2.print(CAN_RX_msg.data[i]);
             Serial2.print("\t");
         }
+
         Serial2.print("\n");
         if (CAN_RX_msg.id == 0x118) {
             // tps = CAN_RX_msg.data[1];
