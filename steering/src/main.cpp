@@ -6,6 +6,8 @@
 #include "cal.hpp"
 #include "can.hpp"
 
+#include <EVE.h>
+#include "tft_data.h"
 #include "tft.h"
 
 #include "screens.h"
