@@ -8,6 +8,10 @@
 #ifndef STEERING_IO_H
 #define STEERING_IO_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define STEERING_STATUS_LED PB14
 #define STEERING_NEOPIXEL PB3
 #define STEERING_TRANSLATOR_OE PB4
@@ -33,4 +37,8 @@
 #define STEERING_RPOT_1 PB0
 #define STEERING_RPOT_2 PB1
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif /* STEERING_IO_H */

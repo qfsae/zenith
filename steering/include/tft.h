@@ -14,9 +14,6 @@ void TFT_touch(void);
 void TFT_display(void);
 void TFT_splash(void);
 
-// TPS test
-extern uint8_t tps;
-
 #ifdef __cplusplus
 }
 #endif

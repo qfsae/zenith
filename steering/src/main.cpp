@@ -40,8 +40,7 @@ void loop() {
     uint32_t current_millis;
     current_millis = millis();
 
-    if ((current_millis - previous_millis) > 3)
-    {
+    if ((current_millis - previous_millis) > 3) {
         // Execute touch display code every ~5 ms
         previous_millis = current_millis;
 
