@@ -488,14 +488,18 @@ namespace CAL
             DataType::Float
         };
 
-        // constexpr data FuelPumpStatus = {
-        //     MOTEC_ID::PDM_1,
-        //     4,
-        //     0xFF,
-        //     0.2,
-        //     DataType::Float
-        // };
-        //FAULT FLAG
+        /**
+         * @brief Fuel Pump Status:
+         * Contained as a statusField,
+         * Accessed at: ID 0x7F0 | Byte 4 | Mask 0xFF
+         */
+        constexpr data FuelPumpStatus = {
+            MOTEC_ID::PDM_1,
+            4,
+            0xFF,
+            1,
+            DataType::statusField
+        };
 
         /**
          * @brief Kill Switch Voltage:
@@ -535,8 +539,13 @@ namespace CAL
             0.2,
             DataType::Float
         };
-        //FAULT FLAGs
-        constexpr data tBStatusFault = {
+        
+        /**
+         *  @brief ThrottleBody Status Fault:
+         * Contained as a statusField,
+         * Accessed at: ID 0x7F1 | Byte 0 | Mask 0xFF
+         */
+        constexpr data ThrottleBodyStatusFault = {
             MOTEC_ID::PDM_2,
             0,
             0xFF,
@@ -544,29 +553,44 @@ namespace CAL
             DataType::statusField
         };
 
-        // constexpr data  tBStatusField = {
-        //     MOTEC_ID::PDM_2,
-        //     1,
-        //     0xFF,
-        //     ,
-        //     DataType::Float
-        // };
+        /**
+         *  @brief ThrottleBody Status Field:
+         * Contained as a statusField,
+         * Accessed at: ID 0x7F1 | Byte 1 | Mask 0xFF
+         */
+        constexpr data  ThrottleBodyStatusField = {
+            MOTEC_ID::PDM_2,
+            1,
+            0xFF,
+            1,
+            DataType::statusField
+        };
 
-        // constexpr data cF1Status = {
-        //     MOTEC_ID::PDM_2,
-        //     2,
-        //     0xFF,
-        //     ,
-        //     DataType::Float
-        // };
+        /**
+         *  @brief Cooling Fan 1 Status:
+         * Contained as a statusField,
+         * Accessed at: ID 0x7F1 | Byte 2 | Mask 0xFF
+         */
+        constexpr data CollingFan1Status = {
+            MOTEC_ID::PDM_2,
+            2,
+            0xFF,
+            1,
+            DataType::statusField
+        };
 
-        // constexpr data cF2Status = {
-        //     MOTEC_ID::PDM_2,
-        //     3,
-        //     0xFF,
-        //     ,
-        //     DataType::Float
-        // };
+        /**
+         *  @brief Cooling Fan 2 Status:
+         * Contained as a statusField,
+         * Accessed at: ID 0x7F1 | Byte 3 | Mask 0xFF
+         */
+        constexpr data CoolingFan2Status = {
+            MOTEC_ID::PDM_2,
+            3,
+            0xFF,
+            1,
+            DataType::statusField
+        };
 
         /**
          * @brief Fuel Injector Current:
@@ -593,23 +617,32 @@ namespace CAL
             0.2,
             DataType::Float
         };
-        //
-        //FAULT FLAG
-        // constexpr data fIStatusField = {
-        //     MOTEC_ID::PDM_2,
-        //     6,
-        //     0xFF,
-        //     ,
-        //     DataType::Float
-        // };
 
-        // constexpr data sRStatus = {
-        //     MOTEC_ID::PDM_2,
-        //     7,
-        //     0xFF,
-        //     ,
-        //     DataType::Float
-        // };
+        /**
+         *  @brief Fuel Injector Status Field:
+         * Contained as a statusField,
+         * Accessed at: ID 0x7F1 | Byte 6 | Mask 0xFF
+         */
+        constexpr data FuelInjectorStatusField = {
+            MOTEC_ID::PDM_2,
+            6,
+            0xFF,
+            1,
+            DataType::statusField
+        };
+
+        /**
+         *  @brief Starter Relay Status:
+         * Contained as a statusField,
+         * Accessed at: ID 0x7F1 | Byte 7 | Mask 0xFF
+         */
+        constexpr data StarterRelayStatus = {
+            MOTEC_ID::PDM_2,
+            7,
+            0xFF,
+            1,
+            DataType::statusField
+        };
     } // namespace DATA_PDM
     
     
