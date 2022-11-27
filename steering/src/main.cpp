@@ -8,6 +8,8 @@
 
 #include "tft.h"
 
+#include "screens.h"
+
 // Only do print statements if we are in debug mode
 #define STEERING_DEBUG 1
 
@@ -48,7 +50,7 @@ void loop() {
 
         display_delay++;
         if (display_delay > 3) { // Execute display refresh every ~20ms
-            TFT_display();
+            TFT_display((tft_callback)display_code);
         }
     }
 
