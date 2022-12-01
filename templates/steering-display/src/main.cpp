@@ -50,7 +50,7 @@ void loop() {
         if (steering_3 == LOW) {
             gear_position++;
         }
-        delay(50); // delay in case a
+        delay(50); 
     }
     last_button_state_3 = steering_3;
 
@@ -60,9 +60,8 @@ void loop() {
             gear_position--;
         }
         delay(50);
-    }
+    } 
     last_button_state_4 = steering_4;
 
     TFT_display();
-
 }
