@@ -8,29 +8,16 @@
 
 #include "EVE.h"
 #include "tft_data.h"
+#include "tft.h"
 
 #define TEST_UTF8 0
 
-// Some pre-defined colours
-#define RED     0xff0000UL
-#define ORANGE  0xffa500UL
-#define GREEN   0x00ff00UL
-#define BLUE    0x0000ffUL
-#define BLUE_1  0x5dade2L
-#define YELLOW  0xffff00UL
-#define MAGENTA 0xff00ffUL
-#define PURPLE  0x800080UL
-#define WHITE   0xffffffUL
-#define BLACK   0x000000UL
 
 // Memory-map defines
 #define MEM_LOGO 0x00000000 // Start-address of logo, needs 19378 bytes of memory
 
 uint8_t tft_active = 0;
 uint16_t num_profile_a, num_profile_b;
-
-// TPS print test
-uint8_t tps;
 
 #define LAYOUT_Y1 66
 
@@ -140,7 +127,7 @@ void TFT_touch(void) {
  * @brief Main display update, meant to be called every 20ms or more 
  * Note that this is not the *only* function to update the display - make more as needed for different layouts and call them in loop() ! 
  */
-void TFT_display(void) {
+void TFT_display(tft_callback f) {
     if(tft_active != 0) {
         if(EVE_IS_BUSY == EVE_busy()) { // Is EVE still processing the last display list?
             return;
@@ -162,8 +149,7 @@ void TFT_display(void) {
         EVE_cmd_dl_burst(TAG(0));
 
         /* DYNAMIC DISPLAY CODE HERE */
-        EVE_color_rgb(BLACK);
-        EVE_cmd_number(5, 15, 28, 0, tps);
+        f(); // call the callback of user specified UI
         /* DYNAMIC DISPLAY CODE HERE */
         
         EVE_cmd_dl_burst(DL_DISPLAY); // Instruct the co-processor to show the list 
