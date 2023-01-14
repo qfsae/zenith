@@ -6,14 +6,13 @@
     "authors":
     [
       {
-        "name": "John Smith",
-        "email": "me@john-smith.com",
-        "url": "https://www.john-smith/contact"
+        "name": "Ethan Peterson",
+        "email": "ethan@petetech.net",
+        "url": "portfolio.petetech.net"
       },
       {
-        "name": "Andrew Smith",
-        "email": "me@andrew-smith.com",
-        "url": "https://www.andrew-smith/contact",
+        "name": "Jacob Chisholm",
+        "url": "github.com/jchisholm204",
         "maintainer": true
       }
     ],
