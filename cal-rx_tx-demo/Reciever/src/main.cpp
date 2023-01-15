@@ -8,14 +8,14 @@ mcp2515_can can(9);
 
 void setup() {
   Serial.begin(9600);
-  while(can.begin(CAN_1000KBPS) != CAN_OK){
+  while(can.begin(CAN_500KBPS) != CAN_OK){
     Serial.println("CAN Init Error..");
     delay(100);
   }
   Serial.println("CAN Bus Initialized");
 }
 
-int throttlePosition;
+int gear = 1;
 int engineRPM = 0;
 
 void loop() {
@@ -23,9 +23,9 @@ void loop() {
     CAL::CAN_msg_t can_recv;
     can.readMsgBuf(&can_recv.len, can_recv.data);
     can_recv.id = can.getCanId();
-    CAL::update(can_recv, CAL::DATA_ECU::ThrottlePosition, &throttlePosition);
+    CAL::update(can_recv, CAL::DATA_DASH::Gear, &gear);
     CAL::update(can_recv, CAL::DATA_ECU::EngineRPM, &engineRPM);
   }
-  Serial.println(String("Throttle Position: ") + throttlePosition + String("\tEngine RPM: ") + engineRPM);
-  delay(100);
+  Serial.println(String("Gear: ") + gear + String("\tEngine RPM: ") + engineRPM);
+  //delay(100);
 }
