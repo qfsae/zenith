@@ -68,6 +68,11 @@ namespace CAL
         static constexpr uint32_t PDM_2 = 0x7F1;
     } // namespace MOTEC_ID
 
+    // Melanous CAN ID's
+    namespace CAN_ID{
+        static constexpr uint32_t DASH = 0x120;
+    }
+
     /**
      * @brief CAN Data Update Method
      * 
@@ -134,6 +139,25 @@ namespace CAL
      */
     extern int update(CAL::CAN_msg_t &msg, const CAL::data &CANdata, StatusField *data);
 
+    /**
+     * @brief Encases all of the Data Types coming off of the Dashboards CAN 
+     * 
+     */
+    namespace DATA_DASH{
+        /**
+         * @brief Car Gear 
+         * Contained as an unsigned 8 bit integer,
+         * Accessed at: ID 0x120 | Byte 0 | Mask 0xFF
+         *  0 = Reverse | 1 = Neutral | {2,3,...} = Drive
+         */
+        constexpr data Gear = {
+            CAN_ID::DASH,
+            0,
+            0xFF,
+            1,
+            DataType::uint8
+        };
+    } // namespace DATA_DASH
 
     /**
      * @brief Encases all of the Data Types coming off of the ECU's CAN
@@ -150,7 +174,7 @@ namespace CAL
             MOTEC_ID::ECU_1,
             0,
             0xFF,
-            1,
+            100,
             DataType::uint8
         };
 

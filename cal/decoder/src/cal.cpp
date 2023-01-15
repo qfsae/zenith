@@ -62,7 +62,7 @@ int CAL::update(CAN_msg_t &msg, const CAL::data &CANdata, int *data){
     //if(!((CANdata.dataType == DataType::int16) || (CANdata.dataType == DataType::uint8))) return 2;
 
     if(CANdata.dataType == DataType::uint8){
-        *data = (msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
+        *data = ((int)msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
         return 0;
     }
     else if(CANdata.dataType == DataType::int16){
