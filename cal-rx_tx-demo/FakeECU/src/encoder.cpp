@@ -102,26 +102,35 @@ CAN_msg_t &Encoder::package(const CAL::data &var){
 }
 
 void Encoder::varToBuf(const CAL::data &data, CAL::CAN_msg_t &msg, int &var){
-    
+    switch (data.dataType)
+    {
+    case DataType::uint8:
+        msg.data[data.start_idx] = (var/data.multiplier);
+        break;
+    case DataType::Float:
+        msg.data[data.start_idx] = (var/data.multiplier);
+    default:
+        break;
+    }
 }
 
 void Encoder::updateVar(const CAL::data &var, int value){
     switch (var.id)
     {
     case MOTEC_ID::ECU_1:
-        ecu1.data[var.start_idx] = (value/var.multiplier);
+        varToBuf(var, ecu1, value);
         break;
     case MOTEC_ID::ECU_2:
-        ecu2.data[var.start_idx] = (value/var.multiplier);
+        varToBuf(var, ecu2, value);
         break;
     case MOTEC_ID::PDM_1:
-        pdm1.data[var.start_idx] = (value/var.multiplier);
+        varToBuf(var, pdm1, value);
         break;
     case MOTEC_ID::PDM_2:
-        pdm2.data[var.start_idx] = (value/var.multiplier);
+        varToBuf(var, pdm2, value);
         break;
     case CAN_ID::DASH:
-        dash.data[var.start_idx] = (value/var.multiplier);
+        varToBuf(var, dash, value);
     default:
         break;
     }
