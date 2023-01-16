@@ -142,32 +142,45 @@ namespace CAL
     /**
      * @brief Encases all of the Data Types coming off of the Dashboards CAN 
      * 
+     * Items marked with (*) are returned by the ECU
      */
     namespace DATA_DASH{
 
         /**
-         * @brief Car Gear 
-         * Contained as an unsigned 8 bit integer,
-         * Accessed at: ID 0x120 | Byte 0 | Mask 0xFF
-         *  0 = Reverse | 1 = Neutral | {2,3,...} = Drive
+         * @brief Gear Up Shift Register
+         * Contained as Boolean Value,
+         * Accessed at: ID 0x120 | Byte 0 | Mask 0x80
          */
-        constexpr data Gear = {
+        constexpr data UpShift = {
             CAN_ID::DASH,
             0,
-            0xFF,
+            0x80,
             1,
-            DataType::uint8
+            DataType::boolean
+        };
+
+        /**
+         * @brief Gear Down Shift Register
+         * Contained as Boolean Value,
+         * Accessed at: ID 0x120 | Byte 0 | Mask 0x40
+         */
+        constexpr data DownShift = {
+            CAN_ID::DASH,
+            0,
+            0x40,
+            1,
+            DataType::boolean
         };
 
         /**
          * @brief Driver Switch 1 (*)
          * Contained as a Boolean Value,
-         * Accessed at: ID 0x120 | Byte 1 | Mask 0x80
+         * Accessed at: ID 0x120 | Byte 0 | Mask 0x20
          */
         constexpr data DriverSwitch1 = {
             CAN_ID::DASH,
-            1,
-            0x80,
+            0,
+            0x20,
             1,
             DataType::boolean
         };
@@ -175,25 +188,12 @@ namespace CAL
         /**
          * @brief Driver Switch 2
          * Contained as a Boolean Value,
-         * Accessed at: ID 0x120 | Byte 1 | Mask 0x40
+         * Accessed at: ID 0x120 | Byte 0 | Mask 0x10
          */
         constexpr data DriverSwitch2 = {
             CAN_ID::DASH,
-            1,
-            0x40,
-            1,
-            DataType::boolean
-        };
-
-        /**
-         * @brief Engine Enable Switch (*)
-         * Contained as a Boolean Value,
-         * Accessed at: ID 0x120 | Byte 1 | Mask 0x20
-         */
-        constexpr data EngineEnable = {
-            CAN_ID::DASH,
-            1,
-            0x20,
+            0,
+            0x10,
             1,
             DataType::boolean
         };
@@ -201,42 +201,29 @@ namespace CAL
         /**
          * @brief Driver Pit Switch (*)
          * Contained as a Boolean Value,
-         * Accessed at: ID 0x120 | Byte 1 | Mask 0x10
+         * Accessed at: ID 0x120 | Byte 0 | Mask 0x08
          */
         constexpr data DriverPitSwitch = {
             CAN_ID::DASH,
-            1,
-            0x10,
+            0,
+            0x08,
             1,
             DataType::boolean
         };
 
         /**
-         * @brief Driver Rotary Toggle 1
+         * @brief Driver Rotary Switch/Toggle
          * Contained as an unsigned 8 bit integer,
-         * Accessed at: ID 0x120 | Byte 2 | Mask 0xFF
+         * Accessed at: ID 0x120 | Byte 1 | Mask 0xFF
          */
-        constexpr data Driver1RotarySwitch = {
+        constexpr data DriverRotarySwitch = {
             CAN_ID::DASH,
-            2,
+            1,
             0xFF,
             1,
             DataType::uint8
         };
 
-        /**
-         * @brief Driver Rotary Toggle 2
-         * Contained as an unsigned 8 bit integer,
-         * Accessed at: ID 0x120 | Byte 3 | Mask 0xFF
-         */
-        constexpr data Driver2RotarySwitch = {
-            CAN_ID::DASH,
-            3,
-            0xFF,
-            1,
-            DataType::uint8
-        };
-        
     } // namespace DATA_DASH
 
     /**
