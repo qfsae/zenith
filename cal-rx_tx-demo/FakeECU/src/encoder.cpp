@@ -101,7 +101,11 @@ CAN_msg_t &Encoder::package(const CAL::data &var){
     }
 }
 
-void Encoder::update(const CAL::data &var, int value){
+void Encoder::varToBuf(const CAL::data &data, CAL::CAN_msg_t &msg, int &var){
+    
+}
+
+void Encoder::updateVar(const CAL::data &var, int value){
     switch (var.id)
     {
     case MOTEC_ID::ECU_1:
@@ -132,7 +136,7 @@ int Encoder::bufToVar(const CAL::data &data, CAN_msg_t &msg){
     }
 }
 
-int Encoder::getVar(const CAL::data &var){
+int Encoder::returnVar(const CAL::data &var){
     switch (var.id)
     {
     case MOTEC_ID::ECU_1:

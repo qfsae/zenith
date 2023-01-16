@@ -31,6 +31,7 @@ namespace CAL
      * @returns Data as an integer
      */
     int bufToVar(const CAL::data &data, CAN_msg_t &msg);
+    void varToBuf(const CAL::data &data, CAN_msg_t &msg, int &var);
    public:
    /**
     * @brief Construct a new Encoder object - Acts as storage for data
@@ -56,14 +57,14 @@ namespace CAL
      * @param var The Data object to update
      * @param value The new Value to assign to the Data Object
      */
-    void update(const CAL::data &var, int value);
+    void updateVar(const CAL::data &var, int value);
     /**
      * @brief Get the Data currently stored for a data object
      * 
      * @param var The Data object to retrieve
      * @returns The currently stored value
      */
-    int getVar(const CAL::data &var);
+    int returnVar(const CAL::data &var);
    };
     
 } // namespace CAL
