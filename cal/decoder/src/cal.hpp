@@ -144,6 +144,7 @@ namespace CAL
      * 
      */
     namespace DATA_DASH{
+
         /**
          * @brief Car Gear 
          * Contained as an unsigned 8 bit integer,
@@ -157,6 +158,85 @@ namespace CAL
             1,
             DataType::uint8
         };
+
+        /**
+         * @brief Driver Switch 1 (*)
+         * Contained as a Boolean Value,
+         * Accessed at: ID 0x120 | Byte 1 | Mask 0x80
+         */
+        constexpr data DriverSwitch1 = {
+            CAN_ID::DASH,
+            1,
+            0x80,
+            1,
+            DataType::boolean
+        };
+
+        /**
+         * @brief Driver Switch 2
+         * Contained as a Boolean Value,
+         * Accessed at: ID 0x120 | Byte 1 | Mask 0x40
+         */
+        constexpr data DriverSwitch2 = {
+            CAN_ID::DASH,
+            1,
+            0x40,
+            1,
+            DataType::boolean
+        };
+
+        /**
+         * @brief Engine Enable Switch (*)
+         * Contained as a Boolean Value,
+         * Accessed at: ID 0x120 | Byte 1 | Mask 0x20
+         */
+        constexpr data EngineEnable = {
+            CAN_ID::DASH,
+            1,
+            0x20,
+            1,
+            DataType::boolean
+        };
+
+        /**
+         * @brief Driver Pit Switch (*)
+         * Contained as a Boolean Value,
+         * Accessed at: ID 0x120 | Byte 1 | Mask 0x10
+         */
+        constexpr data DriverPitSwitch = {
+            CAN_ID::DASH,
+            1,
+            0x10,
+            1,
+            DataType::boolean
+        };
+
+        /**
+         * @brief Driver Rotary Toggle 1
+         * Contained as an unsigned 8 bit integer,
+         * Accessed at: ID 0x120 | Byte 2 | Mask 0xFF
+         */
+        constexpr data Driver1RotarySwitch = {
+            CAN_ID::DASH,
+            2,
+            0xFF,
+            1,
+            DataType::uint8
+        };
+
+        /**
+         * @brief Driver Rotary Toggle 2
+         * Contained as an unsigned 8 bit integer,
+         * Accessed at: ID 0x120 | Byte 3 | Mask 0xFF
+         */
+        constexpr data Driver2RotarySwitch = {
+            CAN_ID::DASH,
+            3,
+            0xFF,
+            1,
+            DataType::uint8
+        };
+        
     } // namespace DATA_DASH
 
     /**
