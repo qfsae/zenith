@@ -108,26 +108,30 @@ void TFT_display(void) {
         // draw left side lines
         EVE_color_rgb_burst(WHITE);
         EVE_cmd_dl_burst(DL_BEGIN | EVE_LINES);
-        EVE_cmd_dl_burst(VERTEX2II(22, 84, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(123, 83, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(25, 178, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(121, 178, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(365, 81, 0, 0));;
-        EVE_cmd_dl_burst(VERTEX2II(465, 82, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(364, 189, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(456, 188, 0, 0));
+        // horizontal lines
+        EVE_cmd_dl_burst(VERTEX2II(20, 90, 0, 0));
+        EVE_cmd_dl_burst(VERTEX2II(120, 90, 0, 0));
+        EVE_cmd_dl_burst(VERTEX2II(20, 180, 0, 0));
+        EVE_cmd_dl_burst(VERTEX2II(120, 180, 0, 0));
+        // vertical lines
+        EVE_cmd_dl_burst(VERTEX2II(20, 0, 0, 0));
+        EVE_cmd_dl_burst(VERTEX2II(20, 272, 0, 0));
+        EVE_cmd_dl_burst(VERTEX2II(120, 0, 0, 0));
+        EVE_cmd_dl_burst(VERTEX2II(120, 272, 0, 0));
         EVE_cmd_dl_burst(DL_END);
 
-        //draw right side lines
+        // //draw right side lines
         EVE_cmd_dl_burst(DL_BEGIN | EVE_LINES);
-        EVE_cmd_dl_burst(VERTEX2II(23, 0, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(23, 273, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(120, 0, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(120, 273, 0, 0));
+        //horizontal lines
+        EVE_cmd_dl_burst(VERTEX2II(360, 90, 0, 0));;
+        EVE_cmd_dl_burst(VERTEX2II(460, 90, 0, 0));
+        EVE_cmd_dl_burst(VERTEX2II(360, 180, 0, 0));
+        EVE_cmd_dl_burst(VERTEX2II(460, 180, 0, 0));
+        //vertical lines
         EVE_cmd_dl_burst(VERTEX2II(360, 0, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(360, 273, 0, 0));
+        EVE_cmd_dl_burst(VERTEX2II(360, 272, 0, 0));
         EVE_cmd_dl_burst(VERTEX2II(460, 0, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(460, 273, 0, 0));
+        EVE_cmd_dl_burst(VERTEX2II(460, 272, 0, 0));
         EVE_cmd_dl_burst(DL_END);
 
         //draw RPM
