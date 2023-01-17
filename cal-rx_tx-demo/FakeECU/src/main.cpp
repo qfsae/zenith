@@ -21,28 +21,42 @@ void setup() {
 }
 
 const int redLine = 12000;
+bool upShift = false;
 
 void loop() {
-  // Shifting (When RPM at Redline)
+
+  // Initiate Shift Check when engine at redline
   if(cal.returnVar(CAL::DATA_ECU::EngineRPM) > redLine){
-    // Fake Lower RPM
-    cal.updateVar(CAL::DATA_ECU::EngineRPM, 3500);
 
-    // Send Upshift
-    cal.updateVar(CAL::DATA_DASH::UpShift, 1);
-    CAL::CAN_msg_t &mg = cal.package(CAL::CAN_ID::DASH);
-    can.sendMsgBuf(mg.id, 0, mg.len, mg.data);
+    // Check for incoming CAN messages
+    if(can.checkReceive() == CAN_MSGAVAIL){
+      CAL::CAN_msg_t can_recv;
+      can.readMsgBuf(&can_recv.len, can_recv.data);
+      can_recv.id = can.getCanId();
+      CAL::update(can_recv, CAL::DATA_DASH::UpShift, &upShift);
+    }
 
-    // Reset UpShift Trigger !!
-    cal.updateVar(CAL::DATA_DASH::UpShift, 0);
+    // Check if Upshift was made
+    if(upShift){
+      // Lower Engine RPM
+      cal.updateVar(CAL::DATA_ECU::EngineRPM, 3500);
+      // Reset Upshift Trigger
+      upShift = false;
+    }
   }
-  
-  // Engine RPM Updates to CAN
-  cal.updateVar(CAL::DATA_ECU::EngineRPM, (cal.returnVar(CAL::DATA_ECU::EngineRPM) + 100));
-  CAL::CAN_msg_t &msg = cal.package(CAL::DATA_ECU::EngineRPM);
-  can.sendMsgBuf(msg.id, 0, msg.len, msg.data);
+  // While Engine not at redline, increase engine RPM
+  else{
 
-  // Engine RPM Updates to Serial
-  Serial.println(String("RPM: ") + cal.returnVar(CAL::DATA_ECU::EngineRPM));
-  delay(100);
+    // Increase by odd number to add realism
+    cal.updateVar(CAL::DATA_ECU::EngineRPM, (cal.returnVar(CAL::DATA_ECU::EngineRPM) + 147));
+
+    // Engine RPM Updates to CAN
+    CAL::CAN_msg_t &msg = cal.package(CAL::DATA_ECU::EngineRPM);
+    can.sendMsgBuf(msg.id, 0, msg.len, msg.data);
+
+    // Engine RPM Updates to Serial
+    Serial.println(String("RPM: ") + cal.returnVar(CAL::DATA_ECU::EngineRPM));
+    delay(100);
+  };  
+
 }

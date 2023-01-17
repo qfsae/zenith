@@ -15,17 +15,23 @@ void setup() {
   Serial.println("CAN Bus Initialized");
 }
 
-int gear = 1;
 int engineRPM = 0;
+uint8_t buf[] = {128};
 
 void loop() {
   if(can.checkReceive() == CAN_MSGAVAIL){
     CAL::CAN_msg_t can_recv;
     can.readMsgBuf(&can_recv.len, can_recv.data);
     can_recv.id = can.getCanId();
-    CAL::update(can_recv, CAL::DATA_DASH::Gear, &gear);
     CAL::update(can_recv, CAL::DATA_ECU::EngineRPM, &engineRPM);
   }
-  Serial.println(String("Gear: ") + gear + String("\tEngine RPM: ") + engineRPM);
-  //delay(100);
+  Serial.print(String("Engine RPM: ") + engineRPM);
+  if(engineRPM > 12000){
+    can.sendMsgBuf(CAL::CAN_ID::DASH, 0, 1, buf);
+    Serial.print("\tUpshift\n");
+  }
+  else{
+    Serial.print("\n");
+  }
+  delay(20);
 }
