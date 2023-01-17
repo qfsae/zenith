@@ -109,6 +109,15 @@ void Encoder::varToBuf(const CAL::data &data, CAL::CAN_msg_t &msg, int &var){
         break;
     case DataType::Float:
         msg.data[data.start_idx] = (var/data.multiplier);
+        break;
+    case DataType::int16:
+        msg.data[data.start_idx - 1] = ((int)(var/data.multiplier) >> 8);
+        msg.data[data.start_idx] = ((int)(var/data.multiplier));
+        break;
+    case DataType::boolean:
+        break;
+    case DataType::statusField:
+        break;
     default:
         break;
     }
