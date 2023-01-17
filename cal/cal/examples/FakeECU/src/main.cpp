@@ -11,7 +11,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "mcp2515_can.h"
-#include "cal.hpp"
+#include <cal.hpp>
 
 mcp2515_can can(9);
 CAL::CAL cal;

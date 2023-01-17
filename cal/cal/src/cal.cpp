@@ -84,26 +84,28 @@ int CAL::CAL::updatePackage(CAN_msg_t &CAN_msg){
         dash = CAN_msg;
         break;
     default:
+        return 1;
         break;
     }
+    return 0;
 }
 
-void varToBuf(const CAL::data &data, CAL::CAN_msg_t &msg, int &var){
-    switch (data.dataType)
+void varToBuf(CAL::CAN_msg_t &msg, const CAL::data &CANdata, int &var){
+    switch (CANdata.dataType)
     {
     case CAL::DataType::uint8:
-        msg.data[data.start_idx] = (var/data.multiplier);
+        msg.data[CANdata.start_idx] = (uint8_t)(var/CANdata.multiplier);
         break;
     case CAL::DataType::Float:
-        msg.data[data.start_idx] = (var/data.multiplier);
+        msg.data[CANdata.start_idx] = (float)(var/CANdata.multiplier);
         break;
     case CAL::DataType::int16:
-        msg.data[data.start_idx - 1] = ((int)(var/data.multiplier) >> 8);
-        msg.data[data.start_idx] = ((int)(var/data.multiplier));
+        msg.data[CANdata.start_idx - 1] = ((int)(var/CANdata.multiplier) >> 8);
+        msg.data[CANdata.start_idx] = ((int)(var/CANdata.multiplier));
         break;
     case CAL::DataType::boolean:
-        if(var == 1) msg.data[data.start_idx] |= data.bitmask;
-        if(var == 0) msg.data[data.start_idx] &= ~data.bitmask;
+        if(var == 1) msg.data[CANdata.start_idx] |= CANdata.bitmask;
+        if(var == 0) msg.data[CANdata.start_idx] &= ~CANdata.bitmask;
         break;
     case CAL::DataType::statusField:
         //Not Supported
@@ -113,54 +115,318 @@ void varToBuf(const CAL::data &data, CAL::CAN_msg_t &msg, int &var){
     }
 }
 
-void CAL::CAL::updateVar(const data &var, int value){
-    switch (var.id)
+void varToBuf(CAL::CAN_msg_t &msg, const CAL::data &CANdata, bool &var){
+    switch (CANdata.dataType)
     {
-    case MOTEC_ID::ECU_1:
-        varToBuf(var, ecu1, value);
+    case CAL::DataType::uint8:
+        msg.data[CANdata.start_idx] = (uint8_t)(var/CANdata.multiplier);
         break;
-    case MOTEC_ID::ECU_2:
-        varToBuf(var, ecu2, value);
+    case CAL::DataType::Float:
+        msg.data[CANdata.start_idx] = (float)(var/CANdata.multiplier);
         break;
-    case MOTEC_ID::PDM_1:
-        varToBuf(var, pdm1, value);
+    case CAL::DataType::int16:
+        msg.data[CANdata.start_idx - 1] = ((int)(var/CANdata.multiplier) >> 8);
+        msg.data[CANdata.start_idx] = ((int)(var/CANdata.multiplier));
         break;
-    case MOTEC_ID::PDM_2:
-        varToBuf(var, pdm2, value);
+    case CAL::DataType::boolean:
+        if(var == true) msg.data[CANdata.start_idx] |= CANdata.bitmask;
+        if(var == false) msg.data[CANdata.start_idx] &= ~CANdata.bitmask;
         break;
-    case CAN_ID::DASH:
-        varToBuf(var, dash, value);
+    case CAL::DataType::statusField:
+        //Not Supported
+        break;
     default:
         break;
     }
 }
 
-int bufToVar(const CAL::data &data, CAL::CAN_msg_t &msg){
-    if(data.dataType == CAL::DataType::boolean){
-        return ((msg.data[data.start_idx] & data.bitmask) > 0);
+void varToBuf(CAL::CAN_msg_t &msg, const CAL::data &CANdata, float &var){
+    switch (CANdata.dataType)
+    {
+    case CAL::DataType::uint8:
+        msg.data[CANdata.start_idx] = (int)(var/CANdata.multiplier);
+        break;
+    case CAL::DataType::Float:
+        msg.data[CANdata.start_idx] = (float)(var/CANdata.multiplier);
+        break;
+    case CAL::DataType::int16:
+        msg.data[CANdata.start_idx - 1] = ((int)(var/CANdata.multiplier) >> 8);
+        msg.data[CANdata.start_idx] = ((int)(var/CANdata.multiplier));
+        break;
+    case CAL::DataType::boolean:
+        if(var == 1) msg.data[CANdata.start_idx] |= CANdata.bitmask;
+        if(var == 0) msg.data[CANdata.start_idx] &= ~CANdata.bitmask;
+        break;
+    case CAL::DataType::statusField:
+        //Not Supported
+        break;
+    default:
+        break;
     }
-    else{
-        return ((int)msg.data[data.start_idx] & data.bitmask) * data.multiplier;
+}
+
+void CAL::CAL::updateVar(const data &CANdata, int value){
+    switch (CANdata.id)
+    {
+    case MOTEC_ID::ECU_1:
+        varToBuf(ecu1, CANdata, value);
+        break;
+    case MOTEC_ID::ECU_2:
+        varToBuf(ecu2, CANdata, value);
+        break;
+    case MOTEC_ID::PDM_1:
+        varToBuf(pdm1, CANdata, value);
+        break;
+    case MOTEC_ID::PDM_2:
+        varToBuf(pdm2, CANdata, value);
+        break;
+    case CAN_ID::DASH:
+        varToBuf(dash, CANdata, value);
+    default:
+        break;
     }
+}
+
+
+void CAL::CAL::updateVar(const data &CANdata, float value){
+    switch (CANdata.id)
+    {
+    case MOTEC_ID::ECU_1:
+        varToBuf(ecu1, CANdata, value);
+        break;
+    case MOTEC_ID::ECU_2:
+        varToBuf(ecu2, CANdata, value);
+        break;
+    case MOTEC_ID::PDM_1:
+        varToBuf(pdm1, CANdata, value);
+        break;
+    case MOTEC_ID::PDM_2:
+        varToBuf(pdm2, CANdata, value);
+        break;
+    case CAN_ID::DASH:
+        varToBuf(dash, CANdata, value);
+    default:
+        break;
+    }
+}
+
+void CAL::CAL::updateVar(const data &CANdata, bool value){
+    switch (CANdata.id)
+    {
+    case MOTEC_ID::ECU_1:
+        varToBuf(ecu1, CANdata, value);
+        break;
+    case MOTEC_ID::ECU_2:
+        varToBuf(ecu2, CANdata, value);
+        break;
+    case MOTEC_ID::PDM_1:
+        varToBuf(pdm1, CANdata, value);
+        break;
+    case MOTEC_ID::PDM_2:
+        varToBuf(pdm2, CANdata, value);
+        break;
+    case CAN_ID::DASH:
+        varToBuf(dash, CANdata, value);
+    default:
+        break;
+    }
+}
+
+void bufToVar(CAL::CAN_msg_t &msg, const CAL::data &CANdata, int &data){
+    switch (CANdata.dataType)
+    {
+    case CAL::DataType::uint8:
+        data = (msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
+        break;
+    case CAL::DataType::int16:
+        data = ((((int16_t)msg.data[CANdata.start_idx + 1] << 8) | msg.data[CANdata.start_idx]) & CANdata.bitmask)*CANdata.multiplier;
+        break;
+    case CAL::DataType::Float:
+        data = ((float)(msg.data[CANdata.start_idx] & CANdata.bitmask))*CANdata.multiplier;
+        break;
+    case CAL::DataType::boolean:
+        data = (msg.data[CANdata.start_idx] & CANdata.bitmask) > 0;
+        break;
+    case CAL::DataType::statusField:
+        data = (CAL::StatusField)(msg.data[CANdata.start_idx]);
+    default:
+        break;
+    }
+}
+
+void bufToVar(CAL::CAN_msg_t &msg, const CAL::data &CANdata, float &data){
+    switch (CANdata.dataType)
+    {
+    case CAL::DataType::uint8:
+        data = (msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
+        break;
+    case CAL::DataType::int16:
+        data = ((((int16_t)msg.data[CANdata.start_idx + 1] << 8) | msg.data[CANdata.start_idx]) & CANdata.bitmask)*CANdata.multiplier;
+        break;
+    case CAL::DataType::Float:
+        data = ((float)(msg.data[CANdata.start_idx] & CANdata.bitmask))*CANdata.multiplier;
+        break;
+    case CAL::DataType::boolean:
+        data = (msg.data[CANdata.start_idx] & CANdata.bitmask) > 0;
+        break;
+    case CAL::DataType::statusField:
+        data = (CAL::StatusField)(msg.data[CANdata.start_idx]);
+    default:
+        break;
+    }
+}
+
+void bufToVar(CAL::CAN_msg_t &msg, const CAL::data &CANdata, bool &data){
+    switch (CANdata.dataType)
+    {
+    case CAL::DataType::uint8:
+        data = (msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
+        break;
+    case CAL::DataType::int16:
+        data = ((((int16_t)msg.data[CANdata.start_idx + 1] << 8) | msg.data[CANdata.start_idx]) & CANdata.bitmask)*CANdata.multiplier;
+        break;
+    case CAL::DataType::Float:
+        data = ((float)(msg.data[CANdata.start_idx] & CANdata.bitmask))*CANdata.multiplier;
+        break;
+    case CAL::DataType::boolean:
+        data = (msg.data[CANdata.start_idx] & CANdata.bitmask) > 0;
+        break;
+    case CAL::DataType::statusField:
+        data = (CAL::StatusField)(msg.data[CANdata.start_idx]);
+    default:
+        break;
+    }
+}
+
+void bufToVar(CAL::CAN_msg_t &msg, const CAL::data &CANdata, uint8_t &data){
+    switch (CANdata.dataType)
+    {
+    case CAL::DataType::uint8:
+        data = (msg.data[CANdata.start_idx] & CANdata.bitmask)*CANdata.multiplier;
+        break;
+    case CAL::DataType::int16:
+        data = ((((int16_t)msg.data[CANdata.start_idx + 1] << 8) | msg.data[CANdata.start_idx]) & CANdata.bitmask)*CANdata.multiplier;
+        break;
+    case CAL::DataType::Float:
+        data = ((float)(msg.data[CANdata.start_idx] & CANdata.bitmask))*CANdata.multiplier;
+        break;
+    case CAL::DataType::boolean:
+        data = (msg.data[CANdata.start_idx] & CANdata.bitmask) > 0;
+        break;
+    case CAL::DataType::statusField:
+        data = (CAL::StatusField)(msg.data[CANdata.start_idx]);
+    default:
+        break;
+    }
+}
+
+int CAL::CAL::returnVar(const data &CANdata){
+    int data;
+    switch (CANdata.id)
+    {
+    case MOTEC_ID::ECU_1:
+        bufToVar(ecu1, CANdata, data);
+        break;
+    case MOTEC_ID::ECU_2:
+        bufToVar(ecu1, CANdata, data);
+        break;
+    case MOTEC_ID::PDM_1:
+        bufToVar(ecu1, CANdata, data);
+        break;
+    case MOTEC_ID::PDM_2:
+        bufToVar(ecu1, CANdata, data);
+    case CAN_ID::DASH:
+        bufToVar(ecu1, CANdata, data);
+    default:
+        break;
+    }
+    return data;
 }
 
 int CAL::CAL::returnVar(const data &CANdata, int &data){
     switch (CANdata.id)
     {
     case MOTEC_ID::ECU_1:
-        return bufToVar(CANdata, ecu1);
+        bufToVar(ecu1, CANdata, data);
         break;
     case MOTEC_ID::ECU_2:
-        return bufToVar(CANdata, ecu2);
+        bufToVar(ecu1, CANdata, data);
         break;
     case MOTEC_ID::PDM_1:
-        return bufToVar(CANdata, pdm1);
+        bufToVar(ecu1, CANdata, data);
         break;
     case MOTEC_ID::PDM_2:
-        return bufToVar(CANdata, pdm2);
+        bufToVar(ecu1, CANdata, data);
     case CAN_ID::DASH:
-        return bufToVar(CANdata, dash);
+        bufToVar(ecu1, CANdata, data);
     default:
         break;
     }
+    return 0;
+}
+
+int CAL::CAL::returnVar(const data &CANdata, uint8_t &data){
+    switch (CANdata.id)
+    {
+    case MOTEC_ID::ECU_1:
+        bufToVar(ecu1, CANdata, data);
+        break;
+    case MOTEC_ID::ECU_2:
+        bufToVar(ecu1, CANdata, data);
+        break;
+    case MOTEC_ID::PDM_1:
+        bufToVar(ecu1, CANdata, data);
+        break;
+    case MOTEC_ID::PDM_2:
+        bufToVar(ecu1, CANdata, data);
+    case CAN_ID::DASH:
+        bufToVar(ecu1, CANdata, data);
+    default:
+        break;
+    }
+    return 0;
+}
+
+int CAL::CAL::returnVar(const data &CANdata, float &data){
+    switch (CANdata.id)
+    {
+    case MOTEC_ID::ECU_1:
+        bufToVar(ecu1, CANdata, data);
+        break;
+    case MOTEC_ID::ECU_2:
+        bufToVar(ecu1, CANdata, data);
+        break;
+    case MOTEC_ID::PDM_1:
+        bufToVar(ecu1, CANdata, data);
+        break;
+    case MOTEC_ID::PDM_2:
+        bufToVar(ecu1, CANdata, data);
+    case CAN_ID::DASH:
+        bufToVar(ecu1, CANdata, data);
+    default:
+        break;
+    }
+    return 0;
+}
+
+int CAL::CAL::returnVar(const data &CANdata, bool &data){
+    switch (CANdata.id)
+    {
+    case MOTEC_ID::ECU_1:
+        bufToVar(ecu1, CANdata, data);
+        break;
+    case MOTEC_ID::ECU_2:
+        bufToVar(ecu1, CANdata, data);
+        break;
+    case MOTEC_ID::PDM_1:
+        bufToVar(ecu1, CANdata, data);
+        break;
+    case MOTEC_ID::PDM_2:
+        bufToVar(ecu1, CANdata, data);
+    case CAN_ID::DASH:
+        bufToVar(ecu1, CANdata, data);
+    default:
+        break;
+    }
+    return 0;
 }

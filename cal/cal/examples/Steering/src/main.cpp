@@ -1,3 +1,13 @@
+/**
+ * @file main.cpp
+ * @author Jacob Chisholm (Jchisholm204.github.io)
+ * @brief CAL Steering Demo Using Arduino
+ * @version 2.0
+ * @date 2023-01-17
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #include <Arduino.h>
 #include <cal.hpp>
 #include "mcp2515_can.h"
