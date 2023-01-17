@@ -115,8 +115,11 @@ void Encoder::varToBuf(const CAL::data &data, CAL::CAN_msg_t &msg, int &var){
         msg.data[data.start_idx] = ((int)(var/data.multiplier));
         break;
     case DataType::boolean:
+        if(var == 1) msg.data[data.start_idx] |= data.bitmask;
+        if(var == 0) msg.data[data.start_idx] &= ~data.bitmask;
         break;
     case DataType::statusField:
+        //Not Supported
         break;
     default:
         break;
