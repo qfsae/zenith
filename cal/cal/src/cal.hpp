@@ -74,70 +74,102 @@ namespace CAL
     }
 
     /**
-     * @brief CAN Data Update Method
-     * 
-     * @param msg The CAN Message to update the data from
-     * @param CANdata The Search Data
-     * @param data pointer for user defined data
-     * 
-     * @returns 0 Success || 1 Incorrect ID
+     * @brief CAL Object
+     * Used for storing CAN bus Data
      */
-    extern int update(CAL::CAN_msg_t &msg, const CAL::data &CANdata, uint8_t *data);
-
+    class CAL
+    {
+    private:
+        CAN_msg_t ecu1;
+        CAN_msg_t ecu2;
+        CAN_msg_t pdm1;
+        CAN_msg_t pdm2;
+        CAN_msg_t dash;
+    public:
     /**
-     * @brief CAN Data Update Method
-     * 
-     * @param msg The CAN Message to update the data from
-     * @param CANdata The Search Data
-     * @param data pointer for user defined data
-     * 
-     * @returns 0 Success || 1 Incorrect ID
-     */
-    extern int update(CAL::CAN_msg_t &msg, const CAL::data &CANdata, int8_t *data);
+        * @brief Construct a new CAL object - Acts as storage for data
+        */
+        CAL();
+        /**
+         * @brief Return the CAN_msg currently stored using an identifier
+         * 
+         * @param id The Identifier of the CAN_msg to return 
+         * @returns reference to internal CAN_msg object
+         */
+        CAN_msg_t &package(uint32_t id);
 
-    /**
-     * @brief CAN Data Update Method
-     * 
-     * @param msg The CAN Message to update the data from
-     * @param CANdata The Search Data
-     * @param data pointer for user defined data
-     * 
-     * @returns 0 Success || 1 Incorrect ID
-     */
-    extern int update(CAL::CAN_msg_t &msg, const CAL::data &CANdata, int *data);
+        /**
+         * @brief Return the CAN_msg stored using a data stored within it 
+         * 
+         * @param var The child of the CAN_msg to return
+         * @returns Reference to parent CAN_msg of var
+         */
+        CAN_msg_t &package(const data &var);
 
-    /**
-     * @brief CAN Data Update Method
-     * 
-     * @param msg The CAN Message to update the data from
-     * @param CANdata The Search Data
-     * @param data pointer for user defined data
-     * 
-     * @returns 0 Success || 1 Incorrect ID
-     */
-    extern int update(CAL::CAN_msg_t &msg, const CAL::data &CANdata, float *data);
+        /**
+         * @brief Update an entire package based off of a CAN message
+         * 
+         * @param CAN_msg The CAN_msg to update from
+         * @returns 0 Success | 1 Incorrect ID
+         */
+        int updatePackage(CAN_msg_t &CAN_msg);
 
-    /**
-     * @brief CAN Data Update Method
-     * 
-     * @param msg The CAN Message to update the data from
-     * @param CANdata The Search Data
-     * @param data pointer for user defined data
-     * 
-     * @returns 0 Success || 1 Incorrect ID
-     */
-    extern int update(CAL::CAN_msg_t &msg, const CAL::data &CANdata, bool *data);
+        /**
+         * @brief Update the value of some data currently stored by the CAL object
+         * 
+         * @param var The Data object to update
+         * @param value The new Value to assign to the Data Object
+         */
+        void updateVar(const data &var, int value);
+        
+        /**
+         * @brief Update the value of some data currently stored by the CAL object
+         * 
+         * @param var The Data object to update
+         * @param value The new Value to assign to the Data Object
+         */
+        void updateVar(const data &var, float value);
 
-    /**
-     * @brief CAN Data Update Method
-     * 
-     * @param msg The CAN Message to update the data from
-     * @param CANdata The Search Data
-     * @param data pointer for user defined data
-     * 
-     * @returns 0 Success || 1 Incorrect ID
-     */
-    extern int update(CAL::CAN_msg_t &msg, const CAL::data &CANdata, StatusField *data);
+        /**
+         * @brief Update the value of some data currently stored by the CAL object
+         * 
+         * @param var The Data object to update
+         * @param value The new Value to assign to the Data Object
+         */
+        void updateVar(const data &var, bool value);
+        
+        /**
+         * @brief Get the Data currently stored for a data object
+         * 
+         * @param CANdata The Data object to retrieve
+         * @param data return by reference
+         */
+        int returnVar(const data &CANdata, int &data);
+        
+        /**
+         * @brief Get the Data currently stored for a data object
+         * 
+         * @param CANdata The Data object to retrieve
+         * @param data return by reference
+         */
+        int returnVar(const data &CANdata, uint8_t &data);
+        
+        /**
+         * @brief Get the Data currently stored for a data object
+         * 
+         * @param CANdata The Data object to retrieve
+         * @param data return by reference
+         */
+        int returnVar(const data &CANdata, float &data);
+        
+         /**
+         * @brief Get the Data currently stored for a data object
+         * 
+         * @param CANdata The Data object to retrieve
+         * @param data return by reference
+         */
+        int returnVar(const data &CANdata, bool &data);    
+    };
 
     /**
      * @brief Encases all of the Data Types coming off of the Dashboards CAN 

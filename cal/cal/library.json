@@ -1,5 +1,5 @@
 {
-    "name": "cal-decoder",
+    "name": "cal",
     "version": "1.0.0",
     "description": "Decodes CAN bus message data from the M150 and PDM15",
     "keywords": "CAN",
