@@ -14,35 +14,35 @@ void setup() {
     delay(100);
   }
   Serial.println("CAN Bus Initialized");
-  cal.updateVar(CAL::DATA_DASH::Gear, 2);
+
+  // Ensure Values Init to false
+  cal.updateVar(CAL::DATA_DASH::UpShift, false);  //0 or false works
+  cal.updateVar(CAL::DATA_DASH::DownShift, 0);
 }
 
-int rpm = 3500;
-int redLine = 12000;
-
-
-void shiftUp(){
-  cal.updateVar(CAL::DATA_DASH::Gear, cal.returnVar(CAL::DATA_DASH::Gear)+1);
-}
-
-void shiftDown(){
-  cal.updateVar(CAL::DATA_DASH::Gear, cal.returnVar(CAL::DATA_DASH::Gear)-1);
-}
+const int redLine = 12000;
 
 void loop() {
-  rpm+=100;
-  if(rpm > redLine){
-    rpm = 3500;
-    shiftUp();
-    CAL::CAN_msg_t &mg = cal.package(CAL::DATA_DASH::Gear);
+  // Shifting (When RPM at Redline)
+  if(cal.returnVar(CAL::DATA_ECU::EngineRPM) > redLine){
+    // Fake Lower RPM
+    cal.updateVar(CAL::DATA_ECU::EngineRPM, 3500);
+
+    // Send Upshift
+    cal.updateVar(CAL::DATA_DASH::UpShift, 1);
+    CAL::CAN_msg_t &mg = cal.package(CAL::CAN_ID::DASH);
     can.sendMsgBuf(mg.id, 0, mg.len, mg.data);
+
+    // Reset UpShift Trigger !!
+    cal.updateVar(CAL::DATA_DASH::UpShift, 0);
   }
-  if(cal.returnVar(CAL::DATA_DASH::Gear) > 7){
-    cal.updateVar(CAL::DATA_DASH::Gear, 1);
-  }
-  cal.updateVar(CAL::DATA_ECU::EngineRPM, rpm);
+  
+  // Engine RPM Updates to CAN
+  cal.updateVar(CAL::DATA_ECU::EngineRPM, (cal.returnVar(CAL::DATA_ECU::EngineRPM) + 100));
   CAL::CAN_msg_t &msg = cal.package(CAL::DATA_ECU::EngineRPM);
   can.sendMsgBuf(msg.id, 0, msg.len, msg.data);
+
+  // Engine RPM Updates to Serial
   Serial.println(String("RPM: ") + cal.returnVar(CAL::DATA_ECU::EngineRPM));
   delay(100);
 }
