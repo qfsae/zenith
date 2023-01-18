@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include <cal.hpp>
 
 #define DEBUG 0
 
@@ -10,16 +11,6 @@ typedef enum {STANDARD_FORMAT = 0, EXTENDED_FORMAT} CAN_FORMAT;
 
 /* Symbolic names for type of CAN message                                    */
 typedef enum {DATA_FRAME = 0, REMOTE_FRAME}         CAN_FRAME;
-
-typedef struct
-{
-  uint32_t id;        /* 29 bit identifier                               */
-  uint8_t  data[8];   /* Data field                                      */
-  uint8_t  len;       /* Length of data field in bytes                   */
-  uint8_t  ch;        /* Object channel(Not use)                         */
-  uint8_t  format;    /* 0 - STANDARD, 1- EXTENDED IDENTIFIER            */
-  uint8_t  type;      /* 0 - DATA FRAME, 1 - REMOTE FRAME                */
-} CAN_msg_t;
 
 typedef const struct
 {
@@ -95,7 +86,7 @@ extern bool CANInit(BITRATE bitrate, int _CAN1, int _CAN2);
  * @param CAN_rx_msg - CAN message structure for reception
  * 
  */
-extern void CANReceive(uint8_t ch, CAN_msg_t* CAN_rx_msg);
+extern void CANReceive(uint8_t ch, CAL::CAN_msg_t* CAN_rx_msg);
 
 /**
  * Encodes CAN messages using the CAN message struct and populates the 
@@ -104,7 +95,7 @@ extern void CANReceive(uint8_t ch, CAN_msg_t* CAN_rx_msg);
  * @params CAN_tx_msg - CAN message structure for transmission
  * 
  */
-extern void CANSend(uint8_t ch, CAN_msg_t* CAN_tx_msg);
+extern void CANSend(uint8_t ch, CAL::CAN_msg_t* CAN_tx_msg);
 
  /**
  * Returns whether there are CAN messages available.
