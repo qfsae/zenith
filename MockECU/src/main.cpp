@@ -8,18 +8,41 @@
 // Thus, all the low level code we write will be directly portable to the Arduino environment in platformio
 #define LED A8
 
-
-
-int ledState = 0;
+CAL::CAL cal;
 
 void setup() {
 	Serial.begin(9600);
-	pinMode(LED, OUTPUT);
+	
+	bool ret = CANInit(CAN_500KBPS, 0, 2);
+	while(!ret);
+	Serial.println("CAN Initialized");
+	cal.updateVar(CAL::DATA_DASH::DownShift, 0);
+	cal.updateVar(CAL::DATA_DASH::UpShift, 0);
 }
 
+CAL::CAN_msg_t can_msg;
+
+
+uint8_t can_ch = 1;
+int timer;
+
 void loop() {
-	Serial.println("Hello World!");
-	delay(100);
-	ledState = !ledState;
-	digitalWrite(LED, ledState);
+	if(CANMsgAvail(can_ch)){
+		CANReceive(can_ch, &can_msg);
+		cal.updatePackage(can_msg);
+	}
+	if(cal.returnVar(CAL::DATA_ECU::EngineRPM) > 12000){
+		if(cal.returnVar(CAL::DATA_DASH::UpShift) == 1){
+			cal.updateVar(CAL::DATA_ECU::EngineRPM, 3500);
+			cal.updateVar(CAL::DATA_DASH::UpShift, 0);
+		}
+	}
+	if(timer>100){
+		cal.updateVar(CAL::DATA_ECU::EngineRPM, (cal.returnVar(CAL::DATA_ECU::EngineRPM) + 100));
+		timer = 0;
+	}
+	timer+=20;
+	CANSend(can_ch, &cal.package(CAL::DATA_ECU::EngineRPM)); 
+
+	delay(20);
 }
