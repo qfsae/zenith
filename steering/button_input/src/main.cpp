@@ -1,18 +1,35 @@
 #include "Arduino.h"
 
-int button = 0;
-long int start = 0;
-long int end = 0;
-long int elapsed = 0;
+unsigned long start = 0;
+unsigned long end = 0;
+unsigned long elapsed = 0;
+int flag = 0;
 
-void timing(){
-    if (button == 1){
-        start = millis();
-    } else {
-        end = millis();
-        elapsed = end - start;
-        //to avoid a bunch of zeroes printed to system
-        if (elapsed != 0 ) {Serial.println(elapsed);}
+//when button is 0 -> pressed
+
+void startTiming(){
+    start = millis();
+    flag = 0;
+}
+
+void timer(){
+    elapsed = end-start;
+    if (elapsed > 1 && flag == 0) {
+        Serial.println(elapsed);
+        flag = 1;
+    }
+}
+
+void endTiming(){
+    end = millis();
+    timer();
+}
+
+void ISR(){
+    if (digitalRead(7) == LOW){
+        startTiming();
+    } else if (digitalRead(7) == HIGH){
+        endTiming();
     }
 }
  
@@ -22,10 +39,13 @@ void setup() {
 
     // pin 7 maps to signal input on nucleo
     pinMode(7, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(7), timing, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(7), ISR, CHANGE);
 }
 
-void loop() {
-    button = digitalRead(7);
+void loop() { 
 }
 
+// 2 interrupts/button - RISING, FALLING
+// ISR#1 - start timer
+// ISR#2 - stop timer and leave space for function
+// empty func - print stmt millis
