@@ -158,11 +158,11 @@ bool CANInit(BITRATE bitrate, int _CAN1, int _CAN2)
   while (!(CAN2->MSR & 0x1UL));          // Wait for Initialization mode
   //printRegister("CAN2->MCR=", CAN2->MCR);
 
-  //CAN1->MCR = 0x51UL;                  // Hardware initialization(No automatic retransmission)
-  CAN1->MCR = 0x41UL;                    // Hardware initialization(With automatic retransmission)
+  CAN1->MCR = 0x51UL;                  // Hardware initialization(No automatic retransmission)
+  //CAN1->MCR = 0x41UL;                    // Hardware initialization(With automatic retransmission)
 
-  //CAN2->MCR = 0x51UL;                  // Hardware initialization(No automatic retransmission)
-  CAN2->MCR = 0x41UL;                    // Hardware initialization(With automatic retransmission)
+  CAN2->MCR = 0x51UL;                  // Hardware initialization(No automatic retransmission)
+  //CAN2->MCR = 0x41UL;                    // Hardware initialization(With automatic retransmission)
 
   
   // Set bit rates 
@@ -406,6 +406,7 @@ void CANSend(uint8_t ch, CAL::CAN_msg_t* CAN_tx_msg)
     // The mailbox don't becomes empty while loop
     if (CAN2->sTxMailBox[0].TIR & 0x1UL) {
       Serial.println("Send Fail");
+      digitalWrite(A8, HIGH);
       Serial.println(CAN1->ESR);
       Serial.println(CAN1->MSR);
       Serial.println(CAN1->TSR);
