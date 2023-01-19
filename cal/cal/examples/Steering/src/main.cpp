@@ -18,7 +18,7 @@ mcp2515_can can(9);
 CAL::CAL cal;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(can.begin(CAN_500KBPS) != CAN_OK){
     Serial.println("CAN Init Error..");
     delay(100);
@@ -37,22 +37,28 @@ void loop() {
 
     // Update Packages with incoming data
     cal.updatePackage(can_recv);
+    for (int i = 0; i < can_recv.len; i++)
+    {
+      Serial.print(can_recv.data[i] + String("\t"));
+    }
+    Serial.print("\n");
+    
   }
-
+/*
   // Method 1 of returning data - by reference (works with all data types)
   cal.returnVar(CAL::DATA_ECU::EngineRPM, engineRPM);
   // Print RPM to Serial Terminal
   Serial.print(String("Engine RPM: ") + engineRPM);
-
+*/
   // Method 2 of returning data - return (ONLY WORKS WITH INTEGERS!!)
   if(cal.returnVar(CAL::DATA_ECU::EngineRPM) > 12000){
     // simulate driver sending shift message
     CAL::CAN_msg_t &can_send = cal.package(CAL::CAN_ID::DASH);
     can.sendMsgBuf(can_send.id, 0, can_send.len, can_send.data);
-    Serial.print("\tUpshift\n");
+    //Serial.print("\tUpshift\n");
   }
   else{
-    Serial.print("\n");
+    //Serial.print("\n");
   }
   delay(20);
 }

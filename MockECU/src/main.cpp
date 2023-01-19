@@ -8,41 +8,62 @@
 // Thus, all the low level code we write will be directly portable to the Arduino environment in platformio
 #define LED A8
 
-CAL::CAL cal;
+CAL::CAL cal1;
+CAL::CAL cal2;
+
 
 void setup() {
-	Serial.begin(9600);
 	
 	bool ret = CANInit(CAN_500KBPS, 0, 2);
 	while(!ret);
-	Serial.println("CAN Initialized");
-	cal.updateVar(CAL::DATA_DASH::DownShift, 0);
-	cal.updateVar(CAL::DATA_DASH::UpShift, 0);
+	cal1.updateVar(CAL::DATA_DASH::DownShift, 0);
+	cal1.updateVar(CAL::DATA_DASH::UpShift, 0);
+	cal2.updateVar(CAL::DATA_DASH::DownShift, 0);
+	cal2.updateVar(CAL::DATA_DASH::UpShift, 0);
+	pinMode(A8, OUTPUT);
+	digitalWrite(A8, 0);
 }
 
-CAL::CAN_msg_t can_msg;
+CAL::CAN_msg_t can_msg1;
+CAL::CAN_msg_t can_msg2;
 
 
-uint8_t can_ch = 1;
+uint8_t can_ch1 = 1;
+uint8_t can_ch2 = 2;
 int timer;
 
 void loop() {
-	if(CANMsgAvail(can_ch)){
-		CANReceive(can_ch, &can_msg);
-		cal.updatePackage(can_msg);
+	if(CANMsgAvail(can_ch1)){
+		CANReceive(can_ch1, &can_msg1);
+		cal1.updatePackage(can_msg1);
 	}
-	if(cal.returnVar(CAL::DATA_ECU::EngineRPM) > 12000){
-		if(cal.returnVar(CAL::DATA_DASH::UpShift) == 1){
-			cal.updateVar(CAL::DATA_ECU::EngineRPM, 3500);
-			cal.updateVar(CAL::DATA_DASH::UpShift, 0);
+	if(cal1.returnVar(CAL::DATA_ECU::EngineRPM) > 12000){
+		if(cal1.returnVar(CAL::DATA_DASH::UpShift) == 1){
+			cal1.updateVar(CAL::DATA_ECU::EngineRPM, 3500);
+			cal1.updateVar(CAL::DATA_DASH::UpShift, 0);
 		}
 	}
 	if(timer>100){
-		cal.updateVar(CAL::DATA_ECU::EngineRPM, (cal.returnVar(CAL::DATA_ECU::EngineRPM) + 100));
+		cal1.updateVar(CAL::DATA_ECU::EngineRPM, (cal1.returnVar(CAL::DATA_ECU::EngineRPM) + 100));
+		cal2.updateVar(CAL::DATA_ECU::EngineRPM, (cal2.returnVar(CAL::DATA_ECU::EngineRPM) + 100));
 		timer = 0;
 	}
+	if(CANMsgAvail(can_ch2)){
+		CANReceive(can_ch2, &can_msg2);
+		cal2.updatePackage(can_msg2);
+	}
+	if(cal2.returnVar(CAL::DATA_ECU::EngineRPM) > 12000){
+		if(cal2.returnVar(CAL::DATA_DASH::UpShift) == 1){
+			cal2.updateVar(CAL::DATA_ECU::EngineRPM, 3500);
+			cal2.updateVar(CAL::DATA_DASH::UpShift, 0);
+		}
+	}
+	else{
+		CANSend(can_ch1, &cal1.package(CAL::DATA_ECU::EngineRPM));
+		//CANSend(can_ch2, &cal2.package(CAL::DATA_ECU::EngineRPM));
+		timer+=100;
+		delay(100);
+	}
 	timer+=20;
-	CANSend(can_ch, &cal.package(CAL::DATA_ECU::EngineRPM)); 
-
 	delay(20);
 }
