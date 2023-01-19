@@ -37,7 +37,7 @@ void loop() {
 		CANReceive(can_ch1, &can_msg1);
 		cal1.updatePackage(can_msg1);
 	}
-	if(cal1.returnVar(CAL::DATA_ECU::EngineRPM) > 12000){
+	if(cal1.returnVar(CAL::DATA_ECU::EngineRPM) > 12100){
 		if(cal1.returnVar(CAL::DATA_DASH::UpShift) == 1){
 			cal1.updateVar(CAL::DATA_ECU::EngineRPM, 3500);
 			cal1.updateVar(CAL::DATA_DASH::UpShift, 0);
@@ -52,7 +52,7 @@ void loop() {
 		CANReceive(can_ch2, &can_msg2);
 		cal2.updatePackage(can_msg2);
 	}
-	if(cal2.returnVar(CAL::DATA_ECU::EngineRPM) > 12000){
+	if(cal2.returnVar(CAL::DATA_ECU::EngineRPM) > 12100){
 		if(cal2.returnVar(CAL::DATA_DASH::UpShift) == 1){
 			cal2.updateVar(CAL::DATA_ECU::EngineRPM, 3500);
 			cal2.updateVar(CAL::DATA_DASH::UpShift, 0);
@@ -60,7 +60,7 @@ void loop() {
 	}
 	else{
 		CANSend(can_ch1, &cal1.package(CAL::DATA_ECU::EngineRPM));
-		//CANSend(can_ch2, &cal2.package(CAL::DATA_ECU::EngineRPM));
+		CANSend(can_ch2, &cal2.package(CAL::DATA_ECU::EngineRPM));
 		timer+=100;
 		delay(100);
 	}
