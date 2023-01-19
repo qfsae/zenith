@@ -69,8 +69,8 @@ void TFT_display(void) {
 
         EVE_start_cmd_burst();          // Start writing to the cmd-fifo as one stream of bytes, only sending the address once
         EVE_cmd_dl_burst(CMD_DLSTART);  // Start the display list
-        EVE_cmd_dl_burst(DL_CLEAR_RGB | // Set the default clear color to white
-                        BLACK);         
+        EVE_cmd_dl_burst(DL_COLOR_RGB | // Set the default clear color to white
+                        WHITE);         
         EVE_cmd_dl_burst(DL_CLEAR |     // Clear the screen - this and the previous prevent artifacts between lists, Attributes are the color, stencil and tag buffers
                         CLR_COL | 
                         CLR_STN | 
@@ -80,122 +80,145 @@ void TFT_display(void) {
         EVE_cmd_dl_burst(VERTEX_FORMAT(0));
 
 
-        // // Display the gear position
-        EVE_cmd_dl_burst(DL_COLOR_RGB | MAGENTA);
-        EVE_cmd_dl_burst(DL_BEGIN | EVE_BITMAPS);
-        gear_position = 0; //TODO: remove, added for debugging
-        switch(gear_position)
-        {
-            case 0:
-                EVE_cmd_setbitmap_burst(CENTER_N, EVE_ARGB1555, 156, 156); // displays N
-                EVE_cmd_dl_burst(VERTEX2F(165, 75));
-                break;
-            case 1:
-                EVE_cmd_setbitmap_burst(CENTER_1, EVE_ARGB1555, 156, 156);
-                EVE_cmd_dl_burst(VERTEX2F(165, 75));
-                break;
-            case 2:
-                EVE_cmd_setbitmap_burst(CENTER_2, EVE_ARGB1555, 156, 156);
-                EVE_cmd_dl_burst(VERTEX2F(165, 75));
-                break;
-            case 3:
-                EVE_cmd_setbitmap_burst(CENTER_3, EVE_ARGB1555, 156, 156);
-                EVE_cmd_dl_burst(VERTEX2F(165, 75));
-                break;
-        }
-        EVE_cmd_dl_burst(DL_END);
 
-        // draw left side lines
-        EVE_color_rgb_burst(WHITE);
-        EVE_cmd_dl_burst(DL_BEGIN | EVE_LINES);
-        // horizontal lines
-        EVE_cmd_dl_burst(VERTEX2II(20, 90, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(120, 90, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(20, 180, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(120, 180, 0, 0));
-        // vertical lines
-        EVE_cmd_dl_burst(VERTEX2II(20, 0, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(20, 272, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(120, 0, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(120, 272, 0, 0));
-        EVE_cmd_dl_burst(DL_END);
-
-        // //draw right side lines
-        EVE_cmd_dl_burst(DL_BEGIN | EVE_LINES);
+// //draw right side lines
+        EVE_color_rgb_burst(YELLOW); // TODO: refactor
+        EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
         //horizontal lines
-        EVE_cmd_dl_burst(VERTEX2II(360, 90, 0, 0));;
-        EVE_cmd_dl_burst(VERTEX2II(460, 90, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(360, 180, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(460, 180, 0, 0));
-        //vertical lines
-        EVE_cmd_dl_burst(VERTEX2II(360, 0, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(360, 272, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(460, 0, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(460, 272, 0, 0));
+        EVE_cmd_dl_burst(VERTEX2II(0, 0, 0, 0));;
+        EVE_cmd_dl_burst(VERTEX2II(10, 272, 0, 0));
+
+        EVE_cmd_dl_burst(VERTEX2II(0, 272, 0, 0));
+        EVE_cmd_dl_burst(VERTEX2II(480, 252, 0, 0));
+
+        EVE_cmd_dl_burst(VERTEX2II(480, 272, 0, 0));
+        EVE_cmd_dl_burst(VERTEX2II(470, 0, 0, 0));
+
+        EVE_cmd_dl_burst(VERTEX2II(480, 0, 0, 0));
+        EVE_cmd_dl_burst(VERTEX2II(0, 20, 0, 0));
         EVE_cmd_dl_burst(DL_END);
 
-        //draw RPM
-        EVE_cmd_text_burst(70, 20, 28, EVE_OPT_CENTER, "RPM");
-        EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
-        EVE_color_rgb_burst(TEST_COLOUR);
-        EVE_cmd_dl_burst(VERTEX2II(30, 45, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(110, 75, 0, 0));
-        EVE_cmd_dl_burst(DL_END);
-        EVE_color_rgb_burst(WHITE);
-        EVE_cmd_number_burst(70, 60, 25, EVE_OPT_CENTER, 10);
 
-        // draw 2nd box
-        EVE_cmd_text_burst(70, 110, 28, EVE_OPT_CENTER, "???");
-        EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
-        EVE_color_rgb_burst(TEST_COLOUR);
-        EVE_cmd_dl_burst(VERTEX2II(30, 135, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(110, 165, 0, 0));
-        EVE_cmd_dl_burst(DL_END);
-        EVE_color_rgb_burst(WHITE);
-        EVE_cmd_number_burst(70, 150, 25, EVE_OPT_CENTER, 4);
+        EVE_color_rgb_burst(WHITE); // TODO: refactor
+        EVE_cmd_text_burst(240, 40, 28, EVE_OPT_CENTER, "Gauge View");
 
-        // draw Speed box
-        EVE_color_rgb_burst(WHITE);
-        EVE_cmd_text_burst(70, 200, 28, EVE_OPT_CENTER, "Speed");
-        EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
-        EVE_color_rgb_burst(TEST_COLOUR);
-        EVE_cmd_dl_burst(VERTEX2II(30, 225, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(110, 255, 0, 0));
-        EVE_cmd_dl_burst(DL_END);
-        EVE_color_rgb_burst(WHITE);
-        EVE_cmd_number_burst(70, 240, 25, EVE_OPT_CENTER, 4);
+        // Speed
+        EVE_cmd_text_burst(100, 60, 27, EVE_OPT_CENTER, "Speed");
+        EVE_cmd_gauge(100, 120, 48, EVE_OPT_NOPOINTER, 10, 8, 0, 100);
+        EVE_color_rgb_burst(RED); // TODO: refactor
+        EVE_cmd_gauge(100, 120, 48, EVE_OPT_NOBACK | EVE_OPT_NOTICKS, 10, 8, 44, 100);
 
-        // draw temp box
-        EVE_color_rgb_burst(WHITE);
-        EVE_cmd_text_burst(410, 20, 28, EVE_OPT_CENTER, "Temp");
-        EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
-        EVE_color_rgb_burst(TEST_COLOUR);
-        EVE_cmd_dl_burst(VERTEX2II(370, 45, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(450, 75, 0, 0));
-        EVE_cmd_dl_burst(DL_END);
-        EVE_color_rgb_burst(WHITE);
-        EVE_cmd_number_burst(410, 60, 25, EVE_OPT_CENTER, 20);
+        // RPM
+        EVE_color_rgb_burst(WHITE); 
+        EVE_cmd_text_burst(380, 60, 27,EVE_OPT_CENTER, "RPM");
+        EVE_cmd_gauge(380, 120, 48,EVE_OPT_NOPOINTER, 10, 8, 0, 100);
+        EVE_color_rgb_burst(RED); // TODO: refactor
+        EVE_cmd_gauge(380, 120, 48, EVE_OPT_NOBACK | EVE_OPT_NOTICKS, 10, 8, 44, 100);
 
-        // draw 5th box
-        EVE_color_rgb_burst(WHITE);
-        EVE_cmd_text_burst(410, 110, 28, EVE_OPT_CENTER, "???");
-        EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
-        EVE_color_rgb_burst(TEST_COLOUR);
-        EVE_cmd_dl_burst(VERTEX2II(370, 135, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(450, 165, 0, 0));
-        EVE_cmd_dl_burst(DL_END);
-        EVE_color_rgb_burst(WHITE);
-        EVE_cmd_number_burst(410, 150, 25, EVE_OPT_CENTER, 4);
+        // Temp
+        EVE_color_rgb_burst(WHITE); 
+        EVE_cmd_text_burst(240, 130, 27, EVE_OPT_CENTER, "Temp");
+        EVE_cmd_gauge(240, 190, 48,  EVE_OPT_NOPOINTER, 10, 8, 0, 100);
+        EVE_color_rgb_burst(RED); // TODO: refactor
+        EVE_cmd_gauge(240, 190, 48, EVE_OPT_NOBACK | EVE_OPT_NOTICKS, 10, 8, 44, 100);
 
-        // draw status box
-        EVE_color_rgb_burst(WHITE);
-        EVE_cmd_text_burst(410, 200, 28, EVE_OPT_CENTER, "Status");
-        EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
-        EVE_color_rgb_burst(GREEN);
-        EVE_cmd_dl_burst(VERTEX2II(370, 225, 0, 0));
-        EVE_cmd_dl_burst(VERTEX2II(450, 255, 0, 0));
-        EVE_cmd_dl_burst(DL_END);
-        EVE_color_rgb_burst(WHITE);
+
+
+        // // // Display the gear position
+        // EVE_cmd_dl_burst(DL_COLOR_RGB | MAGENTA);
+        // EVE_cmd_dl_burst(DL_BEGIN | EVE_BITMAPS);
+
+        // // draw left side lines
+        // EVE_color_rgb_burst(WHITE);
+        // EVE_cmd_dl_burst(DL_BEGIN | EVE_LINES);
+        // // horizontal lines
+        // EVE_cmd_dl_burst(VERTEX2II(20, 90, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(120, 90, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(20, 180, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(120, 180, 0, 0));
+        // // vertical lines
+        // EVE_cmd_dl_burst(VERTEX2II(20, 0, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(20, 272, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(120, 0, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(120, 272, 0, 0));
+        // EVE_cmd_dl_burst(DL_END);
+
+        // // //draw right side lines
+        // EVE_cmd_dl_burst(DL_BEGIN | EVE_LINES);
+        // //horizontal lines
+        // EVE_cmd_dl_burst(VERTEX2II(360, 90, 0, 0));;
+        // EVE_cmd_dl_burst(VERTEX2II(460, 90, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(360, 180, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(460, 180, 0, 0));
+        // //vertical lines
+        // EVE_cmd_dl_burst(VERTEX2II(360, 0, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(360, 272, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(460, 0, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(460, 272, 0, 0));
+        // EVE_cmd_dl_burst(DL_END);
+
+        // //draw RPM
+        // EVE_cmd_text_burst(70, 20, 28, EVE_OPT_CENTER, "RPM");
+        // EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
+        // EVE_color_rgb_burst(TEST_COLOUR);
+        // EVE_cmd_dl_burst(VERTEX2II(30, 45, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(110, 75, 0, 0));
+        // EVE_cmd_dl_burst(DL_END);
+        // EVE_color_rgb_burst(WHITE);
+        // EVE_cmd_number_burst(70, 60, 25, EVE_OPT_CENTER, 10);
+
+        // // draw 2nd box
+        // EVE_cmd_text_burst(70, 110, 28, EVE_OPT_CENTER, "???");
+        // EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
+        // EVE_color_rgb_burst(TEST_COLOUR);
+        // EVE_cmd_dl_burst(VERTEX2II(30, 135, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(110, 165, 0, 0));
+        // EVE_cmd_dl_burst(DL_END);
+        // EVE_color_rgb_burst(WHITE);
+        // EVE_cmd_number_burst(70, 150, 25, EVE_OPT_CENTER, 4);
+
+        // // draw Speed box
+        // EVE_color_rgb_burst(WHITE);
+        // EVE_cmd_text_burst(70, 200, 28, EVE_OPT_CENTER, "Speed");
+        // EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
+        // EVE_color_rgb_burst(TEST_COLOUR);
+        // EVE_cmd_dl_burst(VERTEX2II(30, 225, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(110, 255, 0, 0));
+        // EVE_cmd_dl_burst(DL_END);
+        // EVE_color_rgb_burst(WHITE);
+        // EVE_cmd_number_burst(70, 240, 25, EVE_OPT_CENTER, 4);
+
+        // // draw temp box
+        // EVE_color_rgb_burst(WHITE);
+        // EVE_cmd_text_burst(410, 20, 28, EVE_OPT_CENTER, "Temp");
+        // EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
+        // EVE_color_rgb_burst(TEST_COLOUR);
+        // EVE_cmd_dl_burst(VERTEX2II(370, 45, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(450, 75, 0, 0));
+        // EVE_cmd_dl_burst(DL_END);
+        // EVE_color_rgb_burst(WHITE);
+        // EVE_cmd_number_burst(410, 60, 25, EVE_OPT_CENTER, 20);
+
+        // // draw 5th box
+        // EVE_color_rgb_burst(WHITE);
+        // EVE_cmd_text_burst(410, 110, 28, EVE_OPT_CENTER, "???");
+        // EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
+        // EVE_color_rgb_burst(TEST_COLOUR);
+        // EVE_cmd_dl_burst(VERTEX2II(370, 135, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(450, 165, 0, 0));
+        // EVE_cmd_dl_burst(DL_END);
+        // EVE_color_rgb_burst(WHITE);
+        // EVE_cmd_number_burst(410, 150, 25, EVE_OPT_CENTER, 4);
+
+        // // draw status box
+        // EVE_color_rgb_burst(WHITE);
+        // EVE_cmd_text_burst(410, 200, 28, EVE_OPT_CENTER, "Status");
+        // EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
+        // EVE_color_rgb_burst(GREEN);
+        // EVE_cmd_dl_burst(VERTEX2II(370, 225, 0, 0));
+        // EVE_cmd_dl_burst(VERTEX2II(450, 255, 0, 0));
+        // EVE_cmd_dl_burst(DL_END);
+        // EVE_color_rgb_burst(WHITE);
 
 
         /* DYNAMIC DISPLAY CODE HERE */
@@ -220,7 +243,7 @@ void TFT_splash() {
 
         EVE_start_cmd_burst();
         EVE_cmd_dl_burst(CMD_DLSTART);
-        EVE_cmd_dl_burst(DL_CLEAR_RGB | RED);
+        EVE_cmd_dl_burst(DL_COLOR_RGB | RED);
         EVE_cmd_dl_burst(DL_CLEAR | CLR_COL | CLR_STN | CLR_TAG);
         EVE_cmd_dl_burst(TAG(0));
 
