@@ -21,7 +21,7 @@ CAL::CAL cal;
 
 void setup() {
   Serial.begin(9600);
-  while(can.begin(CAN_500KBPS) != CAN_OK){
+  while(can.begin(CAN_1000KBPS) != CAN_OK){
     Serial.println("CAN Init Error..");
     delay(100);
   }
