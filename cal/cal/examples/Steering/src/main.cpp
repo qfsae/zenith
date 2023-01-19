@@ -13,7 +13,9 @@
 #include "mcp2515_can.h"
 #include <SPI.h>
 
-mcp2515_can can(9);
+#define SPI_CAN 9
+
+mcp2515_can can(SPI_CAN);
 
 CAL::CAL cal;
 
