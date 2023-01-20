@@ -22,5 +22,10 @@
       "ownername/print": "~1.3.0"
     },
     "frameworks": "*",
-    "platforms": "*"
+    "platforms": "*",
+    "build": {
+      "flags": [
+        "-I include"
+      ]
+    }
   }

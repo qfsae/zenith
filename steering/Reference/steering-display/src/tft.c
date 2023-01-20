@@ -69,7 +69,7 @@ void TFT_display(void) {
 
         EVE_start_cmd_burst();          // Start writing to the cmd-fifo as one stream of bytes, only sending the address once
         EVE_cmd_dl_burst(CMD_DLSTART);  // Start the display list
-        EVE_cmd_dl_burst(DL_CLEAR_RGB | // Set the default clear color to white
+        EVE_cmd_dl_burst(DL_COLOR_RGB | // Set the default clear color to white
                         BLACK);         
         EVE_cmd_dl_burst(DL_CLEAR |     // Clear the screen - this and the previous prevent artifacts between lists, Attributes are the color, stencil and tag buffers
                         CLR_COL | 
@@ -220,7 +220,7 @@ void TFT_splash() {
 
         EVE_start_cmd_burst();
         EVE_cmd_dl_burst(CMD_DLSTART);
-        EVE_cmd_dl_burst(DL_CLEAR_RGB | RED);
+        EVE_cmd_dl_burst(DL_COLOR_RGB | RED);
         EVE_cmd_dl_burst(DL_CLEAR | CLR_COL | CLR_STN | CLR_TAG);
         EVE_cmd_dl_burst(TAG(0));
 

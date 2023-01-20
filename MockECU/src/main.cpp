@@ -12,8 +12,7 @@ CAL::CAL cal1;
 CAL::CAL cal2;
 
 
-void setup() {
-	
+void setup() {	
 	bool ret = CANInit(CAN_500KBPS, 0, 2);
 	while(!ret);
 	cal1.updateVar(CAL::DATA_DASH::DownShift, 0);
