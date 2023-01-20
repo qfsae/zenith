@@ -13,13 +13,15 @@
 #include "mcp2515_can.h"
 #include <cal.hpp>
 
-mcp2515_can can(9);
+#define SPI_CAN 9
+
+mcp2515_can can(SPI_CAN);
 CAL::CAL cal;
 
 
 void setup() {
   Serial.begin(9600);
-  while(can.begin(CAN_500KBPS) != CAN_OK){
+  while(can.begin(CAN_1000KBPS) != CAN_OK){
     Serial.println("CAN Init Error..");
     delay(100);
   }
