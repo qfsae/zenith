@@ -158,11 +158,11 @@ bool CANInit(BITRATE bitrate, int _CAN1, int _CAN2)
   while (!(CAN2->MSR & 0x1UL));          // Wait for Initialization mode
   //printRegister("CAN2->MCR=", CAN2->MCR);
 
-  //CAN1->MCR = 0x51UL;                  // Hardware initialization(No automatic retransmission)
-  CAN1->MCR = 0x41UL;                    // Hardware initialization(With automatic retransmission)
+  CAN1->MCR = 0x51UL;                  // Hardware initialization(No automatic retransmission)
+  //CAN1->MCR = 0x41UL;                    // Hardware initialization(With automatic retransmission)
 
-  //CAN2->MCR = 0x51UL;                  // Hardware initialization(No automatic retransmission)
-  CAN2->MCR = 0x41UL;                    // Hardware initialization(With automatic retransmission)
+  CAN2->MCR = 0x51UL;                  // Hardware initialization(No automatic retransmission)
+  //CAN2->MCR = 0x41UL;                    // Hardware initialization(With automatic retransmission)
 
   
   // Set bit rates 
@@ -262,7 +262,7 @@ bool CANInit(BITRATE bitrate, int _CAN1, int _CAN2)
  * @params CAN_rx_msg - CAN message structure for reception
  * 
  */
-void CANReceive(uint8_t ch, CAN_msg_t* CAN_rx_msg)
+void CANReceive(uint8_t ch, CAL::CAN_msg_t* CAN_rx_msg)
 {
   if(ch == 1) {
     uint32_t id = CAN1->sFIFOMailBox[0].RIR;
@@ -339,7 +339,7 @@ void CANReceive(uint8_t ch, CAN_msg_t* CAN_rx_msg)
  * @params CAN_tx_msg - CAN message structure for transmission
  * 
  */
-void CANSend(uint8_t ch, CAN_msg_t* CAN_tx_msg)
+void CANSend(uint8_t ch, CAL::CAN_msg_t* CAN_tx_msg)
 {
   volatile int count = 0;
 
@@ -406,6 +406,7 @@ void CANSend(uint8_t ch, CAN_msg_t* CAN_tx_msg)
     // The mailbox don't becomes empty while loop
     if (CAN2->sTxMailBox[0].TIR & 0x1UL) {
       Serial.println("Send Fail");
+      digitalWrite(A8, HIGH);
       Serial.println(CAN1->ESR);
       Serial.println(CAN1->MSR);
       Serial.println(CAN1->TSR);
