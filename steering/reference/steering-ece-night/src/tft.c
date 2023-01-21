@@ -8,6 +8,7 @@
 
 #include "EVE.h"
 #include "tft_data.h"
+#include "tft.h"
 
 #define TEST_UTF8 0
 
@@ -36,6 +37,7 @@
  * 
  */
 uint16_t tft_active = 0;
+
 void TFT_init(void) {
     if(E_OK == EVE_init())
     {
@@ -55,6 +57,7 @@ void TFT_init(void) {
 }
 
 
+DataHolder ecu_data;
 uint16_t display_list_size = 0;
 uint16_t gear_position;
 /**
@@ -142,7 +145,7 @@ void TFT_display(void) {
         EVE_cmd_dl_burst(VERTEX2II(110, 75, 0, 0));
         EVE_cmd_dl_burst(DL_END);
         EVE_color_rgb_burst(WHITE);
-        EVE_cmd_number_burst(70, 60, 25, EVE_OPT_CENTER, 10);
+        EVE_cmd_number_burst(70, 60, 25, EVE_OPT_CENTER, ecu_data.rpm);
 
         // draw 2nd box
         EVE_cmd_text_burst(70, 110, 28, EVE_OPT_CENTER, "???");
@@ -163,7 +166,8 @@ void TFT_display(void) {
         EVE_cmd_dl_burst(VERTEX2II(110, 255, 0, 0));
         EVE_cmd_dl_burst(DL_END);
         EVE_color_rgb_burst(WHITE);
-        EVE_cmd_number_burst(70, 240, 25, EVE_OPT_CENTER, 4);
+        EVE_cmd_number_burst(70, 240, 25, EVE_OPT_CENTER, ecu_data.speed);
+
 
         // draw temp box
         EVE_color_rgb_burst(WHITE);
@@ -174,7 +178,7 @@ void TFT_display(void) {
         EVE_cmd_dl_burst(VERTEX2II(450, 75, 0, 0));
         EVE_cmd_dl_burst(DL_END);
         EVE_color_rgb_burst(WHITE);
-        EVE_cmd_number_burst(410, 60, 25, EVE_OPT_CENTER, 20);
+        EVE_cmd_number_burst(410, 60, 25, EVE_OPT_CENTER, ecu_data.engine_temp);
 
         // draw 5th box
         EVE_color_rgb_burst(WHITE);

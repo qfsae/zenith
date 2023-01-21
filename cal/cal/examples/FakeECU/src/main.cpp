@@ -21,7 +21,7 @@ CAL::CAL cal;
 
 void setup() {
   Serial.begin(9600);
-  while(can.begin(CAN_1000KBPS) != CAN_OK){
+  while(can.begin(CAN_500KBPS) != CAN_OK) {
     Serial.println("CAN Init Error..");
     delay(100);
   }
@@ -41,12 +41,12 @@ void loop() {
   if(cal.returnVar(CAL::DATA_ECU::EngineRPM) > redLine){
 
     // Check for incoming CAN messages
-    if(can.checkReceive() == CAN_MSGAVAIL){
-      CAL::CAN_msg_t can_recv;
-      can.readMsgBuf(&can_recv.len, can_recv.data);
-      can_recv.id = can.getCanId();
-      cal.updatePackage(can_recv);
-    }
+    // if(can.checkReceive() == CAN_MSGAVAIL){
+    //   CAL::CAN_msg_t can_recv;
+    //   can.readMsgBuf(&can_recv.len, can_recv.data);
+    //   can_recv.id = can.getCanId();
+    //   cal.updatePackage(can_recv);
+    // }
 
     // Check if Upshift was made
     if(upShift){
@@ -57,7 +57,7 @@ void loop() {
     }
   }
   // While Engine not at redline, increase engine RPM
-  else{
+  else {
 
     // Increase by odd number to add realism
     cal.updateVar(CAL::DATA_ECU::EngineRPM, (cal.returnVar(CAL::DATA_ECU::EngineRPM) + 147));
@@ -69,6 +69,6 @@ void loop() {
     // Engine RPM Updates to Serial
     Serial.println(String("RPM: ") + cal.returnVar(CAL::DATA_ECU::EngineRPM));
     delay(100);
-  };  
+  };
 
 }

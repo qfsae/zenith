@@ -158,11 +158,11 @@ bool CANInit(BITRATE bitrate, int _CAN1, int _CAN2)
   while (!(CAN2->MSR & 0x1UL));          // Wait for Initialization mode
   //printRegister("CAN2->MCR=", CAN2->MCR);
 
-  CAN1->MCR = 0x51UL;                  // Hardware initialization(No automatic retransmission)
-  //CAN1->MCR = 0x41UL;                    // Hardware initialization(With automatic retransmission)
+  // CAN1->MCR = 0x51UL;                  // Hardware initialization(No automatic retransmission)
+  CAN1->MCR = 0x41UL;                    // Hardware initialization(With automatic retransmission)
 
-  CAN2->MCR = 0x51UL;                  // Hardware initialization(No automatic retransmission)
-  //CAN2->MCR = 0x41UL;                    // Hardware initialization(With automatic retransmission)
+  // CAN2->MCR = 0x51UL;                  // Hardware initialization(No automatic retransmission)
+  CAN2->MCR = 0x41UL;                    // Hardware initialization(With automatic retransmission)
 
   
   // Set bit rates 
