@@ -19,7 +19,6 @@
 #define STEERING_BUTTON_3 PC6
 #define STEERING_BUTTON_4 PB15
 
-
 void setup() { 
     pinMode(STEERING_BUTTON_3, INPUT_PULLUP);
     pinMode(STEERING_BUTTON_4, INPUT_PULLUP); // This one is plugged in on Jessie's setup
@@ -34,8 +33,14 @@ void setup() {
     SPI.beginTransaction(SPISettings(8000000, MSBFIRST, SPI_MODE0));
     TFT_init();
 
+	if (CANInit(CAN_500KBPS, 0, 2)) {
+        Serial2.println("CAN BUS UP!");
+    } else {
+        Serial2.println("CAN INIT FAIL");
+    }
     gear_position = 0;
-    // // Display splash logo
+    // Initialize CAN BUS
+    // Display splash logo
     TFT_splash();
     delay(3000);
 }
