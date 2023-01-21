@@ -86,8 +86,7 @@ void TFT_display(void) {
         // // Display the gear position
         EVE_cmd_dl_burst(DL_COLOR_RGB | MAGENTA);
         EVE_cmd_dl_burst(DL_BEGIN | EVE_BITMAPS);
-        gear_position = 0; //TODO: remove, added for debugging
-        switch(gear_position)
+        switch(ecu_data.gear_pos)
         {
             case 0:
                 EVE_cmd_setbitmap_burst(CENTER_N, EVE_ARGB1555, 156, 156); // displays N
@@ -148,14 +147,14 @@ void TFT_display(void) {
         EVE_cmd_number_burst(70, 60, 25, EVE_OPT_CENTER, ecu_data.rpm);
 
         // draw 2nd box
-        EVE_cmd_text_burst(70, 110, 28, EVE_OPT_CENTER, "???");
+        EVE_cmd_text_burst(70, 110, 28, EVE_OPT_CENTER, "TPS");
         EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
         EVE_color_rgb_burst(TEST_COLOUR);
         EVE_cmd_dl_burst(VERTEX2II(30, 135, 0, 0));
         EVE_cmd_dl_burst(VERTEX2II(110, 165, 0, 0));
         EVE_cmd_dl_burst(DL_END);
         EVE_color_rgb_burst(WHITE);
-        EVE_cmd_number_burst(70, 150, 25, EVE_OPT_CENTER, 4);
+        EVE_cmd_number_burst(70, 150, 25, EVE_OPT_CENTER, ecu_data.tps);
 
         // draw Speed box
         EVE_color_rgb_burst(WHITE);

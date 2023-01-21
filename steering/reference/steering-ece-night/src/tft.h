@@ -11,7 +11,9 @@ typedef struct {
     int speed;
     int engine_temp;
     int coolant_temp;
+    int tps;
     bool status;
+    int gear_pos;
 } DataHolder;
 
 void TFT_init(void);
