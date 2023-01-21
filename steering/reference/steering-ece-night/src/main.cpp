@@ -13,6 +13,7 @@
 #include "EVE_commands.h"
 #include "tft.h"
 #include "cal.hpp"
+#include "can.hpp"
 
 
 #define STEERING_BUTTON_3 PC6
@@ -34,7 +35,6 @@ void setup() {
     TFT_init();
 
     gear_position = 0;
-
     // // Display splash logo
     TFT_splash();
     delay(3000);
