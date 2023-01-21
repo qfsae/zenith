@@ -32,43 +32,34 @@ void setup() {
   cal.updateVar(CAL::DATA_DASH::DownShift, 0);
 }
 
-const int redLine = 12000;
+const int redLine = 9000;
 bool upShift = false;
+void send_wrapper(CAL::CAN_msg_t msg) {
+  can.sendMsgBuf(msg.id, 0, msg.len, msg.data);
+}
 
+int rpm = 0;
+int speed = 0;
 void loop() {
+  // Increase by odd number to add realism
+  // int rpm = cal.returnVar(CAL::DATA_ECU::EngineRPM);
+  cal.updateVar(CAL::DATA_ECU::EngineRPM, rpm);
+  cal.updateVar(CAL::DATA_ECU::EngineTemp, 101);
+  cal.updateVar(CAL::DATA_ECU::CoolantTemp, 50);
+  cal.updateVar(CAL::DATA_ECU::VehicleSpeed, speed);
 
-  // Initiate Shift Check when engine at redline
-  if(cal.returnVar(CAL::DATA_ECU::EngineRPM) > redLine){
+  send_wrapper(cal.package(CAL::DATA_ECU::EngineRPM));
+  send_wrapper(cal.package(CAL::DATA_ECU::EngineTemp));
+  send_wrapper(cal.package(CAL::DATA_ECU::CoolantTemp));
+  send_wrapper(cal.package(CAL::DATA_ECU::VehicleSpeed));
 
-    // Check for incoming CAN messages
-    // if(can.checkReceive() == CAN_MSGAVAIL){
-    //   CAL::CAN_msg_t can_recv;
-    //   can.readMsgBuf(&can_recv.len, can_recv.data);
-    //   can_recv.id = can.getCanId();
-    //   cal.updatePackage(can_recv);
-    // }
-
-    // Check if Upshift was made
-    if(upShift){
-      // Lower Engine RPM
-      cal.updateVar(CAL::DATA_ECU::EngineRPM, 3500);
-      // Reset Upshift Trigger
-      upShift = false;
-    }
+  // Engine RPM Updates to Serial
+  delay(100);
+  if (rpm > redLine) {
+    rpm = 0;
+    speed = 0;
+  } else {
+    rpm += 147;
+    speed += 2;
   }
-  // While Engine not at redline, increase engine RPM
-  else {
-
-    // Increase by odd number to add realism
-    cal.updateVar(CAL::DATA_ECU::EngineRPM, (cal.returnVar(CAL::DATA_ECU::EngineRPM) + 147));
-
-    // Engine RPM Updates to CAN
-    CAL::CAN_msg_t &msg = cal.package(CAL::DATA_ECU::EngineRPM);
-    can.sendMsgBuf(msg.id, 0, msg.len, msg.data);
-
-    // Engine RPM Updates to Serial
-    Serial.println(String("RPM: ") + cal.returnVar(CAL::DATA_ECU::EngineRPM));
-    delay(100);
-  };
-
 }

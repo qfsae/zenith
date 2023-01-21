@@ -171,7 +171,7 @@ void TFT_display(void) {
 
         // draw temp box
         EVE_color_rgb_burst(WHITE);
-        EVE_cmd_text_burst(410, 20, 28, EVE_OPT_CENTER, "Temp");
+        EVE_cmd_text_burst(410, 20, 28, EVE_OPT_CENTER, "Engine T");
         EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
         EVE_color_rgb_burst(TEST_COLOUR);
         EVE_cmd_dl_burst(VERTEX2II(370, 45, 0, 0));
@@ -182,14 +182,14 @@ void TFT_display(void) {
 
         // draw 5th box
         EVE_color_rgb_burst(WHITE);
-        EVE_cmd_text_burst(410, 110, 28, EVE_OPT_CENTER, "???");
+        EVE_cmd_text_burst(410, 110, 28, EVE_OPT_CENTER, "Coolant T");
         EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
         EVE_color_rgb_burst(TEST_COLOUR);
         EVE_cmd_dl_burst(VERTEX2II(370, 135, 0, 0));
         EVE_cmd_dl_burst(VERTEX2II(450, 165, 0, 0));
         EVE_cmd_dl_burst(DL_END);
         EVE_color_rgb_burst(WHITE);
-        EVE_cmd_number_burst(410, 150, 25, EVE_OPT_CENTER, 4);
+        EVE_cmd_number_burst(410, 150, 25, EVE_OPT_CENTER, ecu_data.coolant_temp);
 
         // draw status box
         EVE_color_rgb_burst(WHITE);
