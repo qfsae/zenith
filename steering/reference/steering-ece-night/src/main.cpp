@@ -15,14 +15,29 @@
 #include "cal.hpp"
 #include "can.hpp"
 #include "steering_io.h"
+#include "EasyButton.h"
+
+#define UPSHIFT_DEBOUNCE_TIME 35
+#define UPSHIFT_PULLUP_EN false // Pull up is provided on the physical PCB
+#define UPSHIFT_ACTIVE_LOW true
+
+EasyButton upshiftButton(STEERING_BUTTON_3, UPSHIFT_DEBOUNCE_TIME, UPSHIFT_PULLUP_EN, UPSHIFT_ACTIVE_LOW);
 
 CAL::CAL cal;
 
 DataHolder ecu_data;
-void setup() { pinMode(STEERING_CAN_OE, OUTPUT);
-    digitalWrite(STEERING_CAN_OE, LOW);
+void button_handler() {
+    ecu_data.gear_pos++;
+    if (ecu_data.gear_pos == 4) {
+        ecu_data.gear_pos = 0;
+    }
+}
 
-    pinMode(STEERING_BUTTON_3, INPUT); // This one is plugged in on Jessie's setup
+void setup() {
+   upshiftButton.begin(); 
+    upshiftButton.onPressed(button_handler);
+    pinMode(STEERING_CAN_OE, OUTPUT);
+    digitalWrite(STEERING_CAN_OE, LOW);
 
     Serial2.begin(115200);
     pinMode(EVE_CS, OUTPUT);
@@ -47,11 +62,8 @@ void setup() { pinMode(STEERING_CAN_OE, OUTPUT);
 
 uint8_t can_ch1 = 1;
 CAL::CAN_msg_t can_msg;
-bool button_prev = false;
-bool button_curr = false;
 void loop() {
-    button_curr = !digitalRead(STEERING_BUTTON_3);
-
+    upshiftButton.read(); // call the polling updater in the library
     if(CANMsgAvail(can_ch1)) {
         CANReceive(can_ch1, &can_msg);
         cal.updatePackage(can_msg);
@@ -63,20 +75,4 @@ void loop() {
 	}
     TFT_display();
 
-    if (button_curr && !button_prev) {
-        ecu_data.gear_pos++;
-        if (ecu_data.gear_pos == 4) {
-            ecu_data.gear_pos = 0;
-        }
-    }
-    button_prev = button_curr;
-    // if (!button_pressed && !digitalRead(STEERING_BUTTON_3)) {
-    //     button_pressed = true;
-    //     ecu_data.gear_pos++;
-    //     if (ecu_data.gear_pos == 4) {
-    //         ecu_data.gear_pos = 0;
-    //     }
-    // } else {
-    //     button_pressed = false;
-    // }
 }
