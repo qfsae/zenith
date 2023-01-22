@@ -31,6 +31,9 @@
 #define CENTER_1 0x0001AE20 // start address of center_1, needs 48672 bytes
 #define CENTER_2 0x00026C40 // start address of center_2, needs 48672 bytes
 #define CENTER_3 0x00032A60 // start address of center_3, needs 48672 bytes
+#define CENTER_4 0x0003E880 // start address of center_4, needs 48672 bytes
+#define CENTER_5 0x0004A6A0 // start address of center_5, needs 48672 bytes
+
 
 /**
  * @brief Initialize the TFT
@@ -52,6 +55,8 @@ void TFT_init(void) {
         EVE_cmd_inflate(CENTER_1, center_1, sizeof(center_1));
         EVE_cmd_inflate(CENTER_2, center_2, sizeof(center_2));
         EVE_cmd_inflate(CENTER_3, center_3, sizeof(center_3));
+        EVE_cmd_inflate(CENTER_4, center_4, sizeof(center_4));
+        EVE_cmd_inflate(CENTER_5, center_5, sizeof(center_5));
         /* LOAD IMAGES INTO MEMORY HERE */
     }
 }
@@ -102,6 +107,14 @@ void TFT_display(void) {
                 break;
             case 3:
                 EVE_cmd_setbitmap_burst(CENTER_3, EVE_ARGB1555, 156, 156);
+                EVE_cmd_dl_burst(VERTEX2F(165, 75));
+                break;
+            case 4:
+                EVE_cmd_setbitmap_burst(CENTER_4, EVE_ARGB1555, 156, 156);
+                EVE_cmd_dl_burst(VERTEX2F(165, 75));
+                break;
+            case 5:
+                EVE_cmd_setbitmap_burst(CENTER_5, EVE_ARGB1555, 156, 156);
                 EVE_cmd_dl_burst(VERTEX2F(165, 75));
                 break;
         }

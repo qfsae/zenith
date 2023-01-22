@@ -28,7 +28,7 @@ CAL::CAL cal;
 DataHolder ecu_data;
 void button_handler() {
     ecu_data.gear_pos++;
-    if (ecu_data.gear_pos == 4) {
+    if (ecu_data.gear_pos == 6) {
         ecu_data.gear_pos = 0;
     }
 }
