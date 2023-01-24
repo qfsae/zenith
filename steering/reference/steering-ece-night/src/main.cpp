@@ -22,20 +22,33 @@
 #define UPSHIFT_ACTIVE_LOW true
 
 EasyButton upshiftButton(STEERING_BUTTON_3, UPSHIFT_DEBOUNCE_TIME, UPSHIFT_PULLUP_EN, UPSHIFT_ACTIVE_LOW);
+EasyButton downshiftButton(STEERING_BUTTON_4, UPSHIFT_DEBOUNCE_TIME, UPSHIFT_PULLUP_EN, UPSHIFT_ACTIVE_LOW);
 
 CAL::CAL cal;
 
 DataHolder ecu_data;
-void button_handler() {
-    ecu_data.gear_pos++;
-    if (ecu_data.gear_pos == 4) {
-        ecu_data.gear_pos = 0;
+void upshift_handler() {
+    Serial2.println("upshift!");
+    if (ecu_data.gear_pos < 5) {
+        ecu_data.gear_pos++;
+    }
+}
+
+void downshift_handler() {
+    Serial2.println("downshift!");
+    if (ecu_data.gear_pos > 0) {
+        ecu_data.gear_pos--;
     }
 }
 
 void setup() {
-   upshiftButton.begin(); 
-    upshiftButton.onPressed(button_handler);
+    ecu_data.gear_pos = 0;
+    upshiftButton.begin(); 
+    upshiftButton.onPressed(upshift_handler);
+
+    downshiftButton.begin();
+    downshiftButton.onPressed(downshift_handler);
+
     pinMode(STEERING_CAN_OE, OUTPUT);
     digitalWrite(STEERING_CAN_OE, LOW);
 
@@ -64,6 +77,7 @@ uint8_t can_ch1 = 1;
 CAL::CAN_msg_t can_msg;
 void loop() {
     upshiftButton.read(); // call the polling updater in the library
+    downshiftButton.read(); // call the polling updater in the library
     if(CANMsgAvail(can_ch1)) {
         CANReceive(can_ch1, &can_msg);
         cal.updatePackage(can_msg);
@@ -74,5 +88,4 @@ void loop() {
         ecu_data.tps = cal.returnVar(CAL::DATA_ECU::ThrottlePosition);
 	}
     TFT_display();
-
 }
