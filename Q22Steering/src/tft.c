@@ -190,7 +190,7 @@ void TFT_display(void) {
         // End Sidebar
         EVE_color_rgb_burst(WHITE);
         EVE_cmd_romfont(C_FONT, 33);
-        EVE_cmd_text_burst(COOL_COOL_CHORD_X, COOL_COOL_CHORD_Y, COOL_COOL_FONT, 0, "COOL");
+        EVE_cmd_text_burst(COOL_COOL_CHORD_X, COOL_COOL_CHORD_Y, COOL_COOL_FONT, 0, "TEMP");
         EVE_cmd_number_burst(COOL_CHORD_X, COOL_CHORD_Y, C_FONT, EVE_OPT_RIGHTX, 87);
         // End Display Engine Temp
 
