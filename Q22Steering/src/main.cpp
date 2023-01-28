@@ -74,7 +74,7 @@ void setup() {
 }
 
 uint8_t can_ch1 = 1;
-CAL::CAN_msg_t can_msg;
+CAN_msg_t can_msg;
 void loop() {
     upshiftButton.read(); // call the polling updater in the library
     downshiftButton.read(); // call the polling updater in the library
