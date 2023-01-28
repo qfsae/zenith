@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.b": "brainfuck",
+        "eve.h": "c",
+        "tft.h": "c"
+    }
+}

@@ -70,7 +70,7 @@ void setup() {
     }
     // Display splash logo
     TFT_splash();
-    delay(3000);
+    delay(500);
 }
 
 uint8_t can_ch1 = 1;
