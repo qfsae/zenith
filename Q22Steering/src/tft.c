@@ -76,6 +76,9 @@ const uint32_t coolantColors[] = {0x00D1FF, 0xe6cc00, 0xe6b400, 0xe69b00, 0xe472
 #define COOL_COOL_CHORD_Y (COOL_CHORD_Y+70)
 #define COOL_COOL_FONT 24
 
+// Engine Constants
+#define K_MAX_TEMP 120
+
 /**
  * @brief Initialize the TFT
  * 
@@ -167,13 +170,13 @@ void TFT_display(void) {
 
         // Start RPM Display
         EVE_cmd_romfont(C_FONT, 34);
-        EVE_cmd_number_burst(RPM_CHORD_X, RPM_CHORD_Y, C_FONT, EVE_OPT_CENTER, 11700);
+        EVE_cmd_number_burst(RPM_CHORD_X, RPM_CHORD_Y, C_FONT, EVE_OPT_CENTER, ecu_data.rpm);
         // END RPM Display
 
         // Start KPH (Kilometers Per Hour) Display
         EVE_cmd_romfont(C_FONT, 34);
         EVE_cmd_text_burst(KPH_KPH_CHORD_X, KPH_KPH_CHORD_Y, KPH_KPH_FONT, 0/*For none*/, "KPH");
-        EVE_cmd_number_burst(KPH_CHORD_X, KPH_CHORD_Y, C_FONT, 0, 108);
+        EVE_cmd_number_burst(KPH_CHORD_X, KPH_CHORD_Y, C_FONT, 0, ecu_data.speed);
         // End KPH Display
 
         // Fake Error Write
@@ -182,7 +185,7 @@ void TFT_display(void) {
 
         // Start Display Engine Temp
         // Side Bar (math should be (int)12*(temp/maxtemp))
-        for (int i = 0; i < 12; i++) // MAX i = 12 (with given box dimensions)
+        for (int i = 0; i < (int)(ecu_data.engine_temp/K_MAX_TEMP)*12; i++) // MAX i = 12 (with given box dimensions)
         {
             EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
             if(i < 6) EVE_color_rgb_burst(coolantColors[0]);
@@ -196,7 +199,7 @@ void TFT_display(void) {
         EVE_color_rgb_burst(WHITE);
         EVE_cmd_romfont(C_FONT, 33);
         EVE_cmd_text_burst(COOL_COOL_CHORD_X, COOL_COOL_CHORD_Y, COOL_COOL_FONT, 0, "TEMP");
-        EVE_cmd_number_burst(COOL_CHORD_X, COOL_CHORD_Y, C_FONT, EVE_OPT_RIGHTX, 87);
+        EVE_cmd_number_burst(COOL_CHORD_X, COOL_CHORD_Y, C_FONT, EVE_OPT_RIGHTX, ecu_data.engine_temp);
         // End Display Engine Temp
 
     
