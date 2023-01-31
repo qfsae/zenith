@@ -22,6 +22,9 @@
 #include "steering_io.h"
 #include "EasyButton.h"
 
+// Blink Rate of display elements
+#define DISPLAY_BLINK_TIME 1000 //(ms)
+
 #define UPSHIFT_DEBOUNCE_TIME 35
 #define UPSHIFT_PULLUP_EN false // Pull up is provided on the physical PCB
 #define UPSHIFT_ACTIVE_LOW true
@@ -32,6 +35,7 @@ EasyButton downshiftButton(STEERING_BUTTON_4, UPSHIFT_DEBOUNCE_TIME, UPSHIFT_PUL
 CAL::CAL cal;
 
 DataHolder ecu_data;
+
 void upshift_handler() {
     Serial2.println("upshift!");
     if (ecu_data.gear_pos < 5) {
@@ -80,6 +84,8 @@ void setup() {
 
 uint8_t can_ch1 = 1;
 CAN_msg_t can_msg;
+uint32_t last_millis = 0;
+
 void loop() {
     upshiftButton.read(); // call the polling updater in the library
     downshiftButton.read(); // call the polling updater in the library
@@ -91,6 +97,14 @@ void loop() {
         ecu_data.engine_temp = cal.returnVar(CAL::DATA_ECU::EngineTemp);
         ecu_data.speed = cal.returnVar(CAL::DATA_ECU::VehicleSpeed);
         ecu_data.tps = cal.returnVar(CAL::DATA_ECU::ThrottlePosition);
+        cal.returnVar(CAL::DATA_ECU::WarningSource, ecu_data.status);
+        cal.returnVar(CAL::DATA_PDM::BatteryVoltage, ecu_data.batteryVoltage);
 	}
     TFT_display();
+
+    // display blinker
+    if(millis() > (last_millis+DISPLAY_BLINK_TIME)){
+        dswitch = !dswitch;
+        last_millis = millis();
+    }
 }

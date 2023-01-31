@@ -26,7 +26,10 @@ typedef struct {
     int tps;
     bool status;
     int gear_pos;
+    float batteryVoltage;
 } DataHolder;
+
+extern bool dswitch;
 
 void TFT_init(void);
 void TFT_touch(void);

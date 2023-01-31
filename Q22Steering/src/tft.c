@@ -14,6 +14,7 @@
 #include "EVE.h"
 #include "tft_data.h"
 #include "tft.h"
+#include "errors.h"
 
 #define TEST_UTF8 0
 
@@ -84,6 +85,18 @@ const uint32_t coolantColors[] = {0x00D1FF, 0xe6cc00, 0xe6b400, 0xe69b00, 0xe472
  * 
  */
 uint16_t tft_active = 0;
+
+bool dswitch = false;
+
+const char* TFT_check_err(){
+    return (*Err_Fuel_Pressure()
+    + *Err_Battery()
+    + *Err_Stale_Data()
+    + *Err_BSPD()
+    + *Err_Engine_Temp()
+    + *Err_ECU_Warn()
+    );
+}
 
 void TFT_init(void) {
     if(E_OK == EVE_init())
@@ -179,10 +192,6 @@ void TFT_display(void) {
         EVE_cmd_number_burst(KPH_CHORD_X, KPH_CHORD_Y, C_FONT, 0, ecu_data.speed);
         // End KPH Display
 
-        // Fake Error Write
-        //EVE_cmd_text_burst(ERR_CHORD_X, ERR_CHORD_Y, ERR_FONT, EVE_OPT_CENTER, "Error: Stale Data");
-        // End Fake Error Write
-
         // Start Display Engine Temp
         // Side Bar (math should be (int)12*(temp/maxtemp))
         for (int i = 0; i < (int)(ecu_data.engine_temp/K_MAX_TEMP)*12; i++) // MAX i = 12 (with given box dimensions)
@@ -199,9 +208,20 @@ void TFT_display(void) {
         EVE_color_rgb_burst(WHITE);
         EVE_cmd_romfont(C_FONT, 33);
         EVE_cmd_text_burst(COOL_COOL_CHORD_X, COOL_COOL_CHORD_Y, COOL_COOL_FONT, 0, "TEMP");
-        EVE_cmd_number_burst(COOL_CHORD_X, COOL_CHORD_Y, C_FONT, EVE_OPT_RIGHTX, ecu_data.engine_temp);
+        EVE_cmd_number_burst(COOL_CHORD_X, COOL_CHORD_Y, C_FONT, EVE_OPT_RIGHTX, ecu_data.coolant_temp);
         // End Display Engine Temp
 
+        // Error Write
+        EVE_cmd_text_burst(ERR_CHORD_X, ERR_CHORD_Y, ERR_FONT, EVE_OPT_CENTER, TFT_check_err());
+        if(dswitch && TFT_check_err()!=0){
+            EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
+            EVE_color_rgb_burst(RED);
+            EVE_cmd_dl_burst(VERTEX2II(0,265,0,0));
+            EVE_cmd_dl_burst(VERTEX2II(500, 300, 0,0));
+            EVE_cmd_dl_burst(DL_END);
+            EVE_color_rgb_burst(WHITE);
+        }
+        // End Error Write
     
     // End Display Write
 
