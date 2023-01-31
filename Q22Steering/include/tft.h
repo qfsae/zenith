@@ -1,3 +1,15 @@
+/**
+ * @file tft.h
+ * @author Jacob Chisholm (jchisholm204.github.io)
+ * @author Logan Lim
+ * @author Ethan Peterson (portfolio.petetech.net)
+ * @brief TFT Display Code
+ * @version 1.2
+ * @date 2023-01-30
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #ifndef TFT_H
 #define TFT_H
 

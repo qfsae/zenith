@@ -1,9 +1,14 @@
-/*
-@file    tft.c / tft.cpp
-@brief   TFT handling functions for Steering Display Firmware
-@version 1.0
-@date    
-@author  
+/**
+ * @file tft.c
+ * @author Jacob Chisholm (jchisholm204.github.io)
+ * @author Logan Lim
+ * @author Ethan Peterson (portfolio.petetech.net)
+ * @brief TFT Display Code
+ * @version 1.2
+ * @date 2023-01-30
+ * 
+ * @copyright Copyright (c) 2023
+ * 
  */
 // Programmers Manual: https://brtchip.com/wp-content/uploads/Support/Documentation/Programming_Guides/ICs/EVE/FT81X_Series_Programmer_Guide.pdf
 #include "EVE.h"

@@ -1,4 +1,15 @@
-
+/**
+ * @file tft_data.c
+ * @author Jacob Chisholm (jchisholm204.github.io)
+ * @author Logan Lim
+ * @author Ethan Peterson (portfolio.petetech.net)
+ * @brief Encoded Images For TFT Steering Wheel
+ * @version 1.2
+ * @date 2023-01-30
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #include <stdint.h>
 
 #if !defined(PROGMEM)

@@ -1,10 +1,15 @@
-/*
-@file    main.cpp
-@brief   Main file for Steering Display Firmware
-@version 1.0
-@date    
-@author  
-*/
+/**
+ * @file main.cpp
+ * @author Jacob Chisholm (jchisholm204.github.io)
+ * @author Logan Lim
+ * @author Ethan Peterson (portfolio.petetech.net)
+ * @brief Q22 QFSAE Steering Wheel Code
+ * @version 1.2
+ * @date 2023-01-30
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 
 #include <Arduino.h>
 #include <SPI.h>
