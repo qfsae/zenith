@@ -11,6 +11,15 @@
  * 
  */
 // Programmers Manual: https://brtchip.com/wp-content/uploads/Support/Documentation/Programming_Guides/ICs/EVE/FT81X_Series_Programmer_Guide.pdf
+/**
+ * Programmers Manual:
+ * Useful Pages:
+ * 240 - loading ROM fonts (larger fonts)
+ * 156 - Fonts (sizes and numbering)
+ * 22 - drawing shapes and lines
+ * 158/9 - Parameter "OPTION"
+ * 
+ */
 #include "EVE.h"
 #include "tft_data.h"
 #include "tft.h"
