@@ -11,10 +11,13 @@
 
 #ifndef ERRORS_H
 #define ERRORS_H
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C"{
     #endif
+    
+    extern uint32_t _Time_Since_Last_CAN_msg;
 
     // Returns Error String For Fuel Pressure Errors
     const char * Err_Fuel_Pressure();

@@ -98,8 +98,23 @@ uint16_t tft_active = 0;
 bool dswitch = false;
 
 const char* TFT_check_err(){
+    if(Err_Fuel_Pressure() !=0){
+        return Err_Fuel_Pressure();
+    }
+    if(Err_Battery() !=0){
+        return Err_Battery();
+    }
+    if(Err_Stale_Data() !=0){
+        return Err_Stale_Data();
+    }
     if(Err_BSPD() !=0){
         return Err_BSPD();
+    }
+    if(Err_Engine_Temp() !=0){
+        return Err_Engine_Temp();
+    }
+    if(Err_ECU_Warn() !=0){
+        return Err_ECU_Warn();
     }
 }
 

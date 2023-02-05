@@ -21,6 +21,7 @@
 #include "can.hpp"
 #include "steering_io.h"
 #include "EasyButton.h"
+#include "errors.h"
 
 // Blink Rate of display elements
 #define DISPLAY_BLINK_TIME 1000 //(ms)
@@ -80,11 +81,13 @@ void setup() {
     // Display splash logo
     TFT_splash();
     delay(500);
+    _Time_Since_Last_CAN_msg = 0;
 }
 
 uint8_t can_ch1 = 1;
 CAN_msg_t can_msg;
 uint32_t last_millis = 0;
+uint32_t last_blink = 0;
 
 void loop() {
     upshiftButton.read(); // call the polling updater in the library
@@ -99,12 +102,15 @@ void loop() {
         ecu_data.tps = cal.returnVar(CAL::DATA_ECU::ThrottlePosition);
         cal.returnVar(CAL::DATA_ECU::WarningSource, ecu_data.status);
         cal.returnVar(CAL::DATA_PDM::BatteryVoltage, ecu_data.batteryVoltage);
+        _Time_Since_Last_CAN_msg = 0;
 	}
     TFT_display();
+    _Time_Since_Last_CAN_msg += (millis()-last_millis);
 
     // display blinker
-    if(millis() > (last_millis+DISPLAY_BLINK_TIME)){
+    if(millis() > (last_blink+DISPLAY_BLINK_TIME)){
         dswitch = !dswitch;
-        last_millis = millis();
+        last_blink = millis();
     }
+    last_millis = millis();
 }

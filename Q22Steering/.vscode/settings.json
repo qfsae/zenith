@@ -2,6 +2,8 @@
     "files.associations": {
         "*.b": "brainfuck",
         "eve.h": "c",
-        "tft.h": "c"
+        "tft.h": "c",
+        "*.tcc": "cpp",
+        "algorithm": "cpp"
     }
 }
