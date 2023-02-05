@@ -98,13 +98,9 @@ uint16_t tft_active = 0;
 bool dswitch = false;
 
 const char* TFT_check_err(){
-    return (*Err_Fuel_Pressure()
-    + *Err_Battery()
-    + *Err_Stale_Data()
-    + *Err_BSPD()
-    + *Err_Engine_Temp()
-    + *Err_ECU_Warn()
-    );
+    if(Err_BSPD() !=0){
+        return Err_BSPD();
+    }
 }
 
 void TFT_init(void) {
@@ -203,7 +199,7 @@ void TFT_display(void) {
 
         // Start Display Engine Temp
         // Side Bar (math should be (int)12*(temp/maxtemp))
-        for (int i = 0; i < (int)(ecu_data.engine_temp/K_MAX_TEMP)*12; i++) // MAX i = 12 (with given box dimensions)
+        for (int i = 0; i < (ecu_data.coolant_temp*12)/K_MAX_TEMP; i++) // MAX i = 12 (with given box dimensions)
         {
             EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
             if(i < 6) EVE_color_rgb_burst(coolantColors[0]);
@@ -221,13 +217,16 @@ void TFT_display(void) {
         // End Display Engine Temp
 
         // Error Write
-        EVE_cmd_text_burst(ERR_CHORD_X, ERR_CHORD_Y, ERR_FONT, EVE_OPT_CENTER, TFT_check_err());
-        if(dswitch && TFT_check_err()!=0){
-            EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
-            EVE_color_rgb_burst(RED);
-            EVE_cmd_dl_burst(VERTEX2II(0,265,0,0));
-            EVE_cmd_dl_burst(VERTEX2II(500, 300, 0,0));
-            EVE_cmd_dl_burst(DL_END);
+        if(TFT_check_err()!=0){
+            if(!dswitch){
+                EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
+                EVE_color_rgb_burst(RED);
+                EVE_cmd_dl_burst(VERTEX2II(0,250,0,0));
+                EVE_cmd_dl_burst(VERTEX2II(500, 300, 0,0));
+                EVE_cmd_dl_burst(DL_END);
+                EVE_color_rgb_burst(BLACK);
+            }
+            EVE_cmd_text_burst(ERR_CHORD_X, ERR_CHORD_Y, ERR_FONT, EVE_OPT_CENTER, TFT_check_err());
             EVE_color_rgb_burst(WHITE);
         }
         // End Error Write

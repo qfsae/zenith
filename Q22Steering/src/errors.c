@@ -28,7 +28,7 @@ const char * Err_Stale_Data(){
 
 // Returns Error String for BSPD
 const char * Err_BSPD(){
-    return 0;
+    return "BSPD FAULT";
 }
 
 // Returns Error For Engine/Coolant Temp MisMatches
