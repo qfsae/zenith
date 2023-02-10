@@ -14,13 +14,9 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-// libs
-#include "EVE_target.hpp" // this can stay
-
+// display
+#include "EVE_target.hpp"
 #include "EVE_commands.hpp"
-
-// us
-#include "tft.h"
 
 // my libs
 #include "cal.hpp"
@@ -30,8 +26,8 @@
 #include "steering_io.h"
 #include "EasyButton.h"
 
-// more me
-#include "errors.h"
+// includes
+#include "display/display.hpp"
 
 // Blink Rate of display elements
 #define DISPLAY_BLINK_TIME 1000 //(ms)
@@ -44,43 +40,37 @@ EasyButton upshiftButton(STEERING_BUTTON_3, UPSHIFT_DEBOUNCE_TIME, UPSHIFT_PULLU
 EasyButton downshiftButton(STEERING_BUTTON_4, UPSHIFT_DEBOUNCE_TIME, UPSHIFT_PULLUP_EN, UPSHIFT_ACTIVE_LOW);
 
 CAL::CAL cal;
-
-DataHolder ecu_data;
+Display tft;
 
 void upshift_handler() {
     Serial2.println("upshift!");
-    if (ecu_data.gear_pos < 5) {
-        ecu_data.gear_pos++;
+    if (tft.gear < 5) {
+        tft.gear++;
     }
 }
 
 void downshift_handler() {
     Serial2.println("downshift!");
-    if (ecu_data.gear_pos > 0) {
-        ecu_data.gear_pos--;
+    if (tft.gear > 0) {
+        tft.gear--;
     }
 }
 
 void setup() {
-    ecu_data.gear_pos = 0;
+    tft.gear = 0;
     upshiftButton.begin(); 
     upshiftButton.onPressed(upshift_handler);
 
     downshiftButton.begin();
     downshiftButton.onPressed(downshift_handler);
 
+    // Set up Steering Wheel CAN (CAN controller needs enable)
     pinMode(STEERING_CAN_OE, OUTPUT);
     digitalWrite(STEERING_CAN_OE, LOW);
 
     Serial2.begin(115200);
-    pinMode(EVE_CS, OUTPUT);
-    digitalWrite(EVE_CS, HIGH);
-    pinMode(EVE_PDN, OUTPUT);
-    digitalWrite(EVE_PDN, LOW);
 
-    SPI.begin(); // Set up the SPI to run in Mode 0 and 8 MHz
-    SPI.beginTransaction(SPISettings(8000000, MSBFIRST, SPI_MODE0));
-    TFT_init();
+    tft.setup();
 
     // Initialize CAN BUS
 	if (CANInit(CAN_500KBPS, 0, 2)) {
@@ -89,15 +79,12 @@ void setup() {
         Serial2.println("CAN INIT FAIL");
     }
     // Display splash logo
-    TFT_splash();
+    tft.display(Display::Screens::Splash);
     delay(500);
-    _Time_Since_Last_CAN_msg = 0;
 }
 
 uint8_t can_ch1 = 1;
 CAN_msg_t can_msg;
-uint32_t last_millis = 0;
-uint32_t last_blink = 0;
 
 void loop() {
     upshiftButton.read(); // call the polling updater in the library
@@ -105,22 +92,7 @@ void loop() {
     if(CANMsgAvail(can_ch1)) {
         CANReceive(can_ch1, &can_msg);
         cal.updatePackage(can_msg);
-        ecu_data.rpm = cal.returnVar(CAL::DATA_ECU::EngineRPM);
-        ecu_data.coolant_temp = cal.returnVar(CAL::DATA_ECU::CoolantTemp);
-        ecu_data.engine_temp = cal.returnVar(CAL::DATA_ECU::EngineTemp);
-        ecu_data.speed = cal.returnVar(CAL::DATA_ECU::VehicleSpeed);
-        ecu_data.tps = cal.returnVar(CAL::DATA_ECU::ThrottlePosition);
-        cal.returnVar(CAL::DATA_ECU::WarningSource, ecu_data.status);
-        cal.returnVar(CAL::DATA_PDM::BatteryVoltage, ecu_data.batteryVoltage);
-        _Time_Since_Last_CAN_msg = 0;
+        tft.updateCAN();
 	}
-    TFT_display();
-    _Time_Since_Last_CAN_msg += (millis()-last_millis);
-
-    // display blinker
-    if(millis() > (last_blink+DISPLAY_BLINK_TIME)){
-        dswitch = !dswitch;
-        last_blink = millis();
-    }
-    last_millis = millis();
+    tft.display(Display::Screens::Main);
 }
