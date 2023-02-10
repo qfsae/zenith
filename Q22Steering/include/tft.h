@@ -13,10 +13,6 @@
 #ifndef TFT_H
 #define TFT_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 // Quick hack to extern the CAL data over to tft.c
 typedef struct {
     int rpm;
@@ -37,9 +33,5 @@ void TFT_display(void);
 void TFT_splash(void);
 
 extern DataHolder ecu_data;
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* TFT_H */

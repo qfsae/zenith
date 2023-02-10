@@ -10,8 +10,8 @@
  * @copyright Copyright (c) 2023
  * 
  */
-#ifndef TFT_DATA_H
-#define TFT_DATA_H
+#ifndef TFT_DATA_HPP
+#define TFT_DATA_HPP
 #include <stdint.h>
 
 #if !defined(PROGMEM)

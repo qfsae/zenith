@@ -11,6 +11,7 @@
  * 
  */
 #include <stdint.h>
+#include "tft_data.hpp"
 
 #if !defined(PROGMEM)
     #define PROGMEM

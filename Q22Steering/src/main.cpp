@@ -14,13 +14,23 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-#include "EVE_target.h"
-#include "EVE_commands.h"
+// libs
+#include "EVE_target.hpp" // this can stay
+
+#include "EVE_commands.hpp"
+
+// us
 #include "tft.h"
+
+// my libs
 #include "cal.hpp"
 #include "can.hpp"
+
+// ethan libs
 #include "steering_io.h"
 #include "EasyButton.h"
+
+// more me
 #include "errors.h"
 
 // Blink Rate of display elements

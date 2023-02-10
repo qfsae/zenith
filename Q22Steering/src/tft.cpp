@@ -20,8 +20,12 @@
  * 158/9 - Parameter "OPTION"
  * 
  */
-#include "EVE.h"
-#include "tft_data.h"
+
+//libs
+#include "EVE.hpp"
+
+// our shit
+#include "tft_data.hpp"
 #include "tft.h"
 #include "errors.h"
 
@@ -138,7 +142,7 @@ void TFT_init(void) {
     }
 }
 
-DataHolder ecu_data;
+//DataHolder ecu_data;
 uint16_t display_list_size = 0;
 uint16_t gear_position;
 /**
