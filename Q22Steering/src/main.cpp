@@ -42,14 +42,24 @@ EasyButton downshiftButton(STEERING_BUTTON_4, UPSHIFT_DEBOUNCE_TIME, UPSHIFT_PUL
 CAL::CAL cal;
 Display tft;
 
+bool upshift = false;
+bool downshift = false;
+
 void upshift_handler() {
     Serial2.println("upshift!");
+    // Does not work because ECU requires more than one positive transmission
+    //cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset0, 0);
+
+    // works
+    upshift = true;
     if (tft.gear < 5) {
         tft.gear++;
     }
 }
 
 void downshift_handler() {
+    downshift = true;
+    //cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset1, 0);
     Serial2.println("downshift!");
     if (tft.gear > 0) {
         tft.gear--;
@@ -73,7 +83,7 @@ void setup() {
     tft.setup();
 
     // Initialize CAN BUS
-	if (CANInit(CAN_500KBPS, 0, 2)) {
+	if (CANInit(CAN_1000KBPS, 0, 2)) {
         Serial2.println("CAN BUS UP!");
     } else {
         Serial2.println("CAN INIT FAIL");
@@ -86,7 +96,27 @@ void setup() {
 uint8_t can_ch1 = 1;
 CAN_msg_t can_msg;
 
+uint32_t dtimer = 0;
+uint32_t utimer = 0;
+
+CAN_msg_t sample = {
+    0x01,
+    {0,0,0,0,0,0,0,0},
+    8,
+    0,
+    0,
+    0
+};
+
+
 void loop() {
+
+    // Does not work because Steering_button_A3 is not hooked upto an ADC
+    // Upshift
+    //cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset0, (float)(((float)analogRead(STEERING_BUTTON_3))*5.00/1024.00));
+    // Down shift
+    //cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset1, (float)(((float)analogRead(STEERING_BUTTON_3))*5.00/1024.00));
+
     upshiftButton.read(); // call the polling updater in the library
     downshiftButton.read(); // call the polling updater in the library
     if(CANMsgAvail(can_ch1)) {
@@ -94,5 +124,41 @@ void loop() {
         cal.updatePackage(can_msg);
         tft.updateCAN();
 	}
+    
     tft.display(Display::Screens::Main);
+
+    // Reset timers on shift
+    if(downshift == true){
+        downshift = false;
+        dtimer = millis();
+    }
+
+    if(upshift == true){
+        upshift = false;
+        utimer = millis();
+    }
+
+    // Send positive shift for time allotment (1000_ms)
+    if(downshift == false && (millis()-dtimer) > 1000){
+        //  5000 is 5 volts (ECU off)
+        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset0, 5000);
+    }
+    else{
+        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset0, 0);
+        downshift = false;
+    }
+
+    if(upshift  == false && (millis()-utimer) > 1000){
+        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset1, 5000);
+    }
+    else{
+        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset1, 0);
+        upshift = false;
+    }
+
+    // Send out persistent updates to ECU (else it complains and freaks out)
+    // Automatic retransmission must be disabled within `st-f4can`
+    //      Failure bricks steering wheel (unknown)
+    CANSend(can_ch1, &cal.package(CAL::MOTEC_RECV_ID::ECU_CAN0));
+
 }
