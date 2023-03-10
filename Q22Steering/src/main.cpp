@@ -145,24 +145,24 @@ void loop() {
     // Send positive shift for time allotment (1000_ms)
     if(downshift == false && (millis()-dtimer) > 1000){
         //  5000 is 5 volts (ECU off)
-        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset0, 5000);
+        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset0, 5000);
     }
     else{
-        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset0, 0);
+        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset0, 0);
         downshift = false;
     }
 
     if(upshift  == false && (millis()-utimer) > 1000){
-        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset1, 5000);
+        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, 5000);
     }
     else{
-        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset1, 0);
+        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, 0);
         upshift = false;
     }
 
     // Send out persistent updates to ECU (else it complains and freaks out)
     // Automatic retransmission must be disabled within `st-f4can`
     //      Failure bricks steering wheel (unknown)
-    CANSend(can_ch1, &cal.package(CAL::MOTEC_RECV_ID::ECU_CAN0));
+    CANSend(can_ch1, &cal.package(CAL::MOTEC_RECV_ID::ECU_CAN6));
 
 }
