@@ -77,6 +77,7 @@ void setup() {
     // Set up Steering Wheel CAN (CAN controller needs enable)
     pinMode(STEERING_CAN_OE, OUTPUT);
     digitalWrite(STEERING_CAN_OE, LOW);
+    pinMode(STEERING_BUTTON_1, OUTPUT);
 
     Serial2.begin(115200);
 
@@ -108,8 +109,11 @@ CAN_msg_t sample = {
     0
 };
 
+bool loopswitch = false;
 
 void loop() {
+    loopswitch = !loopswitch;
+    digitalWrite(STEERING_BUTTON_1, loopswitch);
 
     // Does not work because Steering_button_A3 is not hooked upto an ADC
     // Upshift
