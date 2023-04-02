@@ -36,8 +36,8 @@
 #define UPSHIFT_PULLUP_EN false // Pull up is provided on the physical PCB
 #define UPSHIFT_ACTIVE_LOW true
 
-EasyButton upshiftButton(STEERING_BUTTON_3, UPSHIFT_DEBOUNCE_TIME, UPSHIFT_PULLUP_EN, UPSHIFT_ACTIVE_LOW);
-EasyButton downshiftButton(STEERING_BUTTON_4, UPSHIFT_DEBOUNCE_TIME, UPSHIFT_PULLUP_EN, UPSHIFT_ACTIVE_LOW);
+EasyButton upshiftButton(STEERING_DOWNSHIFT, UPSHIFT_DEBOUNCE_TIME, UPSHIFT_PULLUP_EN, UPSHIFT_ACTIVE_LOW);
+EasyButton downshiftButton(STEERING_UPSHIFT, UPSHIFT_DEBOUNCE_TIME, UPSHIFT_PULLUP_EN, UPSHIFT_ACTIVE_LOW);
 
 CAL::CAL cal;
 Display tft;
@@ -67,6 +67,7 @@ void downshift_handler() {
 }
 
 void setup() {
+    
     tft.gear = 0;
     upshiftButton.begin(); 
     upshiftButton.onPressed(upshift_handler);
@@ -77,7 +78,9 @@ void setup() {
     // Set up Steering Wheel CAN (CAN controller needs enable)
     pinMode(STEERING_CAN_OE, OUTPUT);
     digitalWrite(STEERING_CAN_OE, LOW);
-    pinMode(STEERING_BUTTON_1, OUTPUT);
+
+    pinMode(STEERING_DOWNSHIFT, INPUT_PULLUP);
+    pinMode(STEERING_UPSHIFT, INPUT_PULLUP);
 
     Serial2.begin(115200);
 
@@ -128,7 +131,7 @@ void loop() {
         cal.updatePackage(can_msg);
         tft.updateCAN();
 	}
-    
+
     tft.display(Display::Screens::Main);
 
     // Reset timers on shift
