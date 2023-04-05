@@ -17,3 +17,6 @@
 #include "can.hpp"
 
 extern CAL::CAL cal;
+
+#define ECU5V 5000
+#define ECU0V 0

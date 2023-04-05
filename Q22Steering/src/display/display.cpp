@@ -29,7 +29,10 @@
 String Display::checkErrors(){
     String ret = "";
     if((millis()-lastCAN) > 3000){
-        ret += "Stale CAN Data";
+        ret += " Stale CAN Data ";
+    }
+    if(CAN_Init_Error == true){
+        ret += " CAN Init Error ";
     }
     return ret;
 }

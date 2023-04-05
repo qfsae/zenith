@@ -16,7 +16,9 @@
 class Display{
 private:
 
+    // FSAE Logo Splash Screen
     void displaySplash();
+    // Main Driver Display
     void displayMain();
 
     // TFT Active
@@ -37,6 +39,8 @@ public:
 
     // Engine Gear
     uint8_t gear = 0;
+    // CAN initialization Error
+    bool CAN_Init_Error = false;
 
     // List of Screens
     enum Screens{
@@ -51,5 +55,5 @@ public:
     void display(Screens screen);
 
     void updateCAN();
-
+    
 };

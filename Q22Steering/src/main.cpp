@@ -13,31 +13,23 @@
 
 #include <Arduino.h>
 #include <SPI.h>
-
-// display
 #include "EVE_target.hpp"
 #include "EVE_commands.hpp"
-
-// my libs
-#include "cal.hpp"
-#include "can.hpp"
-
-// ethan libs
 #include "steering_io.h"
 #include "EasyButton.h"
-
-// includes
 #include "display/display.hpp"
+#include "main.hpp"
 
 // Blink Rate of display elements
 #define DISPLAY_BLINK_TIME 1000 //(ms)
+#define ENGINE_SHIFT_DEBOUNCE 1000 //(ms)
 
 #define UPSHIFT_DEBOUNCE_TIME 35
-#define UPSHIFT_PULLUP_EN false // Pull up is provided on the physical PCB
-#define UPSHIFT_ACTIVE_LOW true
+#define SHIFT_PULLUP_EN false // Pull up is provided on the physical PCB
+#define SHIFT_ACTIVE_LOW true
 
-EasyButton upshiftButton(STEERING_DOWNSHIFT, UPSHIFT_DEBOUNCE_TIME, UPSHIFT_PULLUP_EN, UPSHIFT_ACTIVE_LOW);
-EasyButton downshiftButton(STEERING_UPSHIFT, UPSHIFT_DEBOUNCE_TIME, UPSHIFT_PULLUP_EN, UPSHIFT_ACTIVE_LOW);
+EasyButton upshiftButton(STEERING_DOWNSHIFT, UPSHIFT_DEBOUNCE_TIME, SHIFT_PULLUP_EN, SHIFT_ACTIVE_LOW);
+EasyButton downshiftButton(STEERING_UPSHIFT, UPSHIFT_DEBOUNCE_TIME, SHIFT_PULLUP_EN, SHIFT_ACTIVE_LOW);
 
 CAL::CAL cal;
 Display tft;
@@ -46,11 +38,6 @@ bool upshift = false;
 bool downshift = false;
 
 void upshift_handler() {
-    Serial2.println("upshift!");
-    // Does not work because ECU requires more than one positive transmission
-    //cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset0, 0);
-
-    // works
     upshift = true;
     if (tft.gear < 5) {
         tft.gear++;
@@ -59,8 +46,6 @@ void upshift_handler() {
 
 void downshift_handler() {
     downshift = true;
-    //cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset1, 0);
-    Serial2.println("downshift!");
     if (tft.gear > 0) {
         tft.gear--;
     }
@@ -79,6 +64,8 @@ void setup() {
     pinMode(STEERING_CAN_OE, OUTPUT);
     digitalWrite(STEERING_CAN_OE, LOW);
 
+
+    // Pull steering pins up
     pinMode(STEERING_DOWNSHIFT, INPUT_PULLUP);
     pinMode(STEERING_UPSHIFT, INPUT_PULLUP);
 
@@ -89,83 +76,79 @@ void setup() {
     // Initialize CAN BUS
 	if (CANInit(CAN_1000KBPS, 0, 2)) {
         Serial2.println("CAN BUS UP!");
+        tft.CAN_Init_Error = false;
     } else {
         Serial2.println("CAN INIT FAIL");
+        tft.CAN_Init_Error = true;
     }
     // Display splash logo
     tft.display(Display::Screens::Splash);
-    delay(500);
+    delay(2000);
 }
 
 uint8_t can_ch1 = 1;
+// CAN message intermediary (need to make cal update package inline)
 CAN_msg_t can_msg;
 
+// Shift Timers
 uint32_t dtimer = 0;
 uint32_t utimer = 0;
 
-CAN_msg_t sample = {
-    0x01,
-    {0,0,0,0,0,0,0,0},
-    8,
-    0,
-    0,
-    0
-};
-
-bool loopswitch = false;
 
 void loop() {
-    loopswitch = !loopswitch;
-    digitalWrite(STEERING_BUTTON_1, loopswitch);
-
-    // Does not work because Steering_button_A3 is not hooked upto an ADC
-    // Upshift
-    //cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset0, (float)(((float)analogRead(STEERING_BUTTON_3))*5.00/1024.00));
-    // Down shift
-    //cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN0::Offset1, (float)(((float)analogRead(STEERING_BUTTON_3))*5.00/1024.00));
 
     upshiftButton.read(); // call the polling updater in the library
     downshiftButton.read(); // call the polling updater in the library
+
+    // Check for CAN message
     if(CANMsgAvail(can_ch1)) {
         CANReceive(can_ch1, &can_msg);
-        cal.updatePackage(can_msg);
+        // Update CAL stored messages
+        cal.updatePackage(can_msg); // TODO: make inline
+        // Update time since last CAN recv
         tft.updateCAN();
 	}
 
-    tft.display(Display::Screens::Main);
+    // Display runtime call
+    tft.display(Display::Screens::Main/*Display main screen (gear, speed, rpm, engine temp) */);
 
-    // Reset timers on shift
-    if(downshift == true){
-        downshift = false;
-        dtimer = millis();
-    }
 
-    if(upshift == true){
-        upshift = false;
-        utimer = millis();
-    }
+    // BEGIN shiftingLogic
 
-    // Send positive shift for time allotment (1000_ms)
-    if(downshift == false && (millis()-dtimer) > 1000){
-        //  5000 is 5 volts (ECU off)
-        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset0, 5000);
-    }
-    else{
-        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset0, 0);
-        downshift = false;
-    }
+        // Reset timers on shift
+        if(downshift == true){
+            downshift = false;
+            dtimer = millis();
+        }
 
-    if(upshift  == false && (millis()-utimer) > 1000){
-        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, 5000);
-    }
-    else{
-        cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, 0);
-        upshift = false;
-    }
+        if(upshift == true){
+            upshift = false;
+            utimer = millis();
+        }
+
+        // Send positive shift for time allotment (1000_ms) should probably be set to slightly above engine debounce
+        if(downshift == false && (millis()-dtimer) > ENGINE_SHIFT_DEBOUNCE){
+            //  5000 is 5 volts (ECU off)
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset0, ECU5V);
+        }
+        else{
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset0, ECU0V);
+            downshift = false;
+        }
+
+        if(upshift  == false && (millis()-utimer) > ENGINE_SHIFT_DEBOUNCE){
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, ECU5V);
+        }
+        else{
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, ECU0V);
+            upshift = false;
+        }
+
+    // END shiftingLogic
 
     // Send out persistent updates to ECU (else it complains and freaks out)
     // Automatic retransmission must be disabled within `st-f4can`
-    //      Failure bricks steering wheel (unknown)
+    //      Failure bricks steering wheel (msg outbox fills up {possible memory perm err?})
     CANSend(can_ch1, &cal.package(CAL::MOTEC_RECV_ID::ECU_CAN6));
 
 }
