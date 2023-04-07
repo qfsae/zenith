@@ -9,6 +9,8 @@
  * 
  * @copyright Copyright (c) 2023
  * 
+ * 
+ * Reference for timer interupt: https://github.com/stm32duino/STM32Examples/blob/main/examples/Peripherals/HardwareTimer/Timebase_callback/Timebase_callback.ino 
  */
 
 #include <Arduino.h>
@@ -16,7 +18,6 @@
 #include "EVE_target.hpp"
 #include "EVE_commands.hpp"
 #include "steering_io.h"
-#include "EasyButton.h"
 #include "display/display.hpp"
 #include "main.hpp"
 
@@ -24,15 +25,40 @@
 #define DISPLAY_BLINK_TIME 1000 //(ms)
 #define ENGINE_SHIFT_DEBOUNCE 1000 //(ms)
 
-#define UPSHIFT_DEBOUNCE_TIME 35
+#define SHIFT_DEBOUNCE_TIME 35
 #define SHIFT_PULLUP_EN false // Pull up is provided on the physical PCB
 #define SHIFT_ACTIVE_LOW true
+#define BUTTON_DEBOUNCE_TIME 35
+#define BUTTON_PULLUP_EN false
+#define BUTTON_ACTIVE_LOW true
+#define LAUNCH_CONTROL_DELAY 5000 //(ms)
+#define NAV_PRESS_DELAY 2000 //(ms)
 
-EasyButton upshiftButton(STEERING_DOWNSHIFT, UPSHIFT_DEBOUNCE_TIME, SHIFT_PULLUP_EN, SHIFT_ACTIVE_LOW);
-EasyButton downshiftButton(STEERING_UPSHIFT, UPSHIFT_DEBOUNCE_TIME, SHIFT_PULLUP_EN, SHIFT_ACTIVE_LOW);
+#define CAN_SEND_HZ 20 //(s^{-1})
+
+EasyButton upshiftButton(STEERING_DOWNSHIFT, SHIFT_DEBOUNCE_TIME, SHIFT_PULLUP_EN, SHIFT_ACTIVE_LOW);
+EasyButton downshiftButton(STEERING_UPSHIFT, SHIFT_DEBOUNCE_TIME, SHIFT_PULLUP_EN, SHIFT_ACTIVE_LOW);
+
+EasyButton rightRed(STEERING_BUTTON_2, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, BUTTON_ACTIVE_LOW);
+EasyButton rightBlue(STEERING_BUTTON_4, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, BUTTON_ACTIVE_LOW);
+EasyButton leftRed(STEERING_BUTTON_1, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, BUTTON_ACTIVE_LOW);
+EasyButton leftBlue(STEERING_BUTTON_3, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, BUTTON_ACTIVE_LOW);
 
 CAL::CAL cal;
 Display tft;
+// Current Screen Displayed
+Display::Screens DispScrn = Display::Screens::Main;
+
+uint8_t can_ch1 = 1;
+// CAN message intermediary (need to make cal update package inline)
+CAN_msg_t can_msg;
+
+// Shift Timers
+uint32_t dtimer = 0;
+uint32_t utimer = 0;
+// Launch Control Timer
+uint32_t ltimer = 0;
+bool     lenable = false;
 
 bool upshift = false;
 bool downshift = false;
@@ -51,14 +77,72 @@ void downshift_handler() {
     }
 }
 
-void setup() {
-    
-    tft.gear = 0;
-    upshiftButton.begin(); 
-    upshiftButton.onPressed(upshift_handler);
+void rightRed_handler(){
+    if(DispScrn == Display::Screens::Main){
+        DispScrn = Display::Screens::Splash;
+    }
+    else{
+        DispScrn = (Display::Screens)((int)DispScrn + 1);
+    }
+}
 
-    downshiftButton.begin();
-    downshiftButton.onPressed(downshift_handler);
+void rightBlue_handler(){
+}
+
+void leftRed_handler(){ 
+}
+
+void leftBlue_handler(){ 
+}
+
+void sendCANMsg(void){
+    // Send out persistent updates to ECU (else it complains and freaks out)
+    // Automatic retransmission must be disabled within `st-f4can`
+    //      Failure bricks steering wheel (msg outbox fills up {possible memory perm err?})
+    CANSend(can_ch1, &cal.package(CAL::MOTEC_RECV_ID::ECU_CAN6));
+}
+
+
+
+void setup() {
+
+    // // begin CAN timer interupt 
+    #if defined(TIM1)
+    TIM_TypeDef *Instance = TIM1;
+    #else
+    TIM_TypeDef *Instance = TIM2;
+    #endif
+
+    HardwareTimer * CANTimer = new HardwareTimer(Instance);
+
+    CANTimer->setOverflow(CAN_SEND_HZ, HERTZ_FORMAT);
+    CANTimer->attachInterrupt(sendCANMsg);
+    CANTimer->resume();
+    // end CAN timer interupt
+    
+    // begin shifting button setup
+        tft.gear = 0;
+        upshiftButton.begin(); 
+        upshiftButton.onPressed(upshift_handler);
+
+        downshiftButton.begin();
+        downshiftButton.onPressed(downshift_handler);
+    // end shifting button setup
+
+    // begin Button setup
+        rightRed.begin();
+        //rightRed.onPressed(rightRed_handler);
+        rightRed.onPressedFor(NAV_PRESS_DELAY, rightRed_handler);
+
+        rightBlue.begin();
+        rightBlue.onPressed(rightBlue_handler);
+
+        leftRed.begin();
+        leftRed.onPressed(leftRed_handler);
+
+        leftBlue.begin();
+        leftBlue.onPressed(leftBlue_handler);
+    // end button setup
 
     // Set up Steering Wheel CAN (CAN controller needs enable)
     pinMode(STEERING_CAN_OE, OUTPUT);
@@ -86,14 +170,6 @@ void setup() {
     delay(2000);
 }
 
-uint8_t can_ch1 = 1;
-// CAN message intermediary (need to make cal update package inline)
-CAN_msg_t can_msg;
-
-// Shift Timers
-uint32_t dtimer = 0;
-uint32_t utimer = 0;
-
 
 void loop() {
 
@@ -110,7 +186,7 @@ void loop() {
 	}
 
     // Display runtime call
-    tft.display(Display::Screens::Main/*Display main screen (gear, speed, rpm, engine temp) */);
+    tft.display(DispScrn);
 
 
     // BEGIN shiftingLogic
@@ -146,9 +222,37 @@ void loop() {
 
     // END shiftingLogic
 
-    // Send out persistent updates to ECU (else it complains and freaks out)
-    // Automatic retransmission must be disabled within `st-f4can`
-    //      Failure bricks steering wheel (msg outbox fills up {possible memory perm err?})
-    CANSend(can_ch1, &cal.package(CAL::MOTEC_RECV_ID::ECU_CAN6));
+    // begin launch control logic
 
+        if(lenable == true){
+            lenable = false;
+            ltimer = millis();
+        }
+
+        if(lenable  == false && (millis()-utimer) > ENGINE_SHIFT_DEBOUNCE){
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, ECU5V);
+        }
+        else{
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, ECU0V);
+            lenable = false;
+        }
+
+    // end launch control logic
+
+    // begin Screen Navigation
+
+        switch (DispScrn)
+        {
+        case Display::Screens::Main:
+            if(leftBlue.pressedFor(LAUNCH_CONTROL_DELAY) && rightBlue.pressedFor(LAUNCH_CONTROL_DELAY)){
+                lenable = true;
+            }
+            break;
+        case Display::Screens::Splash:
+            break;
+        default:
+            break;
+        }
+
+    // end Screen Navigation
 }

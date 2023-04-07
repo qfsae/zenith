@@ -5,5 +5,8 @@
         "tft.h": "c",
         "*.tcc": "cpp",
         "algorithm": "cpp"
-    }
+    },
+    "cSpell.words": [
+        "interupt"
+    ]
 }

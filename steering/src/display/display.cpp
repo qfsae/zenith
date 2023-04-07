@@ -34,6 +34,7 @@ String Display::checkErrors(){
     if(CAN_Init_Error == true){
         ret += " CAN Init Error ";
     }
+    ret += " Yo Wheres the car? ";
     return ret;
 }
 

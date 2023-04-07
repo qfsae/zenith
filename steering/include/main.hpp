@@ -15,8 +15,14 @@
 #include "SPI.h"
 #include "cal.hpp"
 #include "can.hpp"
+#include "EasyButton.h"
 
 extern CAL::CAL cal;
 
 #define ECU5V 5000
 #define ECU0V 0
+
+extern EasyButton rightRed;
+extern EasyButton rightBlue;
+extern EasyButton leftRed;
+extern EasyButton leftBlue;
