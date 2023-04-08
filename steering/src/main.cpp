@@ -10,7 +10,10 @@
  * @copyright Copyright (c) 2023
  * 
  * 
- * Reference for timer interupt: https://github.com/stm32duino/STM32Examples/blob/main/examples/Peripherals/HardwareTimer/Timebase_callback/Timebase_callback.ino 
+ * Reference for timer interupt: https://github.com/stm32duino/STM32Examples/blob/main/examples/Peripherals/HardwareTimer/Timebase_callback/Timebase_callback.ino
+ * 
+ * st-f4CAN must be >=@^1.0.8
+ * if st-f4CAN <=@^1.0.8 "Hardware initialization(With automatic retransmission)" must be exchanged for "Hardware initialization(Without automatic retransmission)"
  */
 
 #include <Arduino.h>
@@ -28,9 +31,11 @@
 #define SHIFT_DEBOUNCE_TIME 35
 #define SHIFT_PULLUP_EN false // Pull up is provided on the physical PCB
 #define SHIFT_ACTIVE_LOW true
+
 #define BUTTON_DEBOUNCE_TIME 35
 #define BUTTON_PULLUP_EN false
 #define BUTTON_ACTIVE_LOW true
+
 #define LAUNCH_CONTROL_DELAY 5000 //(ms)
 #define NAV_PRESS_DELAY 2000 //(ms)
 
@@ -47,7 +52,7 @@ EasyButton leftBlue(STEERING_BUTTON_3, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, B
 CAL::CAL cal;
 Display tft;
 // Current Screen Displayed
-Display::Screens DispScrn = Display::Screens::Main;
+Display::Screens DispScrn = Display::Screens::WheelDiagnostic;
 
 uint8_t can_ch1 = 1;
 // CAN message intermediary (need to make cal update package inline)
@@ -77,7 +82,7 @@ void downshift_handler() {
     }
 }
 
-void rightRed_handler(){
+void nextScreen(){
     if(DispScrn == Display::Screens::Main){
         DispScrn = Display::Screens::Splash;
     }
@@ -105,20 +110,6 @@ void sendCANMsg(void){
 
 
 void setup() {
-
-    // // begin CAN timer interupt 
-    #if defined(TIM1)
-    TIM_TypeDef *Instance = TIM1;
-    #else
-    TIM_TypeDef *Instance = TIM2;
-    #endif
-
-    HardwareTimer * CANTimer = new HardwareTimer(Instance);
-
-    CANTimer->setOverflow(CAN_SEND_HZ, HERTZ_FORMAT);
-    CANTimer->attachInterrupt(sendCANMsg);
-    CANTimer->resume();
-    // end CAN timer interupt
     
     // begin shifting button setup
         tft.gear = 0;
@@ -132,7 +123,7 @@ void setup() {
     // begin Button setup
         rightRed.begin();
         //rightRed.onPressed(rightRed_handler);
-        rightRed.onPressedFor(NAV_PRESS_DELAY, rightRed_handler);
+        rightRed.onPressedFor(NAV_PRESS_DELAY, nextScreen);
 
         rightBlue.begin();
         rightBlue.onPressed(rightBlue_handler);
@@ -158,7 +149,7 @@ void setup() {
     tft.setup();
 
     // Initialize CAN BUS
-	if (CANInit(CAN_1000KBPS, 0, 2)) {
+	if (CANInit(CAN_1000KBPS, 0, 2, false)) {
         Serial2.println("CAN BUS UP!");
         tft.CAN_Init_Error = false;
     } else {
@@ -167,7 +158,22 @@ void setup() {
     }
     // Display splash logo
     tft.display(Display::Screens::Splash);
-    delay(2000);
+
+    // begin CAN timer interupt 
+    #if defined(TIM1)
+    TIM_TypeDef *Instance = TIM1;
+    #else
+    TIM_TypeDef *Instance = TIM2;
+    #endif
+
+    HardwareTimer * CANTimer = new HardwareTimer(Instance);
+
+    CANTimer->setOverflow(CAN_SEND_HZ, HERTZ_FORMAT);
+    CANTimer->attachInterrupt(sendCANMsg);
+    CANTimer->resume();
+    // end CAN timer interupt
+    delay(100);
+    
 }
 
 
@@ -175,6 +181,10 @@ void loop() {
 
     upshiftButton.read(); // call the polling updater in the library
     downshiftButton.read(); // call the polling updater in the library
+    rightRed.read();
+    rightBlue.read();
+    leftRed.read();
+    leftBlue.read();
 
     // Check for CAN message
     if(CANMsgAvail(can_ch1)) {

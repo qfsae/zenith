@@ -120,7 +120,6 @@ void Display::displayMain(){
         // End Display Engine Temp
 
         // Error Write
-        
         if(checkErrors()!=""){
             if(clock){
                 EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
@@ -130,8 +129,8 @@ void Display::displayMain(){
                 EVE_cmd_dl_burst(DL_END);
                 EVE_color_rgb_burst(color::Black);
             }
+            else {EVE_color_rgb_burst(color::White);}
             EVE_cmd_text_burst(coordinates::errorText::x, coordinates::errorText::y, fonts::error, EVE_OPT_CENTER, checkErrors().c_str());
-            EVE_color_rgb_burst(color::White);
         }
         // End Error Write
     

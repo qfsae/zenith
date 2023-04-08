@@ -20,6 +20,8 @@ private:
     void displaySplash();
     // Main Driver Display
     void displayMain();
+    // Wheel Diagnostic Screen
+    void displayWheelDiagnostic();
 
     // TFT Active
     uint16_t tft_active = 0;
@@ -45,8 +47,10 @@ public:
     // List of Screens
     enum Screens{
         Splash,
+        WheelDiagnostic,
         Main
     };
+    // Important: Splash must be first and Main must be last in enum
 
     // Run Display Setup
     void setup();

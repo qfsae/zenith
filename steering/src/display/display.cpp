@@ -34,7 +34,9 @@ String Display::checkErrors(){
     if(CAN_Init_Error == true){
         ret += " CAN Init Error ";
     }
-    ret += " Yo Wheres the car? ";
+    if(cal.returnVar(CAL::DATA_ECU::WarningSource)){
+        ret += " ECU WARNING ";
+    }
     return ret;
 }
 
@@ -79,7 +81,9 @@ void Display::display(Screens screen){
     case Display::Screens::Splash:
         displaySplash();
         break;
-
+    case Display::Screens::WheelDiagnostic:
+        displayWheelDiagnostic();
+    break;
     case Display::Screens::Main:
         displayMain();
         break;
