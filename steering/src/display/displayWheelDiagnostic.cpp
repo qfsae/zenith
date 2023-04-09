@@ -44,7 +44,7 @@ void Display::displayWheelDiagnostic(){
     // Start Display write
 
 ////////////////////////////////////////////////// begin Button Checkers
-        if(digitalRead(STEERING_BUTTON_2)){
+        if(digitalRead(STEERING_BUTTON_1)){
             EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
             EVE_color_rgb_burst(color::Green);
             EVE_cmd_dl_burst(VERTEX2II(0,0,0,0));
@@ -59,9 +59,9 @@ void Display::displayWheelDiagnostic(){
             EVE_cmd_dl_burst(DL_END);
         }
         EVE_color_rgb_burst(color::Black);
-        EVE_cmd_text_burst(50, 35, fonts::regularLarge, EVE_OPT_CENTER, "SB2");
+        EVE_cmd_text_burst(50, 35, fonts::regularLarge, EVE_OPT_CENTER, "SB1");
 
-        if(digitalRead(STEERING_BUTTON_4)){
+        if(digitalRead(STEERING_BUTTON_3)){
             EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
             EVE_color_rgb_burst(color::Green);
             EVE_cmd_dl_burst(VERTEX2II(0,70,0,0));
@@ -76,7 +76,7 @@ void Display::displayWheelDiagnostic(){
             EVE_cmd_dl_burst(DL_END);
         }
         EVE_color_rgb_burst(color::Black);
-        EVE_cmd_text_burst(50, 105, fonts::regularLarge, EVE_OPT_CENTER, "SB4");
+        EVE_cmd_text_burst(50, 105, fonts::regularLarge, EVE_OPT_CENTER, "SB3");
 
         if(digitalRead(STEERING_DOWNSHIFT)){
             EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
@@ -113,7 +113,7 @@ void Display::displayWheelDiagnostic(){
         EVE_cmd_text_burst(50, 230, fonts::error, EVE_OPT_CENTER, "GNS");
 
 /////////////////////////////////////////////////////////////////////////////////////////
-        if(digitalRead(STEERING_BUTTON_1)){
+        if(digitalRead(STEERING_BUTTON_4)){
             EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
             EVE_color_rgb_burst(color::Green);
             EVE_cmd_dl_burst(VERTEX2II(380,0,0,0));
@@ -128,9 +128,9 @@ void Display::displayWheelDiagnostic(){
             EVE_cmd_dl_burst(DL_END);
         }
         EVE_color_rgb_burst(color::Black);
-        EVE_cmd_text_burst(430, 35, fonts::regularLarge, EVE_OPT_CENTER, "SB1");
+        EVE_cmd_text_burst(430, 35, fonts::regularLarge, EVE_OPT_CENTER, "SB4");
 
-        if(digitalRead(STEERING_BUTTON_3)){
+        if(digitalRead(STEERING_BUTTON_2)){
             EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
             EVE_color_rgb_burst(color::Green);
             EVE_cmd_dl_burst(VERTEX2II(380,70,0,0));
@@ -145,7 +145,7 @@ void Display::displayWheelDiagnostic(){
             EVE_cmd_dl_burst(DL_END);
         }
         EVE_color_rgb_burst(color::Black);
-        EVE_cmd_text_burst(430, 105, fonts::regularLarge, EVE_OPT_CENTER, "SB3");
+        EVE_cmd_text_burst(430, 105, fonts::regularLarge, EVE_OPT_CENTER, "SB2");
 
         if(digitalRead(STEERING_UPSHIFT)){
             EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
@@ -164,7 +164,7 @@ void Display::displayWheelDiagnostic(){
         EVE_color_rgb_burst(color::Black);
         EVE_cmd_text_burst(430, 175, fonts::regularLarge, EVE_OPT_CENTER, "SFTUP");
 
-        if(!cal.returnVar(CAL::DATA_ECU::WarningSource)){
+        if(Launch_Control_en){
             EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
             EVE_color_rgb_burst(color::Green);
             EVE_cmd_dl_burst(VERTEX2II(380,210,0,0));
@@ -179,7 +179,7 @@ void Display::displayWheelDiagnostic(){
             EVE_cmd_dl_burst(DL_END);
         }
         EVE_color_rgb_burst(color::Black);
-        EVE_cmd_text_burst(430, 230, fonts::error, EVE_OPT_CENTER, "ECU WARN");
+        EVE_cmd_text_burst(430, 230, fonts::error, EVE_OPT_CENTER, "LAUNCH");
 ////////////////////////////////////////////////// end Button Checkers
 
         // Car Info

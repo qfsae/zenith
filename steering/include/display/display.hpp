@@ -44,6 +44,8 @@ public:
     // CAN initialization Error
     bool CAN_Init_Error = false;
 
+    bool Launch_Control_en = false;
+
     // List of Screens
     enum Screens{
         Splash,

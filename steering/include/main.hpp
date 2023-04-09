@@ -19,7 +19,7 @@
 
 extern CAL::CAL cal;
 
-#define ECU5V 5000
+#define ECU5V 5000 //change to 5?
 #define ECU0V 0
 
 extern EasyButton rightRed;

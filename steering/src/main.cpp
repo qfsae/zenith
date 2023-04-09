@@ -36,23 +36,23 @@
 #define BUTTON_PULLUP_EN false
 #define BUTTON_ACTIVE_LOW true
 
-#define LAUNCH_CONTROL_DELAY 5000 //(ms)
-#define NAV_PRESS_DELAY 2000 //(ms)
+#define LAUNCH_CONTROL_DELAY 2000 //(ms)
+#define NAV_PRESS_DELAY 1000 //(ms)
 
-#define CAN_SEND_HZ 20 //(s^{-1})
+#define CAN_SEND_HZ 200 //(s^{-1})
 
-EasyButton upshiftButton(STEERING_DOWNSHIFT, SHIFT_DEBOUNCE_TIME, SHIFT_PULLUP_EN, SHIFT_ACTIVE_LOW);
-EasyButton downshiftButton(STEERING_UPSHIFT, SHIFT_DEBOUNCE_TIME, SHIFT_PULLUP_EN, SHIFT_ACTIVE_LOW);
+EasyButton upshiftButton(STEERING_UPSHIFT, SHIFT_DEBOUNCE_TIME, SHIFT_PULLUP_EN, SHIFT_ACTIVE_LOW);
+EasyButton downshiftButton(STEERING_DOWNSHIFT, SHIFT_DEBOUNCE_TIME, SHIFT_PULLUP_EN, SHIFT_ACTIVE_LOW);
 
-EasyButton rightRed(STEERING_BUTTON_2, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, BUTTON_ACTIVE_LOW);
-EasyButton rightBlue(STEERING_BUTTON_4, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, BUTTON_ACTIVE_LOW);
+EasyButton rightRed(STEERING_BUTTON_4, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, BUTTON_ACTIVE_LOW);
+EasyButton rightBlue(STEERING_BUTTON_2, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, BUTTON_ACTIVE_LOW);
 EasyButton leftRed(STEERING_BUTTON_1, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, BUTTON_ACTIVE_LOW);
 EasyButton leftBlue(STEERING_BUTTON_3, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, BUTTON_ACTIVE_LOW);
 
 CAL::CAL cal;
 Display tft;
 // Current Screen Displayed
-Display::Screens DispScrn = Display::Screens::WheelDiagnostic;
+Display::Screens DispScrn = Display::Screens::Main;
 
 uint8_t can_ch1 = 1;
 // CAN message intermediary (need to make cal update package inline)
@@ -61,9 +61,6 @@ CAN_msg_t can_msg;
 // Shift Timers
 uint32_t dtimer = 0;
 uint32_t utimer = 0;
-// Launch Control Timer
-uint32_t ltimer = 0;
-bool     lenable = false;
 
 bool upshift = false;
 bool downshift = false;
@@ -92,12 +89,13 @@ void nextScreen(){
 }
 
 void rightBlue_handler(){
+    leftBlue.pressedFor(LAUNCH_CONTROL_DELAY);
 }
 
 void leftRed_handler(){ 
 }
 
-void leftBlue_handler(){ 
+void leftBlue_handler(){
 }
 
 void sendCANMsg(void){
@@ -127,7 +125,6 @@ void setup() {
 
         rightBlue.begin();
         rightBlue.onPressed(rightBlue_handler);
-
         leftRed.begin();
         leftRed.onPressed(leftRed_handler);
 
@@ -172,10 +169,11 @@ void setup() {
     CANTimer->attachInterrupt(sendCANMsg);
     CANTimer->resume();
     // end CAN timer interupt
-    delay(100);
+    delay(2000);
     
 }
 
+uint32_t ltimeout = 0;
 
 void loop() {
 
@@ -234,35 +232,17 @@ void loop() {
 
     // begin launch control logic
 
-        if(lenable == true){
-            lenable = false;
-            ltimer = millis();
-        }
-
-        if(lenable  == false && (millis()-utimer) > ENGINE_SHIFT_DEBOUNCE){
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, ECU5V);
+        if(tft.Launch_Control_en == true){
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset2, ECU0V);
         }
         else{
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, ECU0V);
-            lenable = false;
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset2, ECU5V);
         }
+
+        // if(leftBlue.pressedFor(LAUNCH_CONTROL_DELAY) && rightBlue.pressedFor(LAUNCH_CONTROL_DELAY && ((ltimeout + 5000) < millis()))){
+        //     tft.Launch_Control_en = !tft.Launch_Control_en;
+        //     ltimeout = millis();
+        // }
 
     // end launch control logic
-
-    // begin Screen Navigation
-
-        switch (DispScrn)
-        {
-        case Display::Screens::Main:
-            if(leftBlue.pressedFor(LAUNCH_CONTROL_DELAY) && rightBlue.pressedFor(LAUNCH_CONTROL_DELAY)){
-                lenable = true;
-            }
-            break;
-        case Display::Screens::Splash:
-            break;
-        default:
-            break;
-        }
-
-    // end Screen Navigation
 }
