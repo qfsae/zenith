@@ -102,7 +102,7 @@ void sendCANMsg(void){
     // Send out persistent updates to ECU (else it complains and freaks out)
     // Automatic retransmission must be disabled within `st-f4can`
     //      Failure bricks steering wheel (msg outbox fills up {possible memory perm err?})
-    CANSend(can_ch1, &cal.package(CAL::MOTEC_RECV_ID::ECU_CAN6));
+    CANSend(can_ch1, &cal.package(CAL::MOTEC_RECV_ID::ECU_CAN7));
 }
 
 
@@ -213,31 +213,44 @@ void loop() {
         // Send positive shift for time allotment (1000_ms) should probably be set to slightly above engine debounce
         if(downshift == false && (millis()-dtimer) > ENGINE_SHIFT_DEBOUNCE){
             //  5000 is 5 volts (ECU off)
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset0, ECU5V);
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset0, ECU0V);
         }
         else{
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset0, ECU0V);
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset0, ECU5V);
             downshift = false;
         }
 
         if(upshift  == false && (millis()-utimer) > ENGINE_SHIFT_DEBOUNCE){
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, ECU5V);
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, ECU0V);
         }
         else{
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, ECU0V);
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, ECU5V);
             upshift = false;
+        }
+
+        if(upshiftButton.isPressed()){
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN7::Offset0, ECU5V);
+        }
+        else{
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN7::Offset0, ECU0V);
+        }
+        if(downshiftButton.isPressed()){
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN7::Offset1, ECU5V);
+        }
+        else{
+            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN7::Offset1, ECU0V);
         }
 
     // END shiftingLogic
 
     // begin launch control logic
 
-        if(tft.Launch_Control_en == true){
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset2, ECU0V);
-        }
-        else{
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset2, ECU5V);
-        }
+        // if(tft.Launch_Control_en == true){
+        //     cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset2, ECU5V);
+        // }
+        // else{
+        //     cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset2, ECU0V);
+        // }
 
         // if(leftBlue.pressedFor(LAUNCH_CONTROL_DELAY) && rightBlue.pressedFor(LAUNCH_CONTROL_DELAY && ((ltimeout + 5000) < millis()))){
         //     tft.Launch_Control_en = !tft.Launch_Control_en;

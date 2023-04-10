@@ -54,12 +54,12 @@ void Display::displayMain(){
         {
             case 0:
                 //                  Data address, img format, width, height (of image)
-                EVE_cmd_setbitmap_burst(CENTER_N, EVE_ARGB1555, 156, 156); // displays N
+                EVE_cmd_setbitmap_burst(CENTER_1, EVE_ARGB1555, 156, 156); // displays N
                 // Position on Screen ( x, y ) ( (0, 0) is top left)
                 EVE_cmd_dl_burst(VERTEX2F(coordinates::gear::x, coordinates::gear::y));
                 break;
             case 1:
-                EVE_cmd_setbitmap_burst(CENTER_1, EVE_ARGB1555, 156, 156);
+                EVE_cmd_setbitmap_burst(CENTER_N, EVE_ARGB1555, 156, 156);
                 EVE_cmd_dl_burst(VERTEX2F(coordinates::gear::x, coordinates::gear::y));
                 break;
             case 2:
