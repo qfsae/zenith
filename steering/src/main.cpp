@@ -167,7 +167,7 @@ void setup() {
 
     CANTimer->setOverflow(CAN_SEND_HZ, HERTZ_FORMAT);
     CANTimer->attachInterrupt(sendCANMsg);
-    CANTimer->resume();
+    //CANTimer->resume();
     // end CAN timer interupt
     delay(2000);
     
