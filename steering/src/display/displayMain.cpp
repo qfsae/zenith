@@ -33,7 +33,7 @@ int get_gear(int pdm_reading) {
     const float FOURTH_PERCENT = 0.751;
     const float FIFTH_PERCENT = 0.99;
     
-    const float gear_pos_percent = (pdm_reading * 0.2) / 5.0;
+    const float gear_pos_percent = (pdm_reading/* * 0.2 cal will return a voltage - jacob*/) / 5.0;
 
     if (gear_pos_percent < NEUTRAL_PERCENT)
         return 1;
@@ -75,8 +75,9 @@ void Display::displayMain(){
             // Display the gear position
         EVE_cmd_dl_burst(DL_COLOR_RGB | color::White);
         EVE_cmd_dl_burst(DL_BEGIN | EVE_BITMAPS);
-        
-        switch(get_gear(cal.returnVar(CAL::DATA_PDM::GearPositionVoltage)))
+        float gear_voltage;
+        cal.returnVar(CAL::DATA_PDM::GearPositionVoltage, gear_voltage);
+        switch(get_gear(gear_voltage))
         {
             case 0:
                 //                  Data address, img format, width, height (of image)

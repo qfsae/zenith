@@ -23,6 +23,7 @@
 #include "steering_io.h"
 #include "display/display.hpp"
 #include "main.hpp"
+#include <Adafruit_NeoPixel.h>
 
 // Blink Rate of display elements
 #define DISPLAY_BLINK_TIME 1000 //(ms)
@@ -64,6 +65,11 @@ uint32_t utimer = 0;
 
 bool upshift = false;
 bool downshift = false;
+
+// NEOPIXELS
+#define NUM_NEOPIXELS 16
+Adafruit_NeoPixel pixels(NUM_NEOPIXELS, STEERING_NEOPIXEL, NEO_GRB + NEO_KHZ800);
+
 
 void upshift_handler() {
     upshift = true;
@@ -133,14 +139,23 @@ void setup() {
     // end button setup
 
     // Set up Steering Wheel CAN (CAN controller needs enable)
+    pinMode(STEERING_NEOPIXEL, OUTPUT);
+    digitalWrite(STEERING_NEOPIXEL, LOW);
+
     pinMode(STEERING_CAN_OE, OUTPUT);
     digitalWrite(STEERING_CAN_OE, LOW);
 
+    pixels.begin();
 
     // Pull steering pins up
     pinMode(STEERING_DOWNSHIFT, INPUT_PULLUP);
     pinMode(STEERING_UPSHIFT, INPUT_PULLUP);
 
+
+    // NEOPIXEL
+    pinMode(STEERING_TRANSLATOR_OE, OUTPUT);
+    digitalWrite(STEERING_TRANSLATOR_OE, HIGH);
+    
     Serial2.begin(115200);
 
     tft.setup();
@@ -241,6 +256,9 @@ void loop() {
             cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN7::Offset1, ECU0V);
         }
 
+    pixels.clear();
+    pixels.setPixelColor(0, pixels.Color(0, 0, 255));
+    pixels.show();
     // END shiftingLogic
 
     // begin launch control logic
