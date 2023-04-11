@@ -259,3 +259,28 @@ void loop() {
 
     // end launch control logic
 }
+
+int get_gear(uint8_t pdm_reading) {
+    // Can make these defines or CAL constants tossing em in for reference.
+    const float NEUTRAL_PERCENT = 0.161;
+    const float FIRST_PERCENT = 0.0;
+    const float SECOND_PERCENT = 0.251;
+    const float THIRD_PERCENT = 0.5;
+    const float FOURTH_PERCENT = 0.751;
+    const float FIFTH_PERCENT = 0.99;
+    
+    const float gear_pos_percent = (pdm_reading * 0.2) / 5.0;
+
+    if (gear_pos_percent < NEUTRAL_PERCENT)
+        return 1;
+    else if (gear_pos_percent > NEUTRAL_PERCENT && gear_pos_percent < SECOND_PERCENT)
+        return 0;
+    else if (gear_pos_percent > SECOND_PERCENT && gear_pos_percent < THIRD_PERCENT)
+        return 2;
+    else if (gear_pos_percent > THIRD_PERCENT && gear_pos_percent < FOURTH_PERCENT)
+        return 3;
+    else if (gear_pos_percent > FOURTH_PERCENT && gear_pos_percent < FIFTH_PERCENT)
+        return 4;
+
+    return 5; 
+}
