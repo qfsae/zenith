@@ -190,6 +190,26 @@ void setup() {
 
 uint32_t ltimeout = 0;
 
+void rpm_to_neopixels(int rpm) {
+    // NOTE: we could add more here and handle a min / max rpm depending on the gear we are in
+
+    // map the rpm value
+    const int RPM_MIN = 2000;
+    const int RPM_MAX = 9500;
+
+    int pixels_enabled = map(rpm, RPM_MIN, RPM_MAX, 0, NUM_NEOPIXELS - 1);
+    
+    pixels.clear();
+    // iterate over the LEDs in the order they are seen
+    // green red blue
+    for (int i = NUM_NEOPIXELS - 1; i >= NUM_NEOPIXELS - 1 - pixels_enabled; i--) {
+        if (i > NUM_NEOPIXELS - 6) pixels.setPixelColor(i, pixels.Color(0, 64, 0));
+        else if (i > NUM_NEOPIXELS - 11) pixels.setPixelColor(i, pixels.Color(64, 0, 0));
+        else pixels.setPixelColor(i, pixels.Color(0, 0, 64));
+    }
+    pixels.show();
+}
+
 void loop() {
 
     upshiftButton.read(); // call the polling updater in the library
@@ -256,9 +276,7 @@ void loop() {
             cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN7::Offset1, ECU0V);
         }
 
-    pixels.clear();
-    pixels.setPixelColor(0, pixels.Color(0, 0, 255));
-    pixels.show();
+    rpm_to_neopixels(9500);
     // END shiftingLogic
 
     // begin launch control logic
