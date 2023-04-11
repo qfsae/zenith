@@ -24,6 +24,31 @@
 #define CENTER_4 0x0003E880 // start address of center_4, needs 48672 bytes
 #define CENTER_5 0x0004A6A0 // start address of center_5, needs 48672 bytes
 
+int get_gear(int pdm_reading) {
+    // Can make these defines or CAL constants tossing em in for reference.
+    const float NEUTRAL_PERCENT = 0.161;
+    const float FIRST_PERCENT = 0.0;
+    const float SECOND_PERCENT = 0.251;
+    const float THIRD_PERCENT = 0.5;
+    const float FOURTH_PERCENT = 0.751;
+    const float FIFTH_PERCENT = 0.99;
+    
+    const float gear_pos_percent = (pdm_reading * 0.2) / 5.0;
+
+    if (gear_pos_percent < NEUTRAL_PERCENT)
+        return 1;
+    else if (gear_pos_percent > NEUTRAL_PERCENT && gear_pos_percent < SECOND_PERCENT)
+        return 0;
+    else if (gear_pos_percent > SECOND_PERCENT && gear_pos_percent < THIRD_PERCENT)
+        return 2;
+    else if (gear_pos_percent > THIRD_PERCENT && gear_pos_percent < FOURTH_PERCENT)
+        return 3;
+    else if (gear_pos_percent > FOURTH_PERCENT && gear_pos_percent < FIFTH_PERCENT)
+        return 4;
+
+    return 5; 
+}
+
 void Display::displayMain(){
     if(tft_active != 0) {
         if(EVE_IS_BUSY == EVE_busy()) { // Is EVE still processing the last display list?
@@ -50,7 +75,8 @@ void Display::displayMain(){
             // Display the gear position
         EVE_cmd_dl_burst(DL_COLOR_RGB | color::White);
         EVE_cmd_dl_burst(DL_BEGIN | EVE_BITMAPS);
-        switch(gear)
+        
+        switch(get_gear(cal.returnVar(CAL::DATA_PDM::GearPositionVoltage)))
         {
             case 0:
                 //                  Data address, img format, width, height (of image)
