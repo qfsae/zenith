@@ -147,7 +147,7 @@ void Display::displayWheelDiagnostic(){
         EVE_color_rgb_burst(color::Black);
         EVE_cmd_text_burst(430, 105, fonts::regularLarge, EVE_OPT_CENTER, "SB2");
 
-        if(digitalRead(STEERING_UPSHIFT)){
+        if(cal.returnVar(CAL::DATA_ECU::ClutchState)){
             EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
             EVE_color_rgb_burst(color::Green);
             EVE_cmd_dl_burst(VERTEX2II(380,140,0,0));
@@ -162,7 +162,7 @@ void Display::displayWheelDiagnostic(){
             EVE_cmd_dl_burst(DL_END);
         }
         EVE_color_rgb_burst(color::Black);
-        EVE_cmd_text_burst(430, 175, fonts::regularLarge, EVE_OPT_CENTER, "SFTUP");
+        EVE_cmd_text_burst(430, 175, fonts::regularLarge, EVE_OPT_CENTER, "Clutch");
 
         if(Launch_Control_en){
             EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
@@ -192,8 +192,8 @@ void Display::displayWheelDiagnostic(){
 
             EVE_cmd_text_burst(240, 120, fonts::regularLarge, EVE_OPT_CENTER, ("TPS:   " + std::to_string(cal.returnVar(CAL::DATA_ECU::ThrottlePosition)) + "%").c_str());
 
-            cal.returnVar(CAL::DATA_PDM::ThrottlePotentiometerVoltage, vtemp);
-            EVE_cmd_text_burst(240, 160, fonts::regularLarge, EVE_OPT_CENTER, "TPS Voltage:");
+            cal.returnVar(CAL::DATA_PDM::GearPositionVoltage, vtemp);
+            EVE_cmd_text_burst(240, 160, fonts::regularLarge, EVE_OPT_CENTER, "GearPos Voltage:");
             EVE_cmd_text_burst(240, 190, fonts::regularLarge, EVE_OPT_CENTER,  FLOAT_STRING(vtemp).c_str());
 
 

@@ -42,8 +42,8 @@
 
 #define CAN_SEND_HZ 200 //(s^{-1})
 
-EasyButton upshiftButton(STEERING_UPSHIFT, SHIFT_DEBOUNCE_TIME, SHIFT_PULLUP_EN, SHIFT_ACTIVE_LOW);
-EasyButton downshiftButton(STEERING_DOWNSHIFT, SHIFT_DEBOUNCE_TIME, SHIFT_PULLUP_EN, SHIFT_ACTIVE_LOW);
+//EasyButton upshiftButton(STEERING_UPSHIFT, SHIFT_DEBOUNCE_TIME, SHIFT_PULLUP_EN, SHIFT_ACTIVE_LOW);
+//EasyButton downshiftButton(STEERING_DOWNSHIFT, SHIFT_DEBOUNCE_TIME, SHIFT_PULLUP_EN, SHIFT_ACTIVE_LOW);
 
 EasyButton rightRed(STEERING_BUTTON_4, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, BUTTON_ACTIVE_LOW);
 EasyButton rightBlue(STEERING_BUTTON_2, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, BUTTON_ACTIVE_LOW);
@@ -59,31 +59,11 @@ uint8_t can_ch1 = 1;
 // CAN message intermediary (need to make cal update package inline)
 CAN_msg_t can_msg;
 
-// Shift Timers
-uint32_t dtimer = 0;
-uint32_t utimer = 0;
-
-bool upshift = false;
-bool downshift = false;
 
 // NEOPIXELS
 #define NUM_NEOPIXELS 16
 Adafruit_NeoPixel pixels(NUM_NEOPIXELS, STEERING_NEOPIXEL, NEO_GRB + NEO_KHZ800);
 
-
-void upshift_handler() {
-    upshift = true;
-    if (tft.gear < 5) {
-        tft.gear++;
-    }
-}
-
-void downshift_handler() {
-    downshift = true;
-    if (tft.gear > 0) {
-        tft.gear--;
-    }
-}
 
 void nextScreen(){
     if(DispScrn == Display::Screens::Main){
@@ -114,15 +94,6 @@ void sendCANMsg(void){
 
 
 void setup() {
-    
-    // begin shifting button setup
-        tft.gear = 0;
-        upshiftButton.begin(); 
-        upshiftButton.onPressed(upshift_handler);
-
-        downshiftButton.begin();
-        downshiftButton.onPressed(downshift_handler);
-    // end shifting button setup
 
     // begin Button setup
         rightRed.begin();
@@ -212,8 +183,7 @@ void rpm_to_neopixels(int rpm) {
 
 void loop() {
 
-    upshiftButton.read(); // call the polling updater in the library
-    downshiftButton.read(); // call the polling updater in the library
+    // call the polling updater in the library
     rightRed.read();
     rightBlue.read();
     leftRed.read();
@@ -231,52 +201,7 @@ void loop() {
     // Display runtime call
     tft.display(DispScrn);
 
-
-    // BEGIN shiftingLogic
-
-        // Reset timers on shift
-        if(downshift == true){
-            downshift = false;
-            dtimer = millis();
-        }
-
-        if(upshift == true){
-            upshift = false;
-            utimer = millis();
-        }
-
-        // Send positive shift for time allotment (1000_ms) should probably be set to slightly above engine debounce
-        if(downshift == false && (millis()-dtimer) > ENGINE_SHIFT_DEBOUNCE){
-            //  5000 is 5 volts (ECU off)
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset0, ECU0V);
-        }
-        else{
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset0, ECU5V);
-            downshift = false;
-        }
-
-        if(upshift  == false && (millis()-utimer) > ENGINE_SHIFT_DEBOUNCE){
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, ECU0V);
-        }
-        else{
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN6::Offset1, ECU5V);
-            upshift = false;
-        }
-
-        if(upshiftButton.isPressed()){
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN7::Offset0, ECU5V);
-        }
-        else{
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN7::Offset0, ECU0V);
-        }
-        if(downshiftButton.isPressed()){
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN7::Offset1, ECU5V);
-        }
-        else{
-            cal.updateVar(CAL::DATA_ECU_RECV::ECU_CAN7::Offset1, ECU0V);
-        }
-
-    rpm_to_neopixels(9500);
+    rpm_to_neopixels(cal.returnVar(CAL::DATA_ECU::EngineRPM));
     // END shiftingLogic
 
     // begin launch control logic

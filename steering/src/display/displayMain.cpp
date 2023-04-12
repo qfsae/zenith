@@ -33,7 +33,7 @@ int get_gear(int pdm_reading) {
     const float FOURTH_PERCENT = 0.751;
     const float FIFTH_PERCENT = 0.99;
     
-    const float gear_pos_percent = (pdm_reading/* * 0.2 cal will return a voltage - jacob*/) / 5.0;
+    const float gear_pos_percent = (pdm_reading/* * 0.2 cal will return a voltage - jacob*/-0.52) / 5.0;
 
     if (gear_pos_percent < NEUTRAL_PERCENT)
         return 1;
