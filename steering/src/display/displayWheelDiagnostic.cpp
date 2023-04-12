@@ -78,7 +78,7 @@ void Display::displayWheelDiagnostic(){
         EVE_color_rgb_burst(color::Black);
         EVE_cmd_text_burst(50, 105, fonts::regularLarge, EVE_OPT_CENTER, "SB3");
 
-        if(digitalRead(STEERING_DOWNSHIFT)){
+        if(cal.returnVar(CAL::DATA_ECU::BrakeState)){
             EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
             EVE_color_rgb_burst(color::Green);
             EVE_cmd_dl_burst(VERTEX2II(0,140,0,0));
@@ -93,7 +93,7 @@ void Display::displayWheelDiagnostic(){
             EVE_cmd_dl_burst(DL_END);
         }
         EVE_color_rgb_burst(color::Black);
-        EVE_cmd_text_burst(50, 175, fonts::regularLarge, EVE_OPT_CENTER, "SFTDN");
+        EVE_cmd_text_burst(50, 175, fonts::regularLarge, EVE_OPT_CENTER, "BRAKE");
 
         if(cal.returnVar(CAL::DATA_ECU::GearNeutralSwitch)){
             EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
@@ -162,7 +162,7 @@ void Display::displayWheelDiagnostic(){
             EVE_cmd_dl_burst(DL_END);
         }
         EVE_color_rgb_burst(color::Black);
-        EVE_cmd_text_burst(430, 175, fonts::regularLarge, EVE_OPT_CENTER, "Clutch");
+        EVE_cmd_text_burst(430, 175, fonts::regularLarge, EVE_OPT_CENTER, "CLUTCH");
 
         if(Launch_Control_en){
             EVE_cmd_dl_burst(DL_BEGIN | EVE_RECTS);
