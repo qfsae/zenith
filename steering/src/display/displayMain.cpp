@@ -24,28 +24,25 @@
 #define CENTER_4 0x0003E880 // start address of center_4, needs 48672 bytes
 #define CENTER_5 0x0004A6A0 // start address of center_5, needs 48672 bytes
 
-int get_gear(int pdm_reading) {
+int get_gear(float pdm_reading) {
     // Can make these defines or CAL constants tossing em in for reference.
-    const float NEUTRAL_PERCENT = 0.161;
-    const float FIRST_PERCENT = 0.0;
-    const float SECOND_PERCENT = 0.251;
-    const float THIRD_PERCENT = 0.5;
-    const float FOURTH_PERCENT = 0.751;
-    const float FIFTH_PERCENT = 0.99;
-    
-    const float gear_pos_percent = (pdm_reading-0.52) / 5.0;
+    const float NEUTRAL = 0.161*5.0;
+    const float FIRST_PERCENT = 0.0*5.0;
+    const float SECOND_PERCENT = 0.251*5.0;
+    const float THIRD_PERCENT = 0.5*5.0;
+    const float FOURTH_PERCENT = 0.751*5.0;
+    const float FIFTH_PERCENT = 0.99*5.0;
 
-    if (gear_pos_percent < NEUTRAL_PERCENT)
+    if (pdm_reading < 0.8)
         return 1;
-    else if (gear_pos_percent > NEUTRAL_PERCENT && gear_pos_percent < SECOND_PERCENT)
+    else if (pdm_reading > 0 && pdm_reading < 1.2)
         return 0;
-    else if (gear_pos_percent > SECOND_PERCENT && gear_pos_percent < THIRD_PERCENT)
+    else if (pdm_reading > 1.2 && pdm_reading < 2)
         return 2;
-    else if (gear_pos_percent > THIRD_PERCENT && gear_pos_percent < FOURTH_PERCENT)
+    else if (pdm_reading > 2 && pdm_reading < 3)
         return 3;
-    else if (gear_pos_percent > FOURTH_PERCENT && gear_pos_percent < FIFTH_PERCENT)
+    else if (pdm_reading > 3 && pdm_reading < 4)
         return 4;
-
     return 5; 
 }
 
@@ -81,12 +78,12 @@ void Display::displayMain(){
         {
             case 0:
                 //                  Data address, img format, width, height (of image)
-                EVE_cmd_setbitmap_burst(CENTER_1, EVE_ARGB1555, 156, 156); // displays N
+                EVE_cmd_setbitmap_burst(CENTER_N, EVE_ARGB1555, 156, 156); // displays N
                 // Position on Screen ( x, y ) ( (0, 0) is top left)
                 EVE_cmd_dl_burst(VERTEX2F(coordinates::gear::x, coordinates::gear::y));
                 break;
             case 1:
-                EVE_cmd_setbitmap_burst(CENTER_N, EVE_ARGB1555, 156, 156);
+                EVE_cmd_setbitmap_burst(CENTER_1, EVE_ARGB1555, 156, 156);
                 EVE_cmd_dl_burst(VERTEX2F(coordinates::gear::x, coordinates::gear::y));
                 break;
             case 2:
