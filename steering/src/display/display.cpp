@@ -43,13 +43,16 @@ String Display::checkErrors(){
     else if(cal.returnVar_f(CAL::DATA_PDM::BatteryVoltage) < 13){
         ret += " Battery Low: ";
         ret += FLOAT_STRING(cal.returnVar_f(CAL::DATA_PDM::BatteryVoltage)).c_str();
-        ret += " ";
+        ret += "V ";
     };
     if(cal.returnVar_os(CAL::DATA_PDM::StarterStatus).Fault == true){
         ret += " Starter Fault ";
     }
-    if(cal.returnVar_os(CAL::DATA_PDM::FuelPumpStatus).Active == true && cal.returnVar_f(CAL::DATA_PDM::FuelPumpCurrent) < 0.5){
-        ret += " Fuel Pump Disconnect ";
+    // if(cal.returnVar_os(CAL::DATA_PDM::FuelPumpStatus).Active == true && cal.returnVar_f(CAL::DATA_PDM::FuelPumpCurrent) < 0.5){
+    //     ret += " Fuel Pump Disconnect ";
+    // }
+    if(cal.returnVar_os(CAL::DATA_PDM::FuelPumpStatus).Fault){
+        ret += " Fuel Pump Fault ";
     }
     return ret;
 }
