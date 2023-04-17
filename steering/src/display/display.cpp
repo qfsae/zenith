@@ -37,6 +37,20 @@ String Display::checkErrors(){
     if(cal.returnVar(CAL::DATA_ECU::WarningSource)){
         ret += " ECU WARNING ";
     }
+    if(cal.returnVar_os(CAL::DATA_PDM::StarterStatus).Active == false && cal.returnVar_f(CAL::DATA_PDM::BatteryVoltage) < 12.5){
+        ret += " REPLACE BATTERY ";
+    }
+    else if(cal.returnVar_f(CAL::DATA_PDM::BatteryVoltage) < 13){
+        ret += " Battery Low: ";
+        ret += FLOAT_STRING(cal.returnVar_f(CAL::DATA_PDM::BatteryVoltage)).c_str();
+        ret += " ";
+    };
+    if(cal.returnVar_os(CAL::DATA_PDM::StarterStatus).Fault == true){
+        ret += " Starter Fault ";
+    }
+    if(cal.returnVar_os(CAL::DATA_PDM::FuelPumpStatus).Active == true && cal.returnVar_f(CAL::DATA_PDM::FuelPumpCurrent) < 0.5){
+        ret += " Fuel Pump Disconnect ";
+    }
     return ret;
 }
 

@@ -13,6 +13,8 @@
 #include "stdint.h"
 #include <Arduino.h>
 
+#define FLOAT_STRING(f) (std::to_string((int)f) + "." + std::to_string((int)((f-(float)((int)f))*100.0)))
+
 class Display{
 private:
 

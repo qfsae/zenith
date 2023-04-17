@@ -72,9 +72,7 @@ void Display::displayMain(){
             // Display the gear position
         EVE_cmd_dl_burst(DL_COLOR_RGB | color::White);
         EVE_cmd_dl_burst(DL_BEGIN | EVE_BITMAPS);
-        float gear_voltage;
-        cal.returnVar(CAL::DATA_PDM::GearPositionVoltage, gear_voltage);
-        switch(get_gear(gear_voltage))
+        switch(get_gear(cal.returnVar_f(CAL::DATA_PDM::GearPositionVoltage)))
         {
             case 0:
                 //                  Data address, img format, width, height (of image)

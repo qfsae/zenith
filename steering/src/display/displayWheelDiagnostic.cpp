@@ -18,8 +18,6 @@
 #include "steering_io.h"
 #include <sstream>
 
-#define FLOAT_STRING(f) (std::to_string((int)f) + "." + std::to_string((int)((f-(float)((int)f))*100.0)))
-
 void Display::displayWheelDiagnostic(){
     if(tft_active != 0) {
         if(EVE_IS_BUSY == EVE_busy()) { // Is EVE still processing the last display list?
@@ -184,17 +182,15 @@ void Display::displayWheelDiagnostic(){
 
         // Car Info
             EVE_color_rgb_burst(color::White);
-            float vtemp;
-            cal.returnVar(CAL::DATA_PDM::BatteryVoltage, vtemp);
             EVE_cmd_text_burst(240, 50, fonts::regularLarge, EVE_OPT_CENTER, "Battery Voltage:");
-            EVE_cmd_text_burst(240, 80, fonts::regularLarge, EVE_OPT_CENTER,  FLOAT_STRING(vtemp).c_str());
+            EVE_cmd_text_burst(240, 80, fonts::regularLarge, EVE_OPT_CENTER,  FLOAT_STRING(cal.returnVar_f(CAL::DATA_PDM::BatteryVoltage)).c_str());
 
 
             EVE_cmd_text_burst(240, 120, fonts::regularLarge, EVE_OPT_CENTER, ("TPS:   " + std::to_string(cal.returnVar(CAL::DATA_ECU::ThrottlePosition)) + "%").c_str());
 
-            cal.returnVar(CAL::DATA_PDM::GearPositionVoltage, vtemp);
+            
             EVE_cmd_text_burst(240, 160, fonts::regularLarge, EVE_OPT_CENTER, "GearPos Voltage:");
-            EVE_cmd_text_burst(240, 190, fonts::regularLarge, EVE_OPT_CENTER,  FLOAT_STRING(vtemp).c_str());
+            EVE_cmd_text_burst(240, 190, fonts::regularLarge, EVE_OPT_CENTER,  FLOAT_STRING(cal.returnVar_f(CAL::DATA_PDM::GearPositionVoltage)).c_str());
 
 
         // Error Write
