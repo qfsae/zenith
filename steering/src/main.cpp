@@ -51,6 +51,7 @@ EasyButton leftRed(STEERING_BUTTON_1, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, BU
 EasyButton leftBlue(STEERING_BUTTON_3, BUTTON_DEBOUNCE_TIME, BUTTON_PULLUP_EN, BUTTON_ACTIVE_LOW);
 
 CAL::CAL cal;
+int logger_gear = 0;
 Display tft;
 // Current Screen Displayed
 Display::Screens DispScrn = Display::Screens::Main;
@@ -196,6 +197,9 @@ void loop() {
         cal.updatePackage(can_msg); // TODO: make inline
         // Update time since last CAN recv
         tft.updateCAN();
+        if(can_msg.id == 0x64D){
+            logger_gear = can_msg.data[6] & 0x0F;
+        };
 	}
 
     // Display runtime call

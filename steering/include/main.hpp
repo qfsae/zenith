@@ -18,6 +18,7 @@
 #include "EasyButton.h"
 
 extern CAL::CAL cal;
+extern int logger_gear;
 
 #define ECU5V 5000 //change to 5?
 #define ECU0V 0

@@ -51,9 +51,9 @@ String Display::checkErrors(){
     // if(cal.returnVar_os(CAL::DATA_PDM::FuelPumpStatus).Active == true && cal.returnVar_f(CAL::DATA_PDM::FuelPumpCurrent) < 0.5){
     //     ret += " Fuel Pump Disconnect ";
     // }
-    if(cal.returnVar_os(CAL::DATA_PDM::FuelPumpStatus).Fault){
-        ret += " Fuel Pump Fault ";
-    }
+    // if(cal.returnVar_os(CAL::DATA_PDM::FuelPumpStatus).Fault){
+    //     ret += " Fuel Pump Fault ";
+    // }
     return ret;
 }
 
