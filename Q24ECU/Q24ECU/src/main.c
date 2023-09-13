@@ -39,15 +39,15 @@ int main(void){
     volatile uint32_t timer = 0, period = 100;
     gpio_write(led2, true);
     //gpio_write(rx, true);
-    //gpio_pud(tx, GPIO_PULLUP);
+    gpio_pull(tx, GPIO_PULLUP);
     s_ticks = 0x0;
     // printf("Running STM32Core\t...\n");
     // printf("SystemCoreClock: %ld\n", SystemCoreClock);
-    GPIOA->PUPDR &= 3U << 2*2; // reset A2 pullup pulldown register
-    GPIOA->PUPDR |= 1U << 2*2; // set A2 -> pullup
+    //GPIOA->PUPDR &= 3U << 2*2; // reset A2 pullup pulldown register
+    //GPIOA->PUPDR |= 1U << 2*2; // set A2 -> pullup
 
     for(;;) {
-        bool tx_on = GPIOA->IDR & 1U << 2; // read GPIO A2 input data register
+        bool tx_on = gpio_read(tx);//GPIOA->IDR & 1U << 2; // read GPIO A2 input data register
 
         gpio_write(led2, tx_on);
         if(timer_expired(&timer, period, s_ticks)){

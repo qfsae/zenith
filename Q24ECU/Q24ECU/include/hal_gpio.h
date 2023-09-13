@@ -22,7 +22,7 @@
 
 #define GPIO(bank) ((GPIO_TypeDef *) (GPIOA_BASE + 0x400U * (bank)))
 enum { GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_AF, GPIO_MODE_ANALOG };
-enum { GPIO_PULLDOWN, GPIO_PULLUP, GPIO_RESET };
+enum { GPIO_PULLUP, GPIO_PULLDOWN, GPIO_RESET };
 
 /**
  * @brief Set the PinMode of a GPIO Pin
@@ -68,7 +68,7 @@ static inline bool gpio_read(uint16_t pin) {
     return (gpio->IDR & (1U << PINNO(pin)));
 }
 
-static inline void gpio_pud(uint16_t pin, uint8_t mode){
+static inline void gpio_pull(uint16_t pin, uint8_t mode){
     GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
     gpio->PUPDR &= ~(3U << (PINNO(pin)*2));
     if(mode!=GPIO_RESET) gpio->PUPDR |= 1U << (2*(PINNO(pin))+mode);
