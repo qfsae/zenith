@@ -36,7 +36,7 @@ int main(void){
     gpio_set_mode(tx, GPIO_MODE_INPUT); // setup pin as input
     gpio_set_mode(rx, GPIO_MODE_INPUT);
     //uart_init(UART_DEBUG, 9600);
-    volatile uint32_t timer = 0, period = 100;
+    volatile uint32_t timer = 0, period = 500;
     gpio_write(led2, true);
     //gpio_write(rx, true);
     gpio_pull(tx, GPIO_PULLUP);
@@ -47,12 +47,13 @@ int main(void){
     //GPIOA->PUPDR |= 1U << 2*2; // set A2 -> pullup
 
     for(;;) {
-        bool tx_on = gpio_read(tx);//GPIOA->IDR & 1U << 2; // read GPIO A2 input data register
+        bool tx_on = gpio_read_idr(tx);//GPIOA->IDR & 1U << 2; // read GPIO A2 input data register
 
         gpio_write(led2, tx_on);
         if(timer_expired(&timer, period, s_ticks)){
             gpio_write(led1, led_on);
             led_on = !led_on;
+            gpio_pull(tx, GPIO_RESET);
             //printf("LED: %d, Ticks: %lu\r\n", led_on, s_ticks);//bricks
             //uart_write_buf(UART2, "HI\n", 4);
         }

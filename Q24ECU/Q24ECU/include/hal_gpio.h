@@ -63,9 +63,14 @@ static inline void gpio_write(uint16_t pin, bool value) {
     gpio->BSRR = (1U << PINNO(pin)) << (value ? 0 : 16);
 }
 
-static inline bool gpio_read(uint16_t pin) {
+static inline bool gpio_read_idr(uint16_t pin) {
     GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
     return (gpio->IDR & (1U << PINNO(pin)));
+}
+
+static inline bool gpio_read_odr(uint16_t pin){
+    GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
+    return (gpio->ODR & (1U << PINNO(pin)));
 }
 
 static inline void gpio_pull(uint16_t pin, uint8_t mode){
