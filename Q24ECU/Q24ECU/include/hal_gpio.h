@@ -79,6 +79,24 @@ static inline void gpio_pull(uint16_t pin, uint8_t mode){
     if(mode!=GPIO_RESET) gpio->PUPDR |= 1U << (2*(PINNO(pin))+mode);
 }
 
+static inline void adc_init_single(ADC_TypeDef *adc){
+    if(adc == ADC1) RCC->APB2ENR |= BIT(8); // enable adc in peripheral register
+    ADC123_COMMON->CCR &= ~(ADC_CCR_ADCPRE);
+    ADC123_COMMON->CCR |= ADC_CCR_ADCPRE_0;
+    adc->CR1 &= ~(ADC_CR1_SCAN);
+    adc->CR1 |= 
+
+}
+
+static inline uint16_t adc_read_single(ADC_TypeDef *adc, uint16_t pin){
+    adc->CR2 |= ADC_CR2_SWSTART;
+    adc->SQR1 &= ~ADC_SQR1_L;
+    adc->SQR3 |= PINNO(pin) << ADC_SQR3_SQ1_Pos;
+    while(adc->SR & ADC_SR_EOC) asm("nop");
+    return (uint16_t)(adc->DR & 0xFFF);
+    adc->CR2 &= ~ADC_CR2_SWSTART;
+}
+
 // t: expiration time, prd: period, now: current time. Return true if expired
 static inline bool timer_expired(volatile uint32_t *t, uint32_t prd, uint32_t now) {
   if (now + prd < *t) *t = 0;                    // Time wrapped? Reset timer
