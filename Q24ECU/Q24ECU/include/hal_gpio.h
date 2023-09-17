@@ -24,6 +24,16 @@
 enum { GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_AF, GPIO_MODE_ANALOG };
 enum { GPIO_PULLUP, GPIO_PULLDOWN, GPIO_RESET };
 
+// 6.3.3: APB1 clock <= 45MHz; APB2 clock <= 90MHz 
+// 3.5.1, Table 11: configure flash latency (WS) in accordance to clock freq 
+// 33.4: The AHB clock must be at least 25 MHz when Ethernet is used 
+enum { APB1_PRE = 5 /* AHB clock / 4 */, APB2_PRE = 4 /* AHB clock / 2 */ }; 
+enum { PLL_HSE = 16, PLL_M = 8, PLL_N = 180, PLL_P = 2 };  // Run at 180 Mhz 
+#define FLASH_LATENCY 5 
+#define SYS_FREQUENCY ((PLL_HSE * PLL_N / PLL_M / PLL_P) * 1000000) 
+#define APB2_FREQUENCY (SYS_FREQUENCY / (BIT(APB2_PRE - 3))) 
+#define APB1_FREQUENCY (SYS_FREQUENCY / (BIT(APB1_PRE - 3))) 
+
 /**
  * @brief Set the PinMode of a GPIO Pin
  * 
@@ -63,6 +73,11 @@ static inline void gpio_write(uint16_t pin, bool value) {
     gpio->BSRR = (1U << PINNO(pin)) << (value ? 0 : 16);
 }
 
+static inline void gpio_toggle_pin(uint16_t pin){
+    GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
+    gpio->BSRR = (1UL << PINNO(pin)) << ((gpio->ODR & (1UL << PINNO(pin))) > 0 ? 16 : 0);
+}
+
 static inline bool gpio_read_idr(uint16_t pin) {
     GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
     return (gpio->IDR & (1U << PINNO(pin)));
@@ -77,24 +92,6 @@ static inline void gpio_pull(uint16_t pin, uint8_t mode){
     GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
     gpio->PUPDR &= ~(3U << (PINNO(pin)*2));
     if(mode!=GPIO_RESET) gpio->PUPDR |= 1U << (2*(PINNO(pin))+mode);
-}
-
-static inline void adc_init_single(ADC_TypeDef *adc){
-    if(adc == ADC1) RCC->APB2ENR |= BIT(8); // enable adc in peripheral register
-    ADC123_COMMON->CCR &= ~(ADC_CCR_ADCPRE);
-    ADC123_COMMON->CCR |= ADC_CCR_ADCPRE_0;
-    adc->CR1 &= ~(ADC_CR1_SCAN);
-    adc->CR1 |= 
-
-}
-
-static inline uint16_t adc_read_single(ADC_TypeDef *adc, uint16_t pin){
-    adc->CR2 |= ADC_CR2_SWSTART;
-    adc->SQR1 &= ~ADC_SQR1_L;
-    adc->SQR3 |= PINNO(pin) << ADC_SQR3_SQ1_Pos;
-    while(adc->SR & ADC_SR_EOC) asm("nop");
-    return (uint16_t)(adc->DR & 0xFFF);
-    adc->CR2 &= ~ADC_CR2_SWSTART;
 }
 
 // t: expiration time, prd: period, now: current time. Return true if expired
