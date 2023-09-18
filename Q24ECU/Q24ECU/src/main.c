@@ -62,7 +62,7 @@ int main(void){
     uart_init(UART_DEBUG, 9600);
     volatile uint32_t timer = 0, period = 200;   
 
-    for(;;) {
+    for(;;) { // while loop that pulls from que | que added to by interrupts
         if(timer_expired(&timer, period, s_ticks)){
             if(!led_on){
                 gpio_write(led2, true);
