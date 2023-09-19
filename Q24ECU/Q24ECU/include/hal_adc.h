@@ -75,13 +75,14 @@ static inline void adc_stop(ADC_TypeDef *adc){
     adc->CR2 &= ~(ADC_CR2_SWSTART);
 }
 
-static inline uint16_t adc_poll(ADC_TypeDef *adc){
-    while((adc->SR & ADC_SR_EOC) != ADC_SR_EOC);
-    return adc->DR;
+static inline uint16_t adc_retrieve(ADC_TypeDef *adc){
+    (void)adc;
+    return 0;
 }
 
-static inline uint16_t adc_read(ADC_TypeDef *adc, uint8_t adcCh){
+static inline uint16_t adc_poll(ADC_TypeDef *adc, uint8_t adcCh){
     adc_configChannel(adc, adcCh, 1);
     adc_start(adc);
-    return adc_poll(adc);
+    while((adc->SR & ADC_SR_EOC) != ADC_SR_EOC);
+    return adc->DR;
 }
