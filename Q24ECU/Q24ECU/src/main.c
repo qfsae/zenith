@@ -24,8 +24,15 @@ void initSystem(void){
     //SCB->CPACR |= ((3UL << 10*2) | (3UL << 11*2)); // enable FPU
     FLASH->ACR |= FLASH_ACR_LATENCY | BIT(8) | BIT(9); // flash latency / prefetch
 
-    // RCC->CR &= ~(BIT(0) | BIT(16) | BIT(18)); // clear hsi on, hse on, hse byp
-    // RCC->CR |= BIT(16);
+    RCC->CR &= ~(BIT(0) | BIT(16) | BIT(18)); // clear hsi on, hse on, hse byp / not needed
+    RCC->CR |= BIT(16);
+    RCC->CFGR &= ~RCC_CFGR_RTCPRE; // reset and set rtc prescaler (8mhz/8 = 1mhz)
+    RCC->CFGR |= (8 << 16U);
+    RCC->CFGR &= ~(RCC_CFGR_HPRE);
+    RCC->CFGR &= ~RCC_CFGR_SW; // reset and select HSE as system clock
+    RCC->CFGR |= RCC_CFGR_SW_HSE;
+    while(RCC->CR & RCC_CR_HSEON != RCC_CR_HSEON) spin(1);
+    SystemCoreClockUpdate(); // likely does not work
 
 
     // RCC->PLLCFGR &= ~((BIT(17) - 1)); // clear pll multipliers
@@ -40,11 +47,10 @@ void initSystem(void){
     RCC->AHB2ENR |= RCC_APB2ENR_SYSCFGEN;
     RCC->APB2ENR |= RCC_APB2ENR_ADC2EN;
     FLASH->ACR |= FLASH_ACR_LATENCY | BIT(8) | BIT(9);
-    SysTick_Config(SystemCoreClock/1000);
+    SysTick_Config(FREQ/1000); // DO NOT USE "SystemClock"
     increment = 0x0;
     s_ticks = 0x0;
     adc_init(ADC2);
-    SystemCoreClockUpdate();
     
 }
 
@@ -60,7 +66,7 @@ int main(void){
     gpio_set_mode(current, GPIO_MODE_ANALOG);
     gpio_set_mode(PIN('C', 1), GPIO_MODE_ANALOG);
     uart_init(UART_DEBUG, 9600);
-    volatile uint32_t timer = 0, period = 200;
+    volatile uint32_t timer = 0, period = 1000;
     volatile double f;
     f = 3.6;
 
@@ -74,10 +80,10 @@ int main(void){
             }
             gpio_toggle_pin(led1);
             led_on = !led_on;
-            //printf("CPU Speed: %ld\n", SystemCoreClock);
+            printf("CPU Speed: %d\n", SystemCoreClock);
             //uart_write_buf(USART2, "hi\n", 4);
-            printf("%f\t", adc_poll(ADC2, 10)*3.3*1.6/(4096));
-            printf("%d\n", adc_poll(ADC2, 10));
+            // printf("%f\t", adc_poll(ADC2, 10)*3.3*1.6/(4096));
+            // printf("%d\n", adc_poll(ADC2, 10));
             // ADC1->CR2 |= ADC_CR2_ADON;W
             //printf("SR: %ld\t", ADC2->SR);
             //printf("LED: %d, Ticks: %lu\r\n", led_on, s_ticks);

@@ -9,7 +9,7 @@
 #include <stm32f446xx.h>
 
 // CPU Frequency
-#define FREQ SystemCoreClock//16000000
+#define FREQ 8000000//SystemCoreClock//16000000
 
 // Set Bit x 1
 #define BIT(x) (1UL << (x))
