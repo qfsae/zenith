@@ -21,7 +21,7 @@ volatile uint64_t increment = 0xDEADBEEF;
 
 
 void initSystem(void){
-    SCB->CPACR |= ((3UL << 10*2) | (3UL << 11*2)); // enable FPU
+    //SCB->CPACR |= ((3UL << 10*2) | (3UL << 11*2)); // enable FPU
     FLASH->ACR |= FLASH_ACR_LATENCY | BIT(8) | BIT(9); // flash latency / prefetch
 
     // RCC->CR &= ~(BIT(0) | BIT(16) | BIT(18)); // clear hsi on, hse on, hse byp
@@ -60,7 +60,9 @@ int main(void){
     gpio_set_mode(current, GPIO_MODE_ANALOG);
     gpio_set_mode(PIN('C', 1), GPIO_MODE_ANALOG);
     uart_init(UART_DEBUG, 9600);
-    volatile uint32_t timer = 0, period = 200;   
+    volatile uint32_t timer = 0, period = 200;
+    volatile double f;
+    f = 3.6;
 
     for(;;) { // while loop that pulls from que | que added to by interrupts
         if(timer_expired(&timer, period, s_ticks)){
@@ -73,9 +75,9 @@ int main(void){
             gpio_toggle_pin(led1);
             led_on = !led_on;
             //printf("CPU Speed: %ld\n", SystemCoreClock);
-            uart_write_buf(USART2, "hi\n", 4);
-            // printf("%d\t", adc_read(ADC2, 10));
-            // printf("%d\n", adc_read(ADC2, 11));
+            //uart_write_buf(USART2, "hi\n", 4);
+            printf("%f\t", adc_poll(ADC2, 10)*3.3*1.6/(4096));
+            printf("%d\n", adc_poll(ADC2, 10));
             // ADC1->CR2 |= ADC_CR2_ADON;W
             //printf("SR: %ld\t", ADC2->SR);
             //printf("LED: %d, Ticks: %lu\r\n", led_on, s_ticks);
