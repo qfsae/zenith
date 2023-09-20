@@ -10,6 +10,13 @@
 #include "hal_gpio.h"
 
 static inline void adc_init(ADC_TypeDef *adc){
+
+    // enable the selected adc interface
+    if(adc==ADC1) RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
+    if(adc==ADC2) RCC->APB2ENR |= RCC_APB2ENR_ADC2EN;
+    if(adc==ADC3) RCC->APB2ENR |= RCC_APB2ENR_ADC3EN;
+
+
     // Set the ADC clock prescaler
     ADC123_COMMON->CCR &= ~(ADC_CCR_ADCPRE);
     ADC123_COMMON->CCR |= 0x00000000U;
@@ -73,11 +80,6 @@ static inline void adc_start(ADC_TypeDef *adc){
 
 static inline void adc_stop(ADC_TypeDef *adc){
     adc->CR2 &= ~(ADC_CR2_SWSTART);
-}
-
-static inline uint16_t adc_retrieve(ADC_TypeDef *adc){
-    (void)adc;
-    return 0;
 }
 
 static inline uint16_t adc_poll(ADC_TypeDef *adc, uint8_t adcCh){

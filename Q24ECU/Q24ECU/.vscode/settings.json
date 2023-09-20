@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.b": "brainfuck",
+        "stm32f446xx.h": "c"
+    }
+}
