@@ -21,37 +21,14 @@ volatile uint64_t increment = 0xDEADBEEF;
 
 
 void initSystem(void){
-    //SCB->CPACR |= ((3UL << 10*2) | (3UL << 11*2)); // enable FPU
-    FLASH->ACR |= FLASH_ACR_LATENCY | BIT(8) | BIT(9); // flash latency / prefetch
-
-    RCC->CR &= ~(BIT(0) | BIT(16) | BIT(18)); // clear hsi on, hse on, hse byp / not needed
-    RCC->CR |= BIT(16);
-    RCC->CFGR &= ~RCC_CFGR_RTCPRE; // reset and set rtc prescaler (8mhz/8 = 1mhz)
-    RCC->CFGR |= (8 << 16U);
-    RCC->CFGR &= ~(RCC_CFGR_HPRE);
-    RCC->CFGR &= ~RCC_CFGR_SW; // reset and select HSE as system clock
-    RCC->CFGR |= RCC_CFGR_SW_HSE;
-    while(RCC->CR & RCC_CR_HSEON != RCC_CR_HSEON) spin(1);
-    SystemCoreClockUpdate(); // likely does not work
-
-
-    // RCC->PLLCFGR &= ~((BIT(17) - 1)); // clear pll multipliers
-    // RCC->PLLCFGR |= (((PLL_P - 2) / 2) & 3) << 16;      // Set PLL_P 
-    // RCC->PLLCFGR |= PLL_M | (PLL_N << 6);               // Set PLL_M and PLL_N 
-    // RCC->CR |= BIT(24);                                 // Enable PLL 
-    // while ((RCC->CR & BIT(25)) == 0) spin(1);           // Wait until done 
-    // RCC->CFGR = (APB1_PRE << 10) | (APB2_PRE << 13);    // Set prescalers 
-    // RCC->CFGR |= 2;                                     // Set clock source to PLL 
-    // while ((RCC->CFGR & 12) == 0) spin(1);              // Wait until done 
-
+    clock_init();
     RCC->AHB2ENR |= RCC_APB2ENR_SYSCFGEN;
-    RCC->APB2ENR |= RCC_APB2ENR_ADC2EN;
-    FLASH->ACR |= FLASH_ACR_LATENCY | BIT(8) | BIT(9);
-    SysTick_Config(FREQ/1000); // DO NOT USE "SystemClock"
+    SysTick_Config(SYS_FREQUENCY/1000); // DO NOT USE "SystemClock"
     increment = 0x0;
     s_ticks = 0x0;
     adc_init(ADC2);
-    
+    SystemCoreClockUpdate();
+
 }
 
 int main(void){
@@ -67,8 +44,6 @@ int main(void){
     gpio_set_mode(PIN('C', 1), GPIO_MODE_ANALOG);
     uart_init(UART_DEBUG, 9600);
     volatile uint32_t timer = 0, period = 1000;
-    volatile double f;
-    f = 3.6;
 
     for(;;) { // while loop that pulls from que | que added to by interrupts
         if(timer_expired(&timer, period, s_ticks)){
@@ -80,14 +55,18 @@ int main(void){
             }
             gpio_toggle_pin(led1);
             led_on = !led_on;
-            printf("CPU Speed: %d\n", SystemCoreClock);
+            SystemCoreClockUpdate();
+            //printf("SYSTick: %ld\tCore: %ld\tFreq: %ld\t", s_ticks, SystemCoreClock, SYS_FREQUENCY);
+            printf("VBatt: %0.3fV\n", 13.5*adc_poll(ADC2, 11)/4096.0);
+            //printf("source: %d\tm: %d\tn: %d\tp: %d\tCore: %ld\n", (RCC->CFGR & RCC_CFGR_SWS), RCC->PLLCFGR & RCC_PLLCFGR_PLLM, ((RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> 6), (((RCC->PLLCFGR & RCC_PLLCFGR_PLLP) >>16) + 1 ) *2, SystemCoreClock);
             //uart_write_buf(USART2, "hi\n", 4);
-            // printf("%f\t", adc_poll(ADC2, 10)*3.3*1.6/(4096));
+            //printf("%f\t", adc_poll(ADC2, 10)*3.3*1.6/(4096));
             // printf("%d\n", adc_poll(ADC2, 10));
             // ADC1->CR2 |= ADC_CR2_ADON;W
             //printf("SR: %ld\t", ADC2->SR);
             //printf("LED: %d, Ticks: %lu\r\n", led_on, s_ticks);
         }
+        //gpio_toggle_pin(led1);
     }
     return 0;
 }

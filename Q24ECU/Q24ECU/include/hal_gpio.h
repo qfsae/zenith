@@ -7,12 +7,13 @@
 #include <sys/stat.h>
 
 #include <stm32f446xx.h>
+#include <clock.h>
 
 // CPU Frequency
-#define FREQ 8000000//SystemCoreClock//16000000
+//#define FREQ 180000000//SystemCoreClock//16000000
 
 // Set Bit x 1
-#define BIT(x) (1UL << (x))
+
 // Package a pin bank (U8) and pin number (U8) into single package (U16)
 #define PIN(bank, num) ((((bank) - 'A') << 8) | (num))
 // Retrieve pin number (U8) from pin package (U16)
@@ -24,15 +25,7 @@
 enum { GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_AF, GPIO_MODE_ANALOG };
 enum { GPIO_PULLUP, GPIO_PULLDOWN, GPIO_RESET };
 
-// 6.3.3: APB1 clock <= 45MHz; APB2 clock <= 90MHz 
-// 3.5.1, Table 11: configure flash latency (WS) in accordance to clock freq 
-// 33.4: The AHB clock must be at least 25 MHz when Ethernet is used 
-enum { APB1_PRE = 5 /* AHB clock / 4 */, APB2_PRE = 4 /* AHB clock / 2 */ }; 
-enum { PLL_HSE = 16, PLL_M = 8, PLL_N = 180, PLL_P = 2 };  // Run at 180 Mhz 
-#define FLASH_LATENCY 5 
-#define SYS_FREQUENCY ((PLL_HSE * PLL_N / PLL_M / PLL_P) * 1000000) 
-#define APB2_FREQUENCY (SYS_FREQUENCY / (BIT(APB2_PRE - 3))) 
-#define APB1_FREQUENCY (SYS_FREQUENCY / (BIT(APB1_PRE - 3))) 
+
 
 /**
  * @brief Set the PinMode of a GPIO Pin
