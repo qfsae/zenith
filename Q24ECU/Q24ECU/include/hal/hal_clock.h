@@ -42,6 +42,7 @@ enum { PLL_HSE = 8, PLL_M = 4, PLL_N = 180, PLL_P = 2 };  // Run at 180 Mhz
 // Initialize the system clock
 static inline void clock_init(void){
     FLASH->ACR |= FLASH_ACR_LATENCY | BIT(8) | BIT(9); // flash latency / prefetch
+    
     RCC->CR &= ~(BIT(0) | BIT(16) | BIT(18));                               // clear hsi on, hse on, hse byp / not needed
     RCC->CR |= BIT(16);                                                     // set HSE ON
     while((RCC->CR & RCC_CR_HSEON )!= RCC_CR_HSEON) asm("nop");                // wait for HSE ready

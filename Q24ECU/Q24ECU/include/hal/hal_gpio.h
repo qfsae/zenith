@@ -72,12 +72,12 @@ static inline void gpio_toggle_pin(uint16_t pin){
 }
 
 static inline bool gpio_read_idr(uint16_t pin) {
-    GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
+    const GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
     return (gpio->IDR & (1U << PINNO(pin)));
 }
 
 static inline bool gpio_read_odr(uint16_t pin){
-    GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
+    const GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
     return (gpio->ODR & (1U << PINNO(pin)));
 }
 

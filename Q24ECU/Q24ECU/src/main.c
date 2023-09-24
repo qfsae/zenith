@@ -81,7 +81,7 @@ int main(void){
             }
             //gpio_toggle_pin(led1);
             led_on = !led_on;
-            printf("Command: %c Data: %c %c %c %c\n", interfaceCMD, cmdData[0], cmdData[1], cmdData[2], cmdData[3]);
+            printf("Command: %d Data: %c %c %c %c\n", interfaceCMD, cmdData[0], cmdData[1], cmdData[2], cmdData[3]);
         }
         //gpio_toggle_pin(led1);
     }

@@ -52,11 +52,11 @@ static inline void uart_enable_rxne(USART_TypeDef *uart, bool enable){
     };
 }
 
-static inline int uart_read_ready(USART_TypeDef *uart){
+static inline int uart_read_ready(const USART_TypeDef *uart){
     return uart->SR & BIT(5);
 }
 
-static inline uint8_t uart_read_byte(USART_TypeDef *uart) {
+static inline uint8_t uart_read_byte(const USART_TypeDef *uart) {
     return ((uint8_t) (uart->DR & 255));
 }
 
