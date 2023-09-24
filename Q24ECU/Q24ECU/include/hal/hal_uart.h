@@ -43,6 +43,15 @@ static inline void uart_init(USART_TypeDef *uart, unsigned long baud) {
     uart->CR1 |= BIT(13) | BIT(2) | BIT(3);  // Set UE, RE, TE
 }
 
+static inline void uart_enable_rxne(USART_TypeDef *uart, bool enable){
+    if(enable){
+        uart->CR1 |= USART_CR1_RXNEIE;
+    }
+    else{
+        uart->CR1 &= ~(USART_CR1_RXNEIE);
+    };
+}
+
 static inline int uart_read_ready(USART_TypeDef *uart){
     return uart->SR & BIT(5);
 }

@@ -7,7 +7,7 @@
 #include <sys/stat.h>
 
 #include <stm32f446xx.h>
-#include <clock.h>
+#include <hal/hal_clock.h>
 
 // CPU Frequency
 //#define FREQ 180000000//SystemCoreClock//16000000
