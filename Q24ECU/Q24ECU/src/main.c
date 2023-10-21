@@ -8,10 +8,9 @@
  */
 
 #include "hal/hal_gpio.h"
-#include "hal/hal_uart.h"
 #include "hal/hal_adc.h"
 
-#include "fifo.h"
+#include "usart2.h"
 
 uint16_t led1 = PIN('B', 0);
 uint16_t led2 = PIN('B', 1);
@@ -23,9 +22,6 @@ void SysTick_Handler(void){
 
 volatile bool led_on = true;
 volatile uint64_t increment = 0xDEADBEEF;
-
-volatile FIFO8_64 USART_RX;
-volatile FIFO8_64 USART_TX;
 
 
 void initSystem(void){
@@ -42,27 +38,6 @@ void initSystem(void){
 
 volatile uint8_t interfaceCMD = 0, cmdData[4];
 volatile uint8_t cmdRecv = 0;
-volatile uint8_t leng = 1;
-
-// Triggered on all USART interrupts -> see STM32F446 Manual
-void USART2_IRQHandler(){
-    //USART2->SR &= ~(USART_SR_TXE);
-    if(USART_RX.length > 0){
-        USART2->DR = FIFO8_pop(&USART_RX);
-        //uart_write_byte(UART_DEBUG, FIFO8_pop(&USART_RX));
-        USART_RX.length--;
-        if(USART_RX.length == 0) uart_enable_txne(USART2, false);
-    }
-    
-    if(uart_read_ready(USART2)){
-        FIFO8_push(&USART_RX, uart_read_byte(USART2));
-        uart_enable_txne(USART2, true);
-        USART_RX.length++;
-    }
-    gpio_toggle_pin(led1);
-    
-}
-
 
 /**
  * @brief Init function for basic timers (TIM6/TIM7)
@@ -100,8 +75,6 @@ void TIM6_DAC_IRQHandler(){
 
 int main(void){
     initSystem();
-    FIFO8_init(&USART_TX);
-    FIFO8_init(&USART_RX);
     
     uint16_t current = PIN('C', 0);
     gpio_set_mode(led1, GPIO_MODE_OUTPUT);
@@ -112,14 +85,14 @@ int main(void){
     gpio_set_mode(PIN('C', 1), GPIO_MODE_ANALOG);
 
     // Initialize USART
-    uart_init(UART_DEBUG, 9600);
+    USART2_Init(9600);
+    //uart_init(UART_DEBUG, 9600);
     // Enable USART receive interrupt
-    uart_enable_rxne(UART_DEBUG, true);
+    //uart_enable_rxne(UART_DEBUG, true);
     //uart_enable_txne(UART_DEBUG, true);
     
     // Set up ARM interrupt (0x03 = lowest priority | 0x00 = highest priority)
-    NVIC_SetPriority(USART2_IRQn, 0x03);
-    NVIC_EnableIRQ(USART2_IRQn);
+    
 
     volatile uint32_t timer = 0, period = 1000;
 
@@ -142,6 +115,15 @@ int main(void){
             // }
             //printf("\nLength: %d\n", leng);
             gpio_toggle_pin(led2);
+            //printf("hi\n");
+            //USART2_Transmit_Buffer("Hello\n", 7);
+            USART2_Transmit('H');
+            USART2_Transmit('e');
+            USART2_Transmit('l');
+            USART2_Transmit('l');
+            USART2_Transmit('o');
+            USART2_Transmit('\n');
+            //printf("%d\n", USART2_RXBuf_Len());
             // FIFO8_push(&USART_TX, 'h');
             // FIFO8_push(&USART_TX, 'e');
             // FIFO8_push(&USART_TX, 'l');
