@@ -52,6 +52,15 @@ static inline void uart_enable_rxne(USART_TypeDef *uart, bool enable){
     };
 }
 
+static inline void uart_enable_txne(USART_TypeDef *uart, bool enable){
+    if(enable){
+        uart->CR1 |= USART_CR1_TXEIE;
+    }
+    else{
+        uart->CR1 &= ~(USART_CR1_TXEIE);
+    };
+}
+
 static inline int uart_read_ready(const USART_TypeDef *uart){
     return uart->SR & BIT(5);
 }
