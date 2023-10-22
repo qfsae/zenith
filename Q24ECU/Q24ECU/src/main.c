@@ -68,7 +68,7 @@ void TIM6_DAC_IRQHandler(){
     TIM6->SR = TIM_SR_CC1IF;
 
     //printf("%d\n", TIM6->SR);
-    //gpio_toggle_pin(led1);
+    gpio_toggle_pin(led1);
     //if((TIM6->SR & 1) == 1) gpio_toggle_pin(led1);
     // TIM6->ARR = (65534);
 }
@@ -96,8 +96,8 @@ int main(void){
 
     volatile uint32_t timer = 0, period = 1000;
 
-    // Enable Timer 6 (Basic Timer) 10Hz (APB2/45000, count to 2000)
-    TIM_basic_Init(TIM6, 45000U, 200U);
+    // Enable Timer 6 (Basic Timer) 1Hz (APB2/45000, count to 2000)
+    TIM_basic_Init(TIM6, 45000U, 2000U);
     NVIC_SetPriority(TIM6_DAC_IRQn, 0x03);
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
@@ -117,12 +117,13 @@ int main(void){
             gpio_toggle_pin(led2);
             //printf("hi\n");
             //USART2_Transmit_Buffer("Hello\n", 7);
-            USART2_Transmit('H');
-            USART2_Transmit('e');
-            USART2_Transmit('l');
-            USART2_Transmit('l');
-            USART2_Transmit('o');
-            USART2_Transmit('\n');
+            // USART2_Transmit('H');
+            // USART2_Transmit('e');
+            // USART2_Transmit('l');
+            // USART2_Transmit('l');
+            // USART2_Transmit('o');
+            // USART2_Transmit('\n');
+            printf("%d\n", gpio_read_odr(led2));
             //printf("%d\n", USART2_RXBuf_Len());
             // FIFO8_push(&USART_TX, 'h');
             // FIFO8_push(&USART_TX, 'e');

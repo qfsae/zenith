@@ -33,7 +33,8 @@ uint8_t USART2_Transmit(volatile uint8_t data){
 }
 
 uint8_t USART2_Transmit_Buffer(char *buf, size_t len){
-    FIFO8_push_buf(&USART_TX, buf, len);
+    //FIFO8_push_buf(&USART_TX, buf, len);
+    while(len-- > 0) FIFO8_push(&USART_TX, *(uint8_t *) buf++);
     uart_enable_txne(USART2, true);
     return (USART_TX.length >= 64);
 }
