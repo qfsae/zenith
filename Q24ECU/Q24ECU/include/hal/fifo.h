@@ -44,9 +44,5 @@ static inline uint8_t FIFO8_init(volatile FIFO8_64 *reg){
     reg->head = -1;
     reg->tail = -1;
     reg->length = 0;
+    return 0;
 }
-
-// static inline void FIFO8_push_buf(FIFO8_64 *reg, char *buf, size_t len){
-//     while(len-- > 0) FIFO8_push(reg, *(uint8_t *) buf++);
-//     reg->length += len;
-// }

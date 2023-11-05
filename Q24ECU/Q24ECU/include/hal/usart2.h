@@ -1,7 +1,7 @@
 #pragma once
 
 #include "fifo.h"
-#include "hal/hal_uart.h"
+#include "f446/hal_uart.h"
 
 void    USART2_Init(unsigned long baud);
 

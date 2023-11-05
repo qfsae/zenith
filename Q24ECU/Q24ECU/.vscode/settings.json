@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "*.b": "brainfuck",
-        "stm32f446xx.h": "c"
+        "stm32f446xx.h": "c",
+        "freertos.h": "c"
     }
 }

@@ -1,4 +1,4 @@
-#include "usart2.h"
+#include "hal/usart2.h"
 
 volatile FIFO8_64 USART_RX;
 volatile FIFO8_64 USART_TX;

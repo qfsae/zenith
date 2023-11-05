@@ -7,10 +7,11 @@
  * 
  */
 
-#include "hal/hal_gpio.h"
-#include "hal/hal_adc.h"
+#include "hal/f446/hal_gpio.h"
+#include "hal/f446/hal_adc.h"
 
-#include "usart2.h"
+#include "hal/usart2.h"
+#include <FreeRTOS.h>
 
 uint16_t led1 = PIN('B', 0);
 uint16_t led2 = PIN('B', 1);

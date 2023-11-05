@@ -3,7 +3,7 @@
 
 #include <sys/stat.h>
 
-#include "usart2.h"
+#include "hal/usart2.h"
 
 int _fstat(int fd, struct stat *st) {
   if (fd < 0) return -1;
