@@ -5,7 +5,7 @@ include(./gcc-arm-none-eabi.cmake)
 set(CMAKE_SYSTEM_NAME Generic)
 
 project(blinky-led)
-set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Project)
+set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core)
 
 set(MCU_FAMILY STM32F4xx)
 set(MCU_MODEL STM32F446xx)
@@ -39,13 +39,27 @@ add_executable(${EXECUTABLE}
     ${PROJECT_SOURCES}
     ${STARTUP_SCRIPT})
 
+
+FILE(GLOB FreeRTOS_src FreeRTOS-Kernel/*.c)
+add_library( FreeRTOS STATIC
+    ${FreeRTOS_src}
+    FreeRTOS-Kernel/portable/GCC/ARM_CM3/port.c
+    FreeRTOS-Kernel/portable/MemMang/heap_4.c)
+target_include_directories( FreeRTOS PUBLIC
+    FreeRTOS-Kernel/portable/GCC/ARM_CM3
+    FreeRTOS-Kernel/include
+    core/include/)
+
+
+
 target_include_directories(${EXECUTABLE} PRIVATE
-    ${INCLUDE_DIRECTORIES})
+    ${INCLUDE_DIRECTORIES}
+    )
 
 target_compile_options(${EXECUTABLE} PRIVATE
     ${CPU_PARAMETERS}
-    -Wall
-    -Wextra
+    # -Wall
+    # -Wextra
     -g
     -fmessage-length=0
     -ffunction-sections
@@ -60,17 +74,18 @@ target_link_options(${EXECUTABLE} PRIVATE
     -T${MCU_LINKER_SCRIPT}
     ${CPU_PARAMETERS}
     #-nostartfiles
-    -Wall
+    # -Wall
     --specs=nano.specs
     -lgcc
     -Wl,--gc-sections
     -Wl,-L./ld
     # Printf floats can be removed in production code
-    -Wl,-u_printf_float
+    #-Wl,-u_printf_float
     -Wl,-Map=${PROJECT_NAME}.map
     -Wl,--print-memory-usage
     )
-
+target_link_libraries(${EXECUTABLE}
+    FreeRTOS)
 add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${EXECUTABLE}> firmware.hex
     COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${EXECUTABLE}> firmware.bin)
