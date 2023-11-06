@@ -4,19 +4,17 @@ cmake_minimum_required(VERSION 3.24)
 include(./gcc-arm-none-eabi.cmake)
 set(CMAKE_SYSTEM_NAME Generic)
 
-project(blinky-led)
+project(Q42VCU)
 set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core)
 
 set(MCU_FAMILY STM32F4xx)
 set(MCU_MODEL STM32F446xx)
 set(CPU_PARAMETERS
-    -mcpu=Cortex-M4
+    -mcpu=cortex-m4
     -mthumb
-    # FPU MUST be enabled for this to work
-    -mfloat-abi=hard
+    # FPU enable code must be written before it can be used
     -mfpu=fpv4-sp-d16
-    -march=armv7
-    -mthumb-interwork
+    -mfloat-abi=hard
     )
 
 set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/vendor/startup_stm32f446retx.s)
@@ -41,46 +39,13 @@ add_executable(${EXECUTABLE}
     ${PROJECT_SOURCES}
     ${STARTUP_SCRIPT})
 
-
-# FILE(GLOB FreeRTOS_src FreeRTOS-Kernel/*.c)
-# add_library( FreeRTOS STATIC
-#     ${FreeRTOS_src}
-#     FreeRTOS-Kernel/portable/GCC/ARM_CM3/port.c
-#     FreeRTOS-Kernel/portable/MemMang/heap_4.c)
-# target_include_directories( FreeRTOS PUBLIC
-#     FreeRTOS-Kernel/portable/GCC/ARM_CM3
-#     FreeRTOS-Kernel/include
-#     core/include/)
-
-set(FREERTOS_KERNEL_PATH "./FreeRTOS-Kernel/")
-add_library(freertos_config INTERFACE)
-target_include_directories(freertos_config
-    INTERFACE
-    ./core/config
-)
-
-# Select the heap port.  values between 1-4 will pick a heap.
-set(FREERTOS_HEAP "4" CACHE STRING "" FORCE)
-
-# Select the native compile PORT
-set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "" FORCE)
-
-# Adding the FreeRTOS-Kernel subdirectory
-add_subdirectory(${FREERTOS_KERNEL_PATH} FreeRTOS-Kernel)
-
-target_compile_options(freertos_kernel PRIVATE
-)
-
-target_link_libraries(${EXECUTABLE} freertos_kernel freertos_config)
-
 target_include_directories(${EXECUTABLE} PRIVATE
-    ${INCLUDE_DIRECTORIES}
-    )
+    ${INCLUDE_DIRECTORIES})
 
 target_compile_options(${EXECUTABLE} PRIVATE
     ${CPU_PARAMETERS}
-    # -Wall
-    # -Wextra
+    -Wall
+    -Wextra
     -g
     -fmessage-length=0
     -ffunction-sections
@@ -95,20 +60,17 @@ target_link_options(${EXECUTABLE} PRIVATE
     -T${MCU_LINKER_SCRIPT}
     ${CPU_PARAMETERS}
     #-nostartfiles
-    # -Wall
+    -Wall
     --specs=nano.specs
-    -static
-    -x assembler-with-cpp
     -lgcc
     -Wl,--gc-sections
     -Wl,-L./ld
     # Printf floats can be removed in production code
-    #-Wl,-u_printf_float
+    -Wl,-u_printf_float
     -Wl,-Map=${PROJECT_NAME}.map
     -Wl,--print-memory-usage
     )
-target_link_libraries(${EXECUTABLE}
-    FreeRTOS)
+
 add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${EXECUTABLE}> firmware.hex
     COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${EXECUTABLE}> firmware.bin)

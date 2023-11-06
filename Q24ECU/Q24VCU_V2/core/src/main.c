@@ -10,20 +10,20 @@
 #include "hal_gpio.h"
 #include "hal_adc.h"
 #include "hal_uart.h"
-#include "FreeRTOS.h"
-#include "FreeRTOSConfig.h"
-#include "task.h"
+// #include "FreeRTOS.h"
+// #include "FreeRTOSConfig.h"
+// #include "task.h"
 
 
 uint16_t led1 = PIN('B', 0);
 uint16_t led2 = PIN('B', 1);
 
-void blinkLED(void *param){
-    gpio_write(led1, true);
-    vTaskDelay(1000);
-    gpio_write(led1, false);
-    vTaskDelay(1000);
-}
+// void blinkLED(void *param){
+//     gpio_write(led1, true);
+//     vTaskDelay(1000);
+//     gpio_write(led1, false);
+//     vTaskDelay(1000);
+// }
 
 static volatile uint32_t s_ticks = 0xBEEF;
 void SysTick_Handler(void){
@@ -96,9 +96,9 @@ int main(void){
     NVIC_SetPriority(TIM6_DAC_IRQn, 0x03);
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
-    TaskHandle_t gLEDtask = NULL;
-    uint32_t status = xTaskCreate(blinkLED, "Blink LED 1", 1024, NULL, tskIDLE_PRIORITY, &gLEDtask);
-    vTaskStartScheduler();
+    // TaskHandle_t gLEDtask = NULL;
+    // uint32_t status = xTaskCreate(blinkLED, "Blink LED 1", 1024, NULL, tskIDLE_PRIORITY, &gLEDtask);
+    // vTaskStartScheduler();
 
     for(;;) {
         if(timer_expired(&timer, period, s_ticks)){
