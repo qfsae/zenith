@@ -5,7 +5,8 @@ set(CMAKE_SYSTEM_PROCESSOR arm)
 set(TOOLCHAIN_PREFIX arm-none-eabi-)
 ## CFLAGS
 set(CMAKE_CFLAGS
-"-fdata-sections -ffunction-sections -Wl,--gc-sections")
+# "-fdata-sections -ffunction-sections -Wl,--gc-sections")
+"")
 
 set(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}gcc ${CMAKE_CFLAGS} ${CMAKE_LDFLAGS})
 set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})

@@ -10,11 +10,13 @@ set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core)
 set(MCU_FAMILY STM32F4xx)
 set(MCU_MODEL STM32F446xx)
 set(CPU_PARAMETERS
-    -mcpu=cortex-m4
+    -mcpu=Cortex-M4
     -mthumb
     # FPU MUST be enabled for this to work
-    -mfpu=fpv4-sp-d16
     -mfloat-abi=hard
+    -mfpu=fpv4-sp-d16
+    -march=armv7
+    -mthumb-interwork
     )
 
 set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/vendor/startup_stm32f446retx.s)
@@ -40,17 +42,36 @@ add_executable(${EXECUTABLE}
     ${STARTUP_SCRIPT})
 
 
-FILE(GLOB FreeRTOS_src FreeRTOS-Kernel/*.c)
-add_library( FreeRTOS STATIC
-    ${FreeRTOS_src}
-    FreeRTOS-Kernel/portable/GCC/ARM_CM3/port.c
-    FreeRTOS-Kernel/portable/MemMang/heap_4.c)
-target_include_directories( FreeRTOS PUBLIC
-    FreeRTOS-Kernel/portable/GCC/ARM_CM3
-    FreeRTOS-Kernel/include
-    core/include/)
+# FILE(GLOB FreeRTOS_src FreeRTOS-Kernel/*.c)
+# add_library( FreeRTOS STATIC
+#     ${FreeRTOS_src}
+#     FreeRTOS-Kernel/portable/GCC/ARM_CM3/port.c
+#     FreeRTOS-Kernel/portable/MemMang/heap_4.c)
+# target_include_directories( FreeRTOS PUBLIC
+#     FreeRTOS-Kernel/portable/GCC/ARM_CM3
+#     FreeRTOS-Kernel/include
+#     core/include/)
 
+set(FREERTOS_KERNEL_PATH "./FreeRTOS-Kernel/")
+add_library(freertos_config INTERFACE)
+target_include_directories(freertos_config
+    INTERFACE
+    ./core/config
+)
 
+# Select the heap port.  values between 1-4 will pick a heap.
+set(FREERTOS_HEAP "4" CACHE STRING "" FORCE)
+
+# Select the native compile PORT
+set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "" FORCE)
+
+# Adding the FreeRTOS-Kernel subdirectory
+add_subdirectory(${FREERTOS_KERNEL_PATH} FreeRTOS-Kernel)
+
+target_compile_options(freertos_kernel PRIVATE
+)
+
+target_link_libraries(${EXECUTABLE} freertos_kernel freertos_config)
 
 target_include_directories(${EXECUTABLE} PRIVATE
     ${INCLUDE_DIRECTORIES}
@@ -76,6 +97,8 @@ target_link_options(${EXECUTABLE} PRIVATE
     #-nostartfiles
     # -Wall
     --specs=nano.specs
+    -static
+    -x assembler-with-cpp
     -lgcc
     -Wl,--gc-sections
     -Wl,-L./ld
