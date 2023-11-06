@@ -17,8 +17,8 @@ set(CPU_PARAMETERS
     -mfloat-abi=hard
     )
 
-set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/core/startup_stm32f446retx.s)
-set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/core/STM32F446RETX_FLASH.ld)
+set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/vendor/startup_stm32f446retx.s)
+set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/vendor/STM32F446RETX_FLASH.ld)
 
 set(EXECUTABLE ${CMAKE_PROJECT_NAME})
 enable_language(C ASM)
@@ -27,8 +27,8 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 
 set(INCLUDE_DIRECTORIES
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/cmsis_core/CMSIS/Core/Include
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/cmsis_f4/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/cmsis_core/CMSIS/Core/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/cmsis_f4/Include
     ${PROJECT_DIR}/include
 )
 
