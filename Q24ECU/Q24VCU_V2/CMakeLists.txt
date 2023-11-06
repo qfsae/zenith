@@ -12,9 +12,9 @@ set(MCU_MODEL STM32F446xx)
 set(CPU_PARAMETERS
     -mcpu=cortex-m4
     -mthumb
-    # FPU enable code must be written before it can be used
-    #-mfpu=fpv4-sp-d16
-    #-mfloat-abi=hard
+    # FPU MUST be enabled for this to work
+    -mfpu=fpv4-sp-d16
+    -mfloat-abi=hard
     )
 
 set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/core/startup_stm32f446retx.s)

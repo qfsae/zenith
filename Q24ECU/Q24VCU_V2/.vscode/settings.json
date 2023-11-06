@@ -3,6 +3,8 @@
         "*.b": "brainfuck",
         "hal.h": "c",
         "time.h": "c",
-        "signal.h": "c"
+        "signal.h": "c",
+        "stm32f446xx.h": "c",
+        "stm32f4xx.h": "c"
     }
 }

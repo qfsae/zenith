@@ -46,11 +46,7 @@ void TIM_basic_Init(TIM_TypeDef *timer, uint16_t prescaler, uint16_t reload_regi
 void TIM6_DAC_IRQHandler(){
     // Place at beginning of IQR - Otherwise it causes the NVIC to rerun the IQR
     TIM6->SR = TIM_SR_CC1IF;
-
-    //printf("%d\n", TIM6->SR);
     gpio_toggle_pin(led1);
-    //if((TIM6->SR & 1) == 1) gpio_toggle_pin(led1);
-    // TIM6->ARR = (65534);
 }
 
 volatile bool led_on = true;
@@ -60,11 +56,12 @@ volatile uint64_t increment = 0xDEADBEEF;
 void SystemInit(void){
     clock_init();
     RCC->AHB2ENR |= RCC_APB2ENR_SYSCFGEN;
+    // enable FPU
+    SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  /* set CP10 and CP11 Full Access */
     SysTick_Config(SYS_FREQUENCY/1000); // DO NOT USE "SystemClock"
     increment = 0x0;
     s_ticks = 0x0;
     adc_init(ADC2);
-    // SystemCoreClockUpdate();
 }
 
 int main(void){
@@ -90,16 +87,8 @@ int main(void){
 
     for(;;) {
         if(timer_expired(&timer, period, s_ticks)){
-            // if(!led_on){
-            //     gpio_write(led2, true);
-            // }
-            // else{
-            //     gpio_write(led2, false);
-            // }
             gpio_toggle_pin(led2);
-            ITM_SendChar('2'); // does not work at moment bc of SWIM being disconnected
-            //printf("hi\n");
-            printf("%d\n", gpio_read_odr(led2));
+            printf("hi\n");
         }
         //gpio_toggle_pin(led1);
     }
