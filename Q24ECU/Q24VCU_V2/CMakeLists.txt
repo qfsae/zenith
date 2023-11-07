@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.24)
 
 #set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 include(./gcc-arm-none-eabi.cmake)
-set(CMAKE_SYSTEM_NAME Generic)
+# set(CMAKE_SYSTEM_NAME Generic)
 
-project(Q42VCU)
+project(Q24VCU)
 set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core)
 
 set(MCU_FAMILY STM32F4xx)

@@ -1,57 +1,20 @@
 /**
  * @file main.c
  * @author Jacob Chisholm (https://jchisholm.github.io) //
- * from bare metal programming guide by --
- * @brief simple led blinking program
+ * @brief System Entry Point
  * @date 2023-08-30
  * 
  */
 
-#include "hal_gpio.h"
-#include "hal_adc.h"
-#include "hal_uart.h"
-// #include "FreeRTOS.h"
-// #include "FreeRTOSConfig.h"
-// #include "task.h"
+#include "main.h"
 
-
-uint16_t led1 = PIN('B', 0);
-uint16_t led2 = PIN('B', 1);
-
-// void blinkLED(void *param){
-//     gpio_write(led1, true);
-//     vTaskDelay(1000);
-//     gpio_write(led1, false);
-//     vTaskDelay(1000);
-// }
+static uint16_t led1 = PIN('B', 0);
+static uint16_t led2 = PIN('B', 1);
 
 static volatile uint32_t s_ticks = 0xBEEF;
+
 void SysTick_Handler(void){
     s_ticks++;
-}
-
-/**
- * @brief Init function for basic timers (TIM6/TIM7)
- * 
- * @param timer TIM6 or TIM6 (STM32F446)
- * @param prescaler Clock Prescaler
- * @param reload_register Overflow Evaluator
- * Note: Values loaded into prescaler and reload are (value-1) -> see datasheet
- */
-void TIM_basic_Init(TIM_TypeDef *timer, uint16_t prescaler, uint16_t reload_register){
-    // Enable Clock
-    if(timer == TIM6) RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
-    if(timer == TIM7) RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
-    // Reset and Set Master Mode to Enable (CNT_EN is used as a trigger output)
-    timer->CR2 &= ~(7UL << 4U);
-    timer->CR2 |= BIT(4); // set timer master mode to enable
-    timer->DIER &= ~(BIT(8) | BIT(0)); // reset interrupt enable reg
-    timer->DIER |= BIT(0); // enable timer interrupt
-    // TIM6->EGR |= BIT(0);
-    timer->ARR = (reload_register-1);//(65536);
-    timer->PSC = (uint16_t)(prescaler-1);//(APB1_FREQUENCY);
-    timer->CR1 &= ~(TIM_CR1_ARPE | TIM_CR1_OPM | TIM_CR1_URS | TIM_CR1_CEN); // reset timer control register 1
-    timer->CR1 |= (TIM_CR1_CEN); // set interrupt source to only overflow | enable timer
 }
 
 void TIM6_DAC_IRQHandler(){
@@ -60,35 +23,17 @@ void TIM6_DAC_IRQHandler(){
     gpio_toggle_pin(led1);
 }
 
-volatile bool led_on = true;
-volatile uint64_t increment = 0xDEADBEEF;
-
-
-void SystemInit(void){
-    clock_init();
-    RCC->AHB2ENR |= RCC_APB2ENR_SYSCFGEN;
-    // enable FPU
-    SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  /* set CP10 and CP11 Full Access */
-    SysTick_Config(SYS_FREQUENCY/1000); // DO NOT USE "SystemClock"
-    increment = 0x0;
-    s_ticks = 0x0;
-    adc_init(ADC2);
-}
-
 int main(void){
-    uint16_t current = PIN('C', 0);
+    // set system ticks to zero
+    s_ticks = 0x0;
+
+    // set up gpio
     gpio_set_mode(led1, GPIO_MODE_OUTPUT);
     gpio_write(led1, false);
     gpio_set_mode(led2, GPIO_MODE_OUTPUT);
     gpio_write(led1, false);
-    gpio_set_mode(current, GPIO_MODE_ANALOG);
-    gpio_set_mode(PIN('C', 1), GPIO_MODE_ANALOG);
 
-    // Initialize USART
-    uart_init(USART2, 9600);
-    uart_enable_rxne(USART2, true);
-    NVIC_SetPriority(USART2_IRQn, 0x03);
-    NVIC_EnableIRQ(USART2_IRQn);
+    // set up main loop delay
     volatile uint32_t timer = 0, period = 1000;
 
     // Enable Timer 6 (Basic Timer) 1Hz (APB2/45000, count to 2000)
@@ -96,14 +41,9 @@ int main(void){
     NVIC_SetPriority(TIM6_DAC_IRQn, 0x03);
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
-    // TaskHandle_t gLEDtask = NULL;
-    // uint32_t status = xTaskCreate(blinkLED, "Blink LED 1", 1024, NULL, tskIDLE_PRIORITY, &gLEDtask);
-    // vTaskStartScheduler();
-
     for(;;) {
         if(timer_expired(&timer, period, s_ticks)){
             gpio_toggle_pin(led2);
-            printf("hi\n");
         }
         //gpio_toggle_pin(led1);
     }

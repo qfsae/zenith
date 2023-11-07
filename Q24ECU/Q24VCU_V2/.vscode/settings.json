@@ -6,6 +6,7 @@
         "signal.h": "c",
         "stm32f446xx.h": "c",
         "stm32f4xx.h": "c",
-        "hal_gpio.h": "c"
+        "hal_gpio.h": "c",
+        "hal_uart.h": "c"
     }
 }
