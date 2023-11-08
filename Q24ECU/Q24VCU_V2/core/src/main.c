@@ -19,8 +19,10 @@ static volatile uint32_t s_ticks = 0xBEEF;
 
 void testTask(void *param){
     //(void)(param); // Cast unused variable to void
-    gpio_toggle_pin(led2);
-    vTaskDelay(500);
+    for(;;){
+        gpio_toggle_pin(led2);
+        vTaskDelay(1000);
+    }
 }
 
 // void SysTick_Handler(void){
@@ -39,9 +41,9 @@ int main(void){
 
     // set up gpio
     gpio_set_mode(led1, GPIO_MODE_OUTPUT);
-    gpio_write(led1, false);
+    gpio_write(led1, true);
     gpio_set_mode(led2, GPIO_MODE_OUTPUT);
-    gpio_write(led1, false);
+    gpio_write(led2, false);
 
     // set up main loop delay
     // volatile uint32_t timer = 0, period = 1000;
