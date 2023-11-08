@@ -14,6 +14,10 @@
 /**
  * @brief Initializes the CPU
  * 
+ * Enable System Configuration Register
+ * Enable Floating Point Unit
+ * Configure System Tick for 1000hz (1ms)
+ * 
  */
 void SystemInit(void){
     // Initialize Clock

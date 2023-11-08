@@ -11,16 +11,34 @@
 #include "FreeRTOS.h"
 #include "FreeRTOSConfig.h"
 #include "task.h"
+#include <string.h>
 
+// debug LED Pins for MockECU
+#define led1 ((uint16_t)(PIN('B', 0)))
+#define led2 ((uint16_t)(PIN('B', 1)))
 
-static uint16_t led1 = PIN('B', 0);
-static uint16_t led2 = PIN('B', 1);
+// set up a basic test task
+TaskHandle_t gTestTask = NULL;
 
 // test task for blinking an led
 void testTask(void *param){
     (void)(param); // Cast unused variable to void
     for(;;){
+        // Toggle LED Pin
         gpio_toggle_pin(led2);
+        // Non Blocking Delay
+        vTaskDelay(1000);
+    }
+}
+
+// Task Handle for Debug print Task
+TaskHandle_t gDebugPrint = NULL;
+
+// Debug Print "HI!" Task
+void debugPrint(void *param){
+    (void)param;
+    for(;;){
+        uart_write_buf(USART2, "Hi!\n", 5);
         vTaskDelay(1000);
     }
 }
@@ -41,13 +59,11 @@ int main(void){
 
     // Enable Timer 6 (Basic Timer) 1Hz (APB2/45000, count to 2000)
     TIM_basic_Init(TIM6, 45000U, 2000U);
-    NVIC_SetPriority(TIM6_DAC_IRQn, 0x03);
+    NVIC_SetPriority(TIM6_DAC_IRQn, 0x03); // Enable Timer IRQ (lowest priority)
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
-    // set up a basic test task
-    TaskHandle_t gTestTask = NULL;
-
-    uint32_t status = xTaskCreate(
+    // Create Sample Blink Task
+    uint32_t status_tstTsk = xTaskCreate(
         testTask,
         "TestTsk",
         1024,
@@ -56,6 +72,17 @@ int main(void){
         &gTestTask
     );
 
+    // Create Sample Print Task
+    uint32_t status_dbgPrn = xTaskCreate(
+        debugPrint,
+        "DebugPrint",
+        1024,
+        NULL,
+        tskIDLE_PRIORITY,
+        &gDebugPrint
+    );
+
+    // Start Scheduler
     vTaskStartScheduler();
 
     // System Main loop (Should never run -> Scheduler runs infinitely)
