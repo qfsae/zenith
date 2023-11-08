@@ -45,6 +45,7 @@ file(GLOB_RECURSE PROJECT_SOURCES FOLLOW_SYMLINKS
 
 add_executable(${EXECUTABLE}
     ${RTOS_DIR}/portable/GCC/ARM_CM4F/port.c
+    ${RTOS_DIR}/portable/MemMang/heap_4.c
     ${RTOS_SOURCES}
     ${PROJECT_SOURCES}
     ${STARTUP_SCRIPT})

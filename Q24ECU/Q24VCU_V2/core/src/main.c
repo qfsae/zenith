@@ -7,15 +7,25 @@
  */
 
 #include "main.h"
+#include "FreeRTOS.h"
+#include "FreeRTOSConfig.h"
+#include "task.h"
+
 
 static uint16_t led1 = PIN('B', 0);
 static uint16_t led2 = PIN('B', 1);
 
 static volatile uint32_t s_ticks = 0xBEEF;
 
-void SysTick_Handler(void){
-    s_ticks++;
+void testTask(void *param){
+    //(void)(param); // Cast unused variable to void
+    gpio_toggle_pin(led2);
+    vTaskDelay(500);
 }
+
+// void SysTick_Handler(void){
+//     s_ticks++;
+// }
 
 void TIM6_DAC_IRQHandler(){
     // Place at beginning of IQR - Otherwise it causes the NVIC to rerun the IQR
@@ -34,18 +44,31 @@ int main(void){
     gpio_write(led1, false);
 
     // set up main loop delay
-    volatile uint32_t timer = 0, period = 1000;
+    // volatile uint32_t timer = 0, period = 1000;
 
     // Enable Timer 6 (Basic Timer) 1Hz (APB2/45000, count to 2000)
     TIM_basic_Init(TIM6, 45000U, 2000U);
     NVIC_SetPriority(TIM6_DAC_IRQn, 0x03);
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
+    TaskHandle_t gTestTask = NULL;
+
+    uint32_t status = xTaskCreate(
+        testTask,
+        "TestTsk",
+        1024,
+        NULL,
+        tskIDLE_PRIORITY,
+        &gTestTask
+    );
+
+    vTaskStartScheduler();
+
     // System Main loop
     for(;;) {
-        if(timer_expired(&timer, period, s_ticks)){
-            gpio_toggle_pin(led2);
-        }
+        // if(timer_expired(&timer, period, s_ticks)){
+        gpio_write(led2, false);
+        // }
     }
     return 0;
 }
