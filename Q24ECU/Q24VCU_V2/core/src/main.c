@@ -41,11 +41,11 @@ int main(void){
     NVIC_SetPriority(TIM6_DAC_IRQn, 0x03);
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
+    // System Main loop
     for(;;) {
         if(timer_expired(&timer, period, s_ticks)){
             gpio_toggle_pin(led2);
         }
-        //gpio_toggle_pin(led1);
     }
     return 0;
 }

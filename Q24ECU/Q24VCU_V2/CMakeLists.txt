@@ -6,6 +6,7 @@ include(./gcc-arm-none-eabi.cmake)
 
 project(Q24VCU)
 set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core)
+set(RTOS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/FreeRTOS-Kernel)
 
 set(MCU_FAMILY STM32F4xx)
 set(MCU_MODEL STM32F446xx)
@@ -30,12 +31,21 @@ set(INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/cmsis_core/CMSIS/Core/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/cmsis_f4/Include
     ${PROJECT_DIR}/include
+    ${RTOS_DIR}/portable/GCC/ARM_CM4F
+    ${PROJECT_DIR}/config
+    ${RTOS_DIR}/include
+    
 )
+
+file(GLOB RTOS_SOURCES
+    ${RTOS_DIR}/*.c)
 
 file(GLOB_RECURSE PROJECT_SOURCES FOLLOW_SYMLINKS
     ${PROJECT_DIR}/src/*.c)
 
 add_executable(${EXECUTABLE}
+    ${RTOS_DIR}/portable/GCC/ARM_CM4F/port.c
+    ${RTOS_SOURCES}
     ${PROJECT_SOURCES}
     ${STARTUP_SCRIPT})
 
