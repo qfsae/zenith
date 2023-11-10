@@ -15,7 +15,7 @@
 
 #define GPIO(bank) ((GPIO_TypeDef *) (GPIOA_BASE + 0x400U * (bank)))
 enum { GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_AF, GPIO_MODE_ANALOG };
-enum { GPIO_PULLUP, GPIO_PULLDOWN, GPIO_RESET };
+enum { GPIO_RESET, GPIO_PULLUP, GPIO_PULLDOWN, GPIO_RESERV};
 
 
 
@@ -64,19 +64,19 @@ static inline void gpio_toggle_pin(uint16_t pin){
 }
 
 static inline bool gpio_read_idr(uint16_t pin) {
-    GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
+    const GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
     return (gpio->IDR & (1U << PINNO(pin)));
 }
 
 static inline bool gpio_read_odr(uint16_t pin){
-    GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
+    const GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
     return (gpio->ODR & (1U << PINNO(pin)));
 }
 
 static inline void gpio_pull(uint16_t pin, uint8_t mode){
     GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
     gpio->PUPDR &= ~(3U << (PINNO(pin)*2));
-    if(mode!=3) gpio->PUPDR |= 1U << (2*(PINNO(pin))+mode); //3 is reserved
+    if(mode!=GPIO_RESERV) gpio->PUPDR |= mode << (2*(PINNO(pin)));
 }
 
 // t: expiration time, prd: period, now: current time. Return true if expired
