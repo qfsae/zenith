@@ -75,7 +75,7 @@ static inline void spin(volatile uint32_t count) {
 
 static inline void uart_write_byte(USART_TypeDef * uart, uint8_t byte) {
     uart->DR = byte;
-    while ((uart->SR & USART_SR_TXE == 0) spin(1);
+    while (uart->SR & USART_SR_TXE == 0) spin(1);
     
 }
 
