@@ -8,18 +8,10 @@
 
 #include <stm32f446xx.h>
 #include "hal_clock.h"
+#include "pins.h"
 
 // CPU Frequency
 //#define FREQ 180000000//SystemCoreClock//16000000
-
-// Set Bit x 1
-
-// Package a pin bank (U8) and pin number (U8) into single package (U16)
-#define PIN(bank, num) ((((bank) - 'A') << 8) | (num))
-// Retrieve pin number (U8) from pin package (U16)
-#define PINNO(pin) (pin & 255)
-// Retrieve pin bank (U8) from pin package (U16)
-#define PINBANK(pin) (pin >> 8)
 
 #define GPIO(bank) ((GPIO_TypeDef *) (GPIOA_BASE + 0x400U * (bank)))
 enum { GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_AF, GPIO_MODE_ANALOG };
