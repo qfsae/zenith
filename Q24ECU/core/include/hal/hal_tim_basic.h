@@ -30,7 +30,7 @@ static inline void TIM_basic_Init(TIM_TypeDef *timer, uint16_t prescaler, uint16
     timer->DIER |= BIT(0); // enable timer interrupt
     // TIM6->EGR |= BIT(0);
     timer->ARR = (reload_register-1);//(65536);
-    timer->PSC = (uint16_t)(prescaler-1);//(APB1_FREQUENCY);
+    timer->PSC = (prescaler-1);//(APB1_FREQUENCY);
     timer->CR1 &= ~(TIM_CR1_ARPE | TIM_CR1_OPM | TIM_CR1_URS | TIM_CR1_CEN); // reset timer control register 1
     timer->CR1 |= (TIM_CR1_CEN); // set interrupt source to only overflow | enable timer
 }
