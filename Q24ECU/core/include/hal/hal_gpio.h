@@ -60,23 +60,23 @@ static inline void gpio_write(uint16_t pin, bool value) {
 
 static inline void gpio_toggle_pin(uint16_t pin){
     GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
-    gpio->BSRR = (1UL << PINNO(pin)) << ((gpio->ODR & (1UL << PINNO(pin))) > 0 ? 16 : 0);
+    gpio->BSRR = (1UL << PINNO(pin)) << (gpio->ODR & (1UL << PINNO(pin)) ? 16 : 0);
 }
 
 static inline bool gpio_read_idr(uint16_t pin) {
-    const GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
+    GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
     return (gpio->IDR & (1U << PINNO(pin)));
 }
 
 static inline bool gpio_read_odr(uint16_t pin){
-    const GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
+    GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
     return (gpio->ODR & (1U << PINNO(pin)));
 }
 
 static inline void gpio_pull(uint16_t pin, uint8_t mode){
     GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
     gpio->PUPDR &= ~(3U << (PINNO(pin)*2));
-    if(mode!=GPIO_RESET) gpio->PUPDR |= 1U << (2*(PINNO(pin))+mode);
+    if(mode!=3) gpio->PUPDR |= 1U << (2*(PINNO(pin))+mode); //3 is reserved
 }
 
 // t: expiration time, prd: period, now: current time. Return true if expired
