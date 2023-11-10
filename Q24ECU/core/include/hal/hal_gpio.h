@@ -15,7 +15,7 @@
 
 #define GPIO(bank) ((GPIO_TypeDef *) (GPIOA_BASE + 0x400U * (bank)))
 enum { GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_AF, GPIO_MODE_ANALOG };
-enum { GPIO_RESET, GPIO_PULLUP, GPIO_PULLDOWN, GPIO_RESERV};
+enum { GPIO_RESET, GPIO_PULLUP, GPIO_PULLDOWN};
 
 
 
@@ -76,7 +76,7 @@ static inline bool gpio_read_odr(uint16_t pin){
 static inline void gpio_pull(uint16_t pin, uint8_t mode){
     GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
     gpio->PUPDR &= ~(3U << (PINNO(pin)*2));
-    if(mode!=GPIO_RESERV) gpio->PUPDR |= mode << (2*(PINNO(pin)));
+    if(mode!=GPIO_RESET) gpio->PUPDR |= mode << (2*(PINNO(pin)));
 }
 
 // t: expiration time, prd: period, now: current time. Return true if expired
