@@ -52,6 +52,7 @@ int main(void){
     gpio_write(debug_led1, true);
     gpio_set_mode(debug_led2, GPIO_MODE_OUTPUT);
     gpio_write(debug_led2, false);
+    gpio_pull(debug_led1, GPIO_PULLDOWN);
 
     // Enable Timer 6 (Basic Timer) 1Hz (APB2/45000, count to 2000)
     TIM_basic_Init(TIM6, 45000U, 2000U);
