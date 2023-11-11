@@ -37,6 +37,13 @@
 #define debug_led1 ((uint16_t)(PIN('B', 0)))
 // debug LED for MockECU
 #define debug_led2 ((uint16_t)(PIN('B', 1)))
+// Hall Effect Current Sensor
+#define PIN_currentSensor ((uint16_t)(PIN('C', 0)))
+// Vin Voltage Divider
+#define PIN_voltageSensor ((uint16_t)(PIN('C', 1)))
+
+// Debug USART (for printf)
+#define UART_DEBUG USART2
 
 
 #endif // BOARD_MOCKECU

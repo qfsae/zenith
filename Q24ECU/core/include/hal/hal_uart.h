@@ -19,8 +19,6 @@
 #include <stm32f446xx.h>
 #include "hal_gpio.h"
 
-#define UART_DEBUG USART2
-
 static inline void uart_init(USART_TypeDef *uart, unsigned long baud) {
     // figure 19. selecting an alternate function (7=spi2/3, usart1..3, uart5, spdif-in)
     uint8_t af = 7;           // Alternate function
