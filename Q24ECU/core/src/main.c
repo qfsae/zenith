@@ -13,6 +13,7 @@
 #include "task.h"
 #include "hal/hal_adc.h"
 #include <string.h>
+#include "hal/hal_flash.h"
 
 // set up a basic test task
 TaskHandle_t gTestTask = NULL;
@@ -37,9 +38,10 @@ void debugPrint(void *param){
     gpio_set_mode(PIN_voltageSensor, GPIO_MODE_ANALOG);
     printf("Task Start: debugPrint\n");
     adc_init(ADC2);
+    hal_FLASH_WriteHW(0x08060010, 55UL);
     for(;;){
-        int adcread = adc_poll(ADC2, 11);
-        printf("Voltage: %f\n", ((float)(adcread))*3.3*1.6/(4096));
+        int adcread = *hal_FLASH_Read(0x08060000);//adc_poll(ADC2, 11);
+        printf("Read: %d\n", adcread);
         // uart_write_buf(USART2, "Hi!\n", 5);
         //printf("HI!!\n");
         vTaskDelay(1000);

@@ -56,7 +56,7 @@ static void hal_FLASH_Lock(void)
  * @param data 
  * @return uint8_t 
  */
-static uint8_t hal_FLASH_WriteFB(uint32_t Address, uint32_t data1, uint32_t data2){
+static uint8_t hal_FLASH_WriteFW(uint32_t Address, uint32_t data1, uint32_t data2){
     // Check if write address is valid
     if(Address < FLASH_USER_START){
         return FLASH_WRITE_ADDR_INVALID;
@@ -74,7 +74,6 @@ static uint8_t hal_FLASH_WriteFB(uint32_t Address, uint32_t data1, uint32_t data
             return FLASH_WRITE_NOACC;
         }
     }
-
 
     // Configure flash register to receive data
     ((FLASH->CR) &= ~(FLASH_CR_PSIZE));
@@ -98,7 +97,7 @@ static uint8_t hal_FLASH_WriteFB(uint32_t Address, uint32_t data1, uint32_t data
     return FLASH_WRITE_OK;
 }
 
-static uint8_t hal_FLASH_WriteHB(uint32_t Address, uint32_t data){
+static uint8_t hal_FLASH_WriteHW(uint32_t Address, uint32_t data){
     // Check if write address is valid
     if(Address < FLASH_USER_START){
         return FLASH_WRITE_ADDR_INVALID;
@@ -117,14 +116,13 @@ static uint8_t hal_FLASH_WriteHB(uint32_t Address, uint32_t data){
         }
     }
 
-
     // Configure flash register to receive data
     ((FLASH->CR) &= ~(FLASH_CR_PSIZE));
-    FLASH->CR |= FLASH_PSIZE_DOUBLE_WORD;
+    FLASH->CR |= FLASH_PSIZE_WORD;
     FLASH->CR |= FLASH_CR_PG;
 
     // Write Data
-    *(__IO uint32_t*)Address = data1;
+    *(__IO uint32_t*)Address = data;
 
     // Finish by locking the flash
     hal_FLASH_Lock();
@@ -133,6 +131,10 @@ static uint8_t hal_FLASH_WriteHB(uint32_t Address, uint32_t data){
     return FLASH_WRITE_OK;
 }
 
-static const volatile uint32_t *hal_FLASH_Read(uint32_t Address){
-    return ((volatile uint32_t*)Address);
-}
+/**
+ * @brief 
+ * 
+ * @param Address 
+ * @return const volatile* 
+ */
+#define hal_FLASH_Read(Address) ((const volatile uint32_t*)Address)
