@@ -11,6 +11,7 @@
 #include "FreeRTOS.h"
 #include "FreeRTOSConfig.h"
 #include "task.h"
+#include "hal/hal_adc.h"
 #include <string.h>
 
 // set up a basic test task
@@ -33,8 +34,14 @@ TaskHandle_t gDebugPrint = NULL;
 // Debug Print "HI!" Task
 void debugPrint(void *param){
     (void)param;
+    gpio_set_mode(PIN_voltageSensor, GPIO_MODE_ANALOG);
+    printf("Task Start: debugPrint\n");
+    adc_init(ADC2);
     for(;;){
-        uart_write_buf(USART2, "Hi!\n", 5);
+        int adcread = adc_poll(ADC2, 11);
+        printf("Voltage: %f\n", ((float)(adcread))*3.3*1.6/(4096));
+        // uart_write_buf(USART2, "Hi!\n", 5);
+        //printf("HI!!\n");
         vTaskDelay(1000);
     }
 }
@@ -58,6 +65,8 @@ int main(void){
     TIM_basic_Init(TIM6, 45000U, 2000U);
     NVIC_SetPriority(TIM6_DAC_IRQn, 0x03); // Enable Timer IRQ (lowest priority)
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
+
+    uart_init(UART_DEBUG, 9600);
 
     // Create Sample Blink Task
     uint32_t status_tstTsk = xTaskCreate(

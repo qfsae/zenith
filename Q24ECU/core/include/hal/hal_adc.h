@@ -68,7 +68,7 @@ static inline void adc_start(ADC_TypeDef *adc){
     if(!(adc->CR2 & ADC_CR2_ADON)){
         adc->CR2 |= ADC_CR2_ADON;
         volatile uint32_t counter = 0U;
-        counter = 3U * (SystemCoreClock/1000000U);
+        counter = 3U * (SYS_FREQUENCY/1000000U);
         // wait for adc to stabilize
         while (counter != 0U) counter--;
     }
@@ -82,6 +82,6 @@ static inline void adc_stop(ADC_TypeDef *adc){
 static inline uint16_t adc_poll(ADC_TypeDef *adc, uint8_t adcCh){
     adc_configChannel(adc, adcCh, 1);
     adc_start(adc);
-    while(!(adc->SR & ADC_SR_EOC)) continue;
+    while(!(adc->SR & ADC_SR_EOC));
     return adc->DR;
 }
