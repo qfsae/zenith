@@ -50,11 +50,12 @@ static void hal_FLASH_Lock(void)
 
 
 /**
- * @brief Write a uint32 to the flash
+ * @brief Write a full word to flash memory (two half words)
  * 
- * @param Address 
- * @param data 
- * @return uint8_t 
+ * @param Address Physical address to write to
+ * @param data1 first half of word
+ * @param data2 second half of word
+ * @returns Flash Write Error
  */
 static uint8_t hal_FLASH_WriteFW(uint32_t Address, uint32_t data1, uint32_t data2){
     // Check if write address is valid
@@ -97,6 +98,13 @@ static uint8_t hal_FLASH_WriteFW(uint32_t Address, uint32_t data1, uint32_t data
     return FLASH_WRITE_OK;
 }
 
+/**
+ * @brief Write a single word to flash memory (uint32) 
+ * 
+ * @param Address The Hardware Address to write to
+ * @param data The Data
+ * @returns Flash Write Error
+ */
 static uint8_t hal_FLASH_WriteHW(uint32_t Address, uint32_t data){
     // Check if write address is valid
     if(Address < FLASH_USER_START){
