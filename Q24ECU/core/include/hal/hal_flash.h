@@ -43,11 +43,26 @@
 #define FLASH_WRITE_NODAT 2
 
 
-static void hal_FLASH_Lock(void)
-{
+static void hal_FLASH_Lock(void){
   FLASH->CR |= FLASH_CR_LOCK;
 };
 
+// Unlock the flash memory
+static uint8_t hal_FLASH_Unlock(void){
+  // Check if already unlocked
+  if(((FLASH->CR) & (FLASH_CR_LOCK)) != 0) {
+
+    /* Authorize the FLASH Registers access */
+    FLASH->KEYR = FLASH_KEY1; // Keys taken from STM32 HAL
+    FLASH->KEYR = FLASH_KEY2;
+
+    /* Verify Flash is unlocked */
+        if((FLASH->CR & FLASH_CR_LOCK) != 0) {
+            return FLASH_WRITE_NOACC;
+        }
+  }
+  return NULL;
+}
 
 /**
  * @brief Write a full word to flash memory (two half words)
@@ -64,17 +79,7 @@ static uint8_t hal_FLASH_WriteFW(uint32_t Address, uint32_t data1, uint32_t data
     }
 
     // Unlock Flash in preparation for write
-    if(((FLASH->CR) & (FLASH_CR_LOCK)) != 0) {
-
-    /* Authorize the FLASH Registers access */
-    FLASH->KEYR = FLASH_KEY1; // Keys taken from STM32 HAL
-    FLASH->KEYR = FLASH_KEY2;
-
-    /* Verify Flash is unlocked */
-        if((FLASH->CR & FLASH_CR_LOCK) != 0) {
-            return FLASH_WRITE_NOACC;
-        }
-    }
+    if(hal_FLASH_Unlock() == FLASH_WRITE_NOACC) return FLASH_WRITE_NOACC;
 
     // Configure flash register to receive data
     ((FLASH->CR) &= ~(FLASH_CR_PSIZE));
@@ -112,18 +117,8 @@ static uint8_t hal_FLASH_WriteHW(uint32_t Address, uint32_t data){
     }
 
     // Unlock Flash in preparation for write
-    if(((FLASH->CR) & (FLASH_CR_LOCK)) != 0) {
-
-    /* Authorize the FLASH Registers access */
-    FLASH->KEYR = FLASH_KEY1; // Keys taken from STM32 HAL
-    FLASH->KEYR = FLASH_KEY2;
-
-    /* Verify Flash is unlocked */
-        if((FLASH->CR & FLASH_CR_LOCK) != 0) {
-            return FLASH_WRITE_NOACC;
-        }
-    }
-
+    if(hal_FLASH_Unlock() == FLASH_WRITE_NOACC) return FLASH_WRITE_NOACC;
+    
     // Configure flash register to receive data
     ((FLASH->CR) &= ~(FLASH_CR_PSIZE));
     FLASH->CR |= FLASH_PSIZE_WORD;
