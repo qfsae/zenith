@@ -1,0 +1,37 @@
+{
+    "configurations": [
+        {
+            "name": "ARM",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/vendor/cmsis_f4/Include",
+                "${workspaceFolder}/core/include",
+                "${workspaceFolder}/FreeRTOS-Kernel/include",
+                "${workspaceFolder}/FreeRTOS-Kernel/portable/GCC/ARM_CM4F",
+                "${workspaceFolder}/core/config"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.18362.0",
+            "compilerPath": "C:/MinGW/bin/gcc.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "${default}",
+            "configurationProvider": "ms-vscode.makefile-tools",
+            "mergeConfigurations": false,
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/**",
+                    "${workspaceFolder}/Project/include",
+                    "${workspaceFolder}/core/cmsis_f4/Include",
+                    "${workspaceFolder}/core/cmsis_core/CMSIS/Core/Include"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        }
+    ],
+    "version": 4
+}
