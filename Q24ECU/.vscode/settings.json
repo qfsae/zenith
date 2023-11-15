@@ -9,6 +9,7 @@
         "hal_gpio.h": "c",
         "hal_uart.h": "c",
         "hal_clock.h": "c",
-        "float.h": "c"
+        "float.h": "c",
+        "queue.h": "c"
     }
 }
