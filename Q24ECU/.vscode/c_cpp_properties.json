@@ -8,7 +8,8 @@
                 "${workspaceFolder}/core/include",
                 "${workspaceFolder}/FreeRTOS-Kernel/include",
                 "${workspaceFolder}/FreeRTOS-Kernel/portable/GCC/ARM_CM4F",
-                "${workspaceFolder}/core/config"
+                "${workspaceFolder}/core/config",
+                "${workspaceFolder}/core/include/hal"
             ],
             "defines": [
                 "_DEBUG",

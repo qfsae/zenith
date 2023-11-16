@@ -19,7 +19,7 @@
 #include <stm32f446xx.h>
 #include "hal_gpio.h"
 
-static inline void uart_init(USART_TypeDef *uart, unsigned long baud) {
+static inline void hal_uart_init(USART_TypeDef *uart, unsigned long baud) {
     // figure 19. selecting an alternate function (7=spi2/3, usart1..3, uart5, spdif-in)
     uint8_t af = 7;           // Alternate function
     uint16_t rx = 0, tx = 0;  // pins
@@ -41,7 +41,7 @@ static inline void uart_init(USART_TypeDef *uart, unsigned long baud) {
     uart->CR1 |= BIT(13) | BIT(2) | BIT(3);  // Set UE, RE, TE
 }
 
-static inline void uart_enable_rxne(USART_TypeDef *uart, bool enable){
+static inline void hal_uart_enable_rxne(USART_TypeDef *uart, bool enable){
     if(enable){
         uart->CR1 |= USART_CR1_RXNEIE;
     }
@@ -50,7 +50,7 @@ static inline void uart_enable_rxne(USART_TypeDef *uart, bool enable){
     };
 }
 
-static inline void uart_enable_txne(USART_TypeDef *uart, bool enable){
+static inline void hal_uart_enable_txne(USART_TypeDef *uart, bool enable){
     if(enable){
         uart->CR1 |= USART_CR1_TXEIE;
     }
@@ -59,11 +59,11 @@ static inline void uart_enable_txne(USART_TypeDef *uart, bool enable){
     };
 }
 
-static inline int uart_read_ready(const USART_TypeDef *uart){
+static inline int hal_uart_read_ready(const USART_TypeDef *uart){
     return uart->SR & USART_SR_RXNE;
 }
 
-static inline uint8_t uart_read_byte(const USART_TypeDef *uart) {
+static inline uint8_t hal_uart_read_byte(const USART_TypeDef *uart) {
     return ((uint8_t) (uart->DR & 255));
 }
 
@@ -71,12 +71,12 @@ static inline void spin(volatile uint32_t count) {
   while (count--) asm("nop");
 }
 
-static inline void uart_write_byte(USART_TypeDef * uart, uint8_t byte) {
+static inline void hal_uart_write_byte(USART_TypeDef * uart, uint8_t byte) {
     uart->DR = byte;
     while ((uart->SR & USART_SR_TXE) == 0) spin(1);
     
 }
 
-static inline void uart_write_buf(USART_TypeDef *uart, char *buf, size_t len){
-    while(len-- > 0) uart_write_byte(uart, *(uint8_t *) buf++);
+static inline void hal_uart_write_buf(USART_TypeDef *uart, char *buf, size_t len){
+    while(len-- > 0) hal_uart_write_byte(uart, *(uint8_t *) buf++);
 }

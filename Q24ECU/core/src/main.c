@@ -15,11 +15,7 @@
 #include <string.h>
 // #include <hal/hal_uart.h>
 #include "hal/hal_flash.h"
-#include "queue.h"
-#include "semphr.h"
-
-
-xSemaphoreHandle usartHandle = NULL;
+#include "interfaces/usart.h"
 
 // set up a basic test task
 TaskHandle_t gTestTask = NULL;
@@ -30,16 +26,7 @@ void testTask(void *param){
     for(;;){
         // Toggle LED Pin
         gpio_toggle_pin(debug_led2);
-        if(usartHandle != NULL){
-            if(xSemaphoreTake(usartHandle, (TickType_t) 0) == pdTRUE){
-                //uart_write_buf(UART_DEBUG, "Task2\n", 7);
-                char *name;
-                name = pcTaskGetName(NULL);
-                printf("Hi from %s\n" name);
-                xSemaphoreGive(usartHandle);
-            }
-        }
-        // Non Blocking Delay
+        printf("%d\n", xTaskGetTickCount());
         vTaskDelay(1000);
     }
 }
@@ -50,22 +37,8 @@ TaskHandle_t gDebugPrint = NULL;
 // Debug Print "HI!" Task
 void debugPrint(void *param){
     (void)param;
-    //gpio_set_mode(PIN_voltageSensor, GPIO_MODE_ANALOG);
-    //printf("Task Start: debugPrint\n");
-    // adc_init(ADC2);
-    //hal_FLASH_WriteHW(0x08060010, 55UL);
     for(;;){
-        //int adcread = *hal_FLASH_Read(0x08060000);//adc_poll(ADC2, 11);
-        //printf("Read: %d\n", adcread);
-        // uart_write_buf(USART2, "Hi!\n", 5);
-        // wait max of 1ms
-        if(usartHandle != NULL){
-            if(xSemaphoreTake(usartHandle, (TickType_t) 10) == pdTRUE){
-                uart_write_buf(UART_DEBUG, "Task1\n", 7);
-                xSemaphoreGive(usartHandle);
-            }
-        }
-        //printf("HI!!\n");
+        printf("%d\n", xTaskGetTickCount());
         vTaskDelay(1000);
     }
 }
@@ -76,15 +49,14 @@ void TIM6_DAC_IRQHandler(){
     gpio_toggle_pin(debug_led1);
 }
 
-int main(void){
-    usartHandle = xSemaphoreCreateBinary();
-    xSemaphoreGive(usartHandle);
+USART_t debug;
 
+int main(void){
     // set up gpio
     gpio_set_mode(debug_led1, GPIO_MODE_OUTPUT);
-    gpio_write(debug_led1, true);
+    gpio_write(debug_led1, false);
     gpio_set_mode(debug_led2, GPIO_MODE_OUTPUT);
-    gpio_write(debug_led2, false);
+    gpio_write(debug_led2, true);
     gpio_pull(debug_led1, GPIO_PULLDOWN);
 
     // Enable Timer 6 (Basic Timer) 1Hz (APB2/45000, count to 2000)
@@ -92,7 +64,10 @@ int main(void){
     NVIC_SetPriority(TIM6_DAC_IRQn, 0x03); // Enable Timer IRQ (lowest priority)
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
-    uart_init(UART_DEBUG, 9600);
+    // hal_uart_init(UART_DEBUG, 9600);
+    usart_send_init(&debug, UART_DEBUG, 38400);
+    // xSemaphoreGive(debug.handle);
+    printf("system starting tasks...\n");
 
     // Create Sample Blink Task
     uint32_t status_tstTsk = xTaskCreate(
@@ -113,6 +88,8 @@ int main(void){
         tskIDLE_PRIORITY,
         &gDebugPrint
     );
+
+    // xTaskGetHandle()
 
     // Start Scheduler
     vTaskStartScheduler();

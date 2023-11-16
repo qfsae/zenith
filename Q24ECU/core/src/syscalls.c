@@ -3,8 +3,10 @@
 
 #include <sys/stat.h>
 
-#include "hal/hal_uart.h"
-#include "pins.h"
+#include "interfaces/usart.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "string.h"
 
 int _fstat(int fd, struct stat *st) {
   if (fd < 0) return -1;
@@ -87,7 +89,24 @@ int _getpid(void) {
 
 int _write(int fd, char *ptr, int len) {
   (void) fd, (void) ptr, (void) len;
-  if (fd == 1 || fd == 2) uart_write_buf(UART_DEBUG, ptr, (size_t) len);
+  if (fd == 1 || fd == 2){
+    char * callerID = NULL;
+    // Get the name of the task calling printf - Only run if scheduler has been started
+    if(xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
+      callerID = pcTaskGetName(NULL);
+    if(debug.interface == NULL)  return -1;
+    if(debug.handle == NULL)     return -1;
+    // Take over the debug usart
+    if(xSemaphoreTake(debug.handle, (TickType_t) 10) == pdTRUE){
+      // Write caller ID, followed by ": ", then the argument given to printf
+      if(callerID != NULL){
+        hal_uart_write_buf(debug.interface, callerID, strlen(callerID));
+        hal_uart_write_buf(debug.interface, ": ", 3);
+      }
+      hal_uart_write_buf(debug.interface, ptr, (size_t) len);
+      xSemaphoreGive(debug.handle);
+    }
+  } //hal_uart_write_buf(UART_DEBUG, ptr, (size_t) len);
   return -1;
 }
 
