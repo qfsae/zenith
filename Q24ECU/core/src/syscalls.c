@@ -3,7 +3,7 @@
 
 #include <sys/stat.h>
 
-#include "interfaces/usart.h"
+#include "interfaces/interface_uart.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "string.h"

@@ -15,7 +15,7 @@
 #include <string.h>
 // #include <hal/hal_uart.h>
 #include "hal/hal_flash.h"
-#include "interfaces/usart.h"
+#include "interfaces/interface_uart.h"
 
 // set up a basic test task
 TaskHandle_t gTestTask = NULL;
@@ -25,7 +25,7 @@ void testTask(void *param){
     (void)(param); // Cast unused variable to void
     for(;;){
         // Toggle LED Pin
-        gpio_toggle_pin(debug_led2);
+        // gpio_toggle_pin(debug_led2);
         printf("%d\n", xTaskGetTickCount());
         vTaskDelay(1000);
     }
@@ -38,18 +38,37 @@ TaskHandle_t gDebugPrint = NULL;
 void debugPrint(void *param){
     (void)param;
     for(;;){
-        printf("%d\n", xTaskGetTickCount());
-        vTaskDelay(1000);
+        // if(hal_uart_read_ready(debug.interface)){
+        //     uint8_t receivedData;
+
+        //     // Read data from the USART (replace with your actual read operation)
+        //     receivedData = hal_uart_read_byte(debug.interface);
+
+        //     // Send the received data to the task
+        //     xQueueSend(debug.rxQue, (void*) &receivedData, portMAX_DELAY);
+        // }
     }
 }
+
+TaskHandle_t guartrxtsk;
+void debugUSART_rx_task(void *param){
+    (void)param;
+    for(;;){
+        // if(uxQueueMessagesWaiting(debug.rxQue)){
+            uint8_t buf;
+            xQueueReceive(debug.rxQue, &buf, 10);
+            printf("%c", buf);
+        // }
+    }
+}
+
+
 
 void TIM6_DAC_IRQHandler(){
     // Place at beginning of IQR - Otherwise it causes the NVIC to rerun the IQR
     TIM6->SR = TIM_SR_CC1IF;
     gpio_toggle_pin(debug_led1);
 }
-
-USART_t debug;
 
 int main(void){
     // set up gpio
@@ -65,7 +84,7 @@ int main(void){
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
     // hal_uart_init(UART_DEBUG, 9600);
-    usart_send_init(&debug, UART_DEBUG, 38400);
+    uart_setup();
     // xSemaphoreGive(debug.handle);
     printf("system starting tasks...\n");
 
@@ -87,6 +106,16 @@ int main(void){
         NULL,
         tskIDLE_PRIORITY,
         &gDebugPrint
+    );
+    
+    
+    xTaskCreate(
+        debugUSART_rx_task,
+        "uartrx",
+        1024,
+        NULL,
+        tskIDLE_PRIORITY,
+        &guartrxtsk
     );
 
     // xTaskGetHandle()
