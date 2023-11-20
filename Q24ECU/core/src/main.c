@@ -8,20 +8,13 @@
  */
 
 #include "main.h"
-#include "FreeRTOS.h"
-#include "FreeRTOSConfig.h"
-#include "task.h"
-#include "hal/hal_adc.h"
-#include <string.h>
-// #include <hal/hal_uart.h>
-#include "hal/hal_flash.h"
-#include "interfaces/interface_uart.h"
+#include "limits.h"
 
-// set up a basic test task
-TaskHandle_t gTestTask = NULL;
+TaskHandle_t tskh_Test1 = NULL;
+TaskHandle_t tskh_BlinkLED = NULL;
+TaskHandle_t tskh_USART2_Handler = NULL;
 
-// test task for blinking an led
-void testTask(void *param){
+void tsk_Test1(void *param){
     (void)(param); // Cast unused variable to void
     for(;;){
         // Toggle LED Pin
@@ -31,11 +24,8 @@ void testTask(void *param){
     }
 }
 
-// Task Handle for Debug print Task
-TaskHandle_t gDebugPrint = NULL;
 
-// Debug Print "HI!" Task
-void debugPrint(void *param){
+void tsk_BlinkLED(void *param){
     (void)param;
     for(;;){
         // if(hal_uart_read_ready(debug.interface)){
@@ -47,21 +37,23 @@ void debugPrint(void *param){
         //     // Send the received data to the task
         //     xQueueSend(debug.rxQue, (void*) &receivedData, portMAX_DELAY);
         // }
+        vTaskSuspend(NULL);
     }
 }
 
-TaskHandle_t guartrxtsk;
-void debugUSART_rx_task(void *param){
+void tsk_USART2_Handler(void *param){
     (void)param;
     for(;;){
-        // if(uxQueueMessagesWaiting(debug.rxQue)){
-            uint8_t buf;
-            xQueueReceive(debug.rxQue, &buf, 10);
-            printf("%c", buf);
-        // }
+        uint8_t buf = 0;
+        uint32_t pendingBit;
+        xTaskNotifyWaitIndexed( 0,                  /* Wait for 0th Notificaition */
+                                0x00,               /* Don't clear any bits on entry. */
+                                ULONG_MAX,          /* Clear all bits on exit. */
+                                &pendingBit, /* Receives the notification value. */
+                                portMAX_DELAY );    /* Block indefinitely. */
+        printf("%c", pendingBit);
     }
 }
-
 
 
 void TIM6_DAC_IRQHandler(){
@@ -89,33 +81,33 @@ int main(void){
     printf("system starting tasks...\n");
 
     // Create Sample Blink Task
-    uint32_t status_tstTsk = xTaskCreate(
-        testTask,
-        "TestTsk",
+    xTaskCreate(
+        tsk_BlinkLED,
+        "blink",
         1024,
         NULL,
         tskIDLE_PRIORITY,
-        &gTestTask
+        &tskh_BlinkLED
     );
 
     // Create Sample Print Task
-    uint32_t status_dbgPrn = xTaskCreate(
-        debugPrint,
-        "DebugPrint",
+    xTaskCreate(
+        tsk_Test1,
+        "tst1",
         1024,
         NULL,
         tskIDLE_PRIORITY,
-        &gDebugPrint
+        &tskh_Test1
     );
     
     
     xTaskCreate(
-        debugUSART_rx_task,
-        "uartrx",
+        tsk_USART2_Handler,
+        "u2",
         1024,
         NULL,
         tskIDLE_PRIORITY,
-        &guartrxtsk
+        &tskh_USART2_Handler
     );
 
     // xTaskGetHandle()

@@ -12,6 +12,7 @@
 #include "interfaces/interface_uart.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "taskHandlers.h"
 
 
 uart_t debug;
@@ -19,29 +20,23 @@ uart_t debug;
 void uart_setup(){
     // Enable the debug usart and setup its IQR handler
     uart_send_init(&debug, UART_DEBUG, 250000);
-    // hal_uart_enable_rxne(debug.interface, true);
-    // NVIC_SetPriority(USART2_IRQn, 0x03);
-    // NVIC_EnableIRQ(USART2_IRQn);
+    hal_uart_enable_rxne(debug.interface, true);
+    NVIC_SetPriority(USART2_IRQn, 0x03);
+    NVIC_EnableIRQ(USART2_IRQn);
 }
 
 void USART2_IRQHandler(){
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    uint8_t receivedData;
+    uint8_t receivedData = 0;
+    // Clear the interrupt bit (enables exiting of fn)
+    receivedData = hal_uart_read_byte(UART_DEBUG);
 
-        if(hal_uart_read_ready(debug.interface)){
-            uint8_t receivedData;
+    xTaskNotifyIndexedFromISR( tskh_USART2_Handler,
+                            0,
+                            0,
+                            eSetBits,
+                            &xHigherPriorityTaskWoken );
 
-            // Read data from the USART (replace with your actual read operation)
-            receivedData = hal_uart_read_byte(debug.interface);
-
-            // Send the received data to the task
-            xQueueSendFromISR(debug.rxQue, (void*) &receivedData, NULL);
-        }
-    // /* Now the buffer is empty we can switch context if necessary. */
-    // if( xHigherPriorityTaskWoken )
-    // {
-    //     /* Actual macro used here is port specific. */
-    //     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-    // }
+    // portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
     
 }
