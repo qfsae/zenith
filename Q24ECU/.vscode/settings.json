@@ -11,6 +11,7 @@
         "hal_clock.h": "c",
         "float.h": "c",
         "queue.h": "c",
-        "taskhandlers.h": "c"
+        "taskhandlers.h": "c",
+        "freertos.h": "c"
     }
 }

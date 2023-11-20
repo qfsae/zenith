@@ -29,14 +29,14 @@ void USART2_IRQHandler(){
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     uint8_t receivedData = 0;
     // Clear the interrupt bit (enables exiting of fn)
+    // xSemaphoreTakeFromISR(debug.handle, &xHigherPriorityTaskWoken);
     receivedData = hal_uart_read_byte(UART_DEBUG);
+    // xSemaphoreGiveFromISR(debug.handle, &xHigherPriorityTaskWoken);
 
-    xTaskNotifyIndexedFromISR( tskh_USART2_Handler,
-                            0,
-                            0,
-                            eSetBits,
-                            &xHigherPriorityTaskWoken );
+    xStreamBufferSendFromISR(debug.stream, &receivedData, sizeof(receivedData), NULL);
 
     // portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-    
+    if(receivedData == '1'){
+        gpio_toggle_pin(debug_led2);
+    }
 }

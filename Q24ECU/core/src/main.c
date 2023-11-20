@@ -44,14 +44,20 @@ void tsk_BlinkLED(void *param){
 void tsk_USART2_Handler(void *param){
     (void)param;
     for(;;){
-        uint8_t buf = 0;
+        uint8_t buf[64];
         uint32_t pendingBit;
-        xTaskNotifyWaitIndexed( 0,                  /* Wait for 0th Notificaition */
-                                0x00,               /* Don't clear any bits on entry. */
-                                ULONG_MAX,          /* Clear all bits on exit. */
-                                &pendingBit, /* Receives the notification value. */
-                                portMAX_DELAY );    /* Block indefinitely. */
-        printf("%c", pendingBit);
+        // if(xStreamBufferReceive(debug.stream, (void*) &buf, sizeof(buf), 100) > 0){
+        //     // gpio_toggle_pin(debug_led2);
+        // }
+        //printf("%d\n", xStreamBufferBytesAvailable(debug.stream));
+        // if(xStreamBufferBytesAvailable(debug.stream)){
+            int bytes = xStreamBufferReceive(debug.stream, (void*) &buf, sizeof(uint8_t), 0);
+            if(bytes > 0){
+                printf("%c\n", buf[0]);
+            }
+            
+        // }
+        // printf("%c", pendingBit);
     }
 }
 
@@ -106,9 +112,10 @@ int main(void){
         "u2",
         1024,
         NULL,
-        tskIDLE_PRIORITY,
+        tskIDLE_PRIORITY + 2,
         &tskh_USART2_Handler
     );
+    printf("u2 created: %d\n", tskh_USART2_Handler != NULL);
 
     // xTaskGetHandle()
 

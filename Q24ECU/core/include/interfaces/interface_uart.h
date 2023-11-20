@@ -11,12 +11,12 @@
 #include "hal/hal_uart.h"
 #include "FreeRTOS.h"
 #include "semphr.h"
-#include "queue.h"
+#include "stream_buffer.h"
 
 typedef struct {
     USART_TypeDef *interface;
     xSemaphoreHandle handle;
-    xQueueHandle rxQue;
+    StreamBufferHandle_t stream;
 } uart_t;
 
 // handler for DEBUG USART (USART 2 on MockECU)
@@ -37,7 +37,7 @@ extern void USART2_IRQHandler();
  */
 static inline void uart_send_init(uart_t *handle, USART_TypeDef *interface, unsigned long baud){
     handle->handle = xSemaphoreCreateBinary();
-    handle->rxQue = xQueueCreate(10, sizeof(uint8_t));
+    handle->stream = xStreamBufferCreate(64, 1);
     if(handle->handle == NULL) return;
     handle->interface = interface;
     hal_uart_init(handle->interface, baud);
