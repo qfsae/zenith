@@ -9,6 +9,9 @@
 
 #include "main.h"
 #include "limits.h"
+#include "taskHandlers.h"
+
+// Init global handles for tasks
 
 TaskHandle_t tskh_Test1 = NULL;
 TaskHandle_t tskh_BlinkLED = NULL;
@@ -17,8 +20,7 @@ TaskHandle_t tskh_USART2_Handler = NULL;
 void tsk_Test1(void *param){
     (void)(param); // Cast unused variable to void
     for(;;){
-        // Toggle LED Pin
-        // gpio_toggle_pin(debug_led2);
+        // Print out the systemtick timer once a second
         printf("%d\n", xTaskGetTickCount());
         vTaskDelay(1000);
     }
@@ -28,15 +30,7 @@ void tsk_Test1(void *param){
 void tsk_BlinkLED(void *param){
     (void)param;
     for(;;){
-        // if(hal_uart_read_ready(debug.interface)){
-        //     uint8_t receivedData;
-
-        //     // Read data from the USART (replace with your actual read operation)
-        //     receivedData = hal_uart_read_byte(debug.interface);
-
-        //     // Send the received data to the task
-        //     xQueueSend(debug.rxQue, (void*) &receivedData, portMAX_DELAY);
-        // }
+        // This task is currently not used so perma suspend it
         vTaskSuspend(NULL);
     }
 }
@@ -45,19 +39,14 @@ void tsk_USART2_Handler(void *param){
     (void)param;
     for(;;){
         uint8_t buf[64];
-        uint32_t pendingBit;
-        // if(xStreamBufferReceive(debug.stream, (void*) &buf, sizeof(buf), 100) > 0){
-        //     // gpio_toggle_pin(debug_led2);
-        // }
-        //printf("%d\n", xStreamBufferBytesAvailable(debug.stream));
-        // if(xStreamBufferBytesAvailable(debug.stream)){
-            int bytes = xStreamBufferReceive(debug.stream, (void*) &buf, sizeof(uint8_t), 0);
-            if(bytes > 0){
-                printf("%c\n", buf[0]);
-            }
-            
-        // }
-        // printf("%c", pendingBit);
+        size_t bytes = xStreamBufferReceive(debug.stream, (void*) &buf, 64, portMAX_DELAY);
+        printf("%s (%d)\n", buf, bytes);
+        // reset the stream buffer
+        for (int i = 0; i < 64; i++)
+        {
+            buf[i] = 0;
+        }
+        
     }
 }
 
@@ -78,7 +67,7 @@ int main(void){
 
     // Enable Timer 6 (Basic Timer) 1Hz (APB2/45000, count to 2000)
     TIM_basic_Init(TIM6, 45000U, 2000U);
-    NVIC_SetPriority(TIM6_DAC_IRQn, 0x03); // Enable Timer IRQ (lowest priority)
+    NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_Priority_MIN); // Enable Timer IRQ (lowest priority)
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
     // hal_uart_init(UART_DEBUG, 9600);
@@ -106,18 +95,15 @@ int main(void){
         &tskh_Test1
     );
     
-    
+    // Create UART2 (debug) receive task handler
     xTaskCreate(
         tsk_USART2_Handler,
         "u2",
         1024,
         NULL,
-        tskIDLE_PRIORITY + 2,
+        tskIDLE_PRIORITY+4,
         &tskh_USART2_Handler
     );
-    printf("u2 created: %d\n", tskh_USART2_Handler != NULL);
-
-    // xTaskGetHandle()
 
     // Start Scheduler
     vTaskStartScheduler();

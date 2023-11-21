@@ -12,6 +12,10 @@
         "float.h": "c",
         "queue.h": "c",
         "taskhandlers.h": "c",
-        "freertos.h": "c"
+        "freertos.h": "c",
+        "limits.h": "c",
+        "main.h": "c",
+        "interface_uart.h": "c",
+        "task.h": "c"
     }
 }

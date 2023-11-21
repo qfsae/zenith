@@ -16,6 +16,7 @@
 #include "hal/hal_tim_basic.h"
 #include "hal/hal_flash.h"
 #include "taskHandlers.h"
+#include "nvicConfig.h"
 
 extern void SystemInit(void);
 

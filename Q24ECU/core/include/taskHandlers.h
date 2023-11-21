@@ -13,6 +13,9 @@
 #include "FreeRTOSConfig.h"
 #include "task.h"
 
+// Test Task 1
 extern TaskHandle_t tskh_Test1;
+// Blink LED example Task
 extern TaskHandle_t tskh_BlinkLED;
+// UART2 (debug) receive task handler
 extern TaskHandle_t tskh_USART2_Handler;
