@@ -17,46 +17,6 @@ TaskHandle_t tskh_Test1 = NULL;
 TaskHandle_t tskh_BlinkLED = NULL;
 TaskHandle_t tskh_USART2_Handler = NULL;
 
-void tsk_Test1(void *param){
-    (void)(param); // Cast unused variable to void
-    for(;;){
-        // Print out the systemtick timer once a second
-        printf("%d\n", xTaskGetTickCount());
-        vTaskDelay(1000);
-    }
-}
-
-
-void tsk_BlinkLED(void *param){
-    (void)param;
-    for(;;){
-        // This task is currently not used so perma suspend it
-        vTaskSuspend(NULL);
-    }
-}
-
-void tsk_USART2_Handler(void *param){
-    (void)param;
-    for(;;){
-        uint8_t buf[64];
-        size_t bytes = xStreamBufferReceive(debug.stream, (void*) &buf, 64, portMAX_DELAY);
-        printf("%s (%d)\n", buf, bytes);
-        // reset the stream buffer
-        for (int i = 0; i < 64; i++)
-        {
-            buf[i] = 0;
-        }
-        
-    }
-}
-
-
-void TIM6_DAC_IRQHandler(){
-    // Place at beginning of IQR - Otherwise it causes the NVIC to rerun the IQR
-    TIM6->SR = TIM_SR_CC1IF;
-    gpio_toggle_pin(debug_led1);
-}
-
 int main(void){
     // set up gpio
     gpio_set_mode(debug_led1, GPIO_MODE_OUTPUT);
@@ -73,7 +33,7 @@ int main(void){
     // hal_uart_init(UART_DEBUG, 9600);
     uart_setup();
     // xSemaphoreGive(debug.handle);
-    printf("system starting tasks...\n");
+    printf("\nsystem starting tasks...\n");
 
     // Create Sample Blink Task
     xTaskCreate(
