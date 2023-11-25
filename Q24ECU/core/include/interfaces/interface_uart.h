@@ -13,21 +13,6 @@
 #include "semphr.h"
 #include "stream_buffer.h"
 
-/**
- * @brief check if a uart port is null
- * 
- * @param port The UART port
- * 
- */
-#define uart_port_nullcheck(port) \
-    if(port == NULL)              return; \
-    if(port->semaphore == NULL)   return; \
-    if(port->rxbuffer == NULL)      return; \
-
-
-// debug uart port (for syscalls)
-#define port_debug port_uart2
-
 
 /**
  * @brief UART port typedef
@@ -57,6 +42,26 @@ extern uart_t port_uart2;
  */
 extern void os_uart_setup();
 
+
+/**
+ * @brief Initialize a USART device and its Semaphore
+ * 
+ * @param port The USART_t typedef handle
+ * @param uart the USARTx define from CMSIS headers
+ * @param baud USART Baud Rate
+ */
+static void uart_send_init(uart_t *port, USART_TypeDef *uart, unsigned long baud){
+    port->semaphore = xSemaphoreCreateBinary();
+    if(port->semaphore == NULL) return;
+    port->rxbuffer = xStreamBufferCreate(64, 1);
+    if(port->rxbuffer == NULL) return;
+    port->port = uart;
+    if(port->port == NULL) return;
+    hal_uart_init(port->port, baud);
+    xSemaphoreGive(port->port);
+}
+
+
 // USART2 IQR Handler
 extern void USART2_IRQHandler();
 
@@ -67,8 +72,10 @@ extern void USART2_IRQHandler();
  * @param byte The Byte to transmit
  * @param timeout The amount of ticks to wait for the interface to become available
  */
-static inline void uart_send_blocking(uart_t *port, uint8_t byte, TickType_t timeout){
-    uart_port_nullcheck(port)
+static void uart_send_blocking(uart_t *port, uint8_t byte, TickType_t timeout){
+    if(port == NULL) return;
+    if(port->port == NULL) return;
+    if(port->semaphore == NULL) return;
     if(xSemaphoreTake(port->semaphore, timeout) == pdTRUE){
         hal_uart_write_byte(port->port, byte);
         xSemaphoreGive(port->semaphore);
@@ -76,15 +83,17 @@ static inline void uart_send_blocking(uart_t *port, uint8_t byte, TickType_t tim
 }
 
 /**
- * @brief 
+ * @brief Task Blocking command to send a buffer over uart
  * 
  * @param port The uart_t port to use (Must be initialized)
  * @param buf Data Buffer
  * @param len Length of Data Buffer
  * @param timeout The amount of ticks to wait for the interface to become available 
  */
-static inline void uart_send_buf_blocking(uart_t *port, char* buf, size_t len, TickType_t timeout){
-    uart_port_nullcheck(port)
+static void uart_send_buf_blocking(uart_t *port, char* buf, size_t len, TickType_t timeout){
+    if(port == NULL) return;
+    if(port->port == NULL) return;
+    if(port->semaphore == NULL) return;
     if(xSemaphoreTake(port->semaphore, timeout) == pdTRUE){
         hal_uart_write_buf(port->port, buf, len);
         xSemaphoreGive(port->semaphore);

@@ -30,11 +30,14 @@ int main(void){
     NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_Priority_MIN); // Enable Timer IRQ (lowest priority)
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
-    // hal_uart_init(UART_DEBUG, 9600);
+    // initialize os interfaces
     os_uart_setup();
-    // xSemaphoreGive(debug.handle);
-    printf("\nsystem starting tasks...\n");
 
+    printf("\033[2J");
+    spin(9999999UL);
+    printf("system starting tasks...\n");
+    spin(9999999UL);
+    
     // Create Sample Blink Task
     xTaskCreate(
         tsk_BlinkLED,

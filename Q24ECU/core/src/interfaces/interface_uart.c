@@ -19,23 +19,6 @@
 uart_t port_uart2;
 
 
-
-/**
- * @brief Initialize a USART device and its Semaphore
- * 
- * @param port The USART_t typedef handle
- * @param uart the USARTx define from CMSIS headers
- * @param baud USART Baud Rate
- */
-static inline void uart_send_init(uart_t *port, USART_TypeDef *uart, unsigned long baud){
-    port->semaphore = xSemaphoreCreateBinary();
-    port->rxbuffer = xStreamBufferCreate(64, 1);
-    if(port->port == NULL) return;
-    port->port = uart;
-    hal_uart_init(port->port, baud);
-    xSemaphoreGive(port->port);
-}
-
 /**
  * @brief OS UART Setup handler
  * 
@@ -48,7 +31,8 @@ static inline void uart_send_init(uart_t *port, USART_TypeDef *uart, unsigned lo
  */
 void os_uart_setup(){
     // Enable the UART 2 port and setup its IQR handler
-    uart_send_init(&port_uart2, UART_DEBUG, 250000);
+    uart_send_init(&port_uart2, USART2, 250000);
+    xSemaphoreGive(port_uart2.semaphore);
     hal_uart_enable_rxne(port_uart2.port, true);
     NVIC_SetPriority(USART2_IRQn, (NVIC_Priority_MIN-10));
     NVIC_EnableIRQ(USART2_IRQn);

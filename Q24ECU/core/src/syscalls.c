@@ -92,19 +92,18 @@ int _write(int fd, char *ptr, int len) {
   if (fd == 1 || fd == 2){
     char * callerID = NULL;
     // Get the name of the task calling printf - Only run if scheduler has been started
-    if(xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
-      callerID = pcTaskGetName(NULL);
-    if(port_debug.port == NULL)  return -1;
-    if(port_debug.semaphore == NULL)     return -1;
+    if(xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) callerID = pcTaskGetName(NULL);
+    if(port_uart2.port == NULL)          return -1;
+    if(port_uart2.semaphore == NULL)     return -1;
     // Take over the debug usart
-    if(xSemaphoreTake(port_debug.semaphore, (TickType_t) 10) == pdTRUE){
+    if(xSemaphoreTake(port_uart2.semaphore, (TickType_t) 10) == pdTRUE){
       // Write caller ID, followed by ": ", then the argument given to printf
       if(callerID != NULL){
-        hal_uart_write_buf(port_debug.port, callerID, strlen(callerID));
-        hal_uart_write_buf(port_debug.port, ": ", 3);
+        hal_uart_write_buf(port_uart2.port, callerID, strlen(callerID));
+        hal_uart_write_buf(port_uart2.port, ": ", 3);
       }
-      hal_uart_write_buf(port_debug.port, ptr, (size_t) len);
-      xSemaphoreGive(port_debug.semaphore);
+      hal_uart_write_buf(port_uart2.port, ptr, (size_t) len);
+      xSemaphoreGive(port_uart2.semaphore);
     }
   } //hal_uart_write_buf(UART_DEBUG, ptr, (size_t) len);
   return -1;
