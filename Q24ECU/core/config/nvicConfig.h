@@ -21,5 +21,5 @@
 
 // Highest Priority that can be given to an NVIC Interrupt
 #define NVIC_Priority_MAX 21
-// Highest Priority that can be given to an NVIC Interrupt
+// Lowest Priority that can be given to an NVIC Interrupt
 #define NVIC_Priority_MIN 79

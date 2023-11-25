@@ -16,7 +16,7 @@ void tsk_Test1(void *param){
     (void)(param); // Cast unused variable to void
     for(;;){
         // Print out the systemtick timer once a second
-        printf("%d\n", xTaskGetTickCount());
+        printf("%ld\n", xTaskGetTickCount());
         vTaskDelay(1000);
     }
 }

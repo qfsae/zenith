@@ -16,7 +16,7 @@ void tsk_USART2_Handler(void *param){
     (void)param;
     for(;;){
         uint8_t buf[64];
-        size_t bytes = xStreamBufferReceive(debug.stream, (void*) &buf, 64, portMAX_DELAY);
+        size_t bytes = xStreamBufferReceive(port_uart2.rxbuffer, (void*) &buf, 64, portMAX_DELAY);
         printf("%s (%d)\n", buf, bytes);
         // reset the stream buffer
         for (int i = 0; i < 64; i++)

@@ -13,36 +13,52 @@
 #include "semphr.h"
 #include "stream_buffer.h"
 
-typedef struct {
-    USART_TypeDef *interface;
-    xSemaphoreHandle handle;
-    StreamBufferHandle_t stream;
-} uart_t;
+/**
+ * @brief check if a uart port is null
+ * 
+ * @param port The UART port
+ * 
+ */
+#define uart_port_nullcheck(port) \
+    if(port == NULL)              return; \
+    if(port->semaphore == NULL)   return; \
+    if(port->rxbuffer == NULL)      return; \
 
-// handler for DEBUG USART (USART 2 on MockECU)
-extern uart_t debug;
 
-extern void uart_setup();
-
-// USART2 IQR Handler
-extern void USART2_IRQHandler();
+// debug uart port (for syscalls)
+#define port_debug port_uart2
 
 
 /**
- * @brief Initialize a USART device and its Semaphore
+ * @brief UART port typedef
+ * @param port The UART port (CMSIS UART typedef)
+ * @param semaphore The semaphore controlling the UART port
+ * @param rxbuffer The receive buffer loaded by the UART IRQ Handler
  * 
- * @param handle The USART_t typedef handle
- * @param interface the USARTx define from CMSIS headers
- * @param baud USART Baud Rate
  */
-static inline void uart_send_init(uart_t *handle, USART_TypeDef *interface, unsigned long baud){
-    handle->handle = xSemaphoreCreateBinary();
-    handle->stream = xStreamBufferCreate(64, 1);
-    if(handle->handle == NULL) return;
-    handle->interface = interface;
-    hal_uart_init(handle->interface, baud);
-    xSemaphoreGive(handle->handle);
-}
+typedef struct uart_t {
+    USART_TypeDef *port;
+    xSemaphoreHandle semaphore;
+    StreamBufferHandle_t rxbuffer;
+} uart_t;
+
+// UART OS Handlers
+extern uart_t port_uart2;
+
+/**
+ * @brief OS UART Setup handler
+ * 
+ * This function should be called to initalized all onboard UART interfaces.
+ * This function should not be called more than once.
+ * All UART initialization should happen within this function
+ * 
+ * Called in main
+ * 
+ */
+extern void os_uart_setup();
+
+// USART2 IQR Handler
+extern void USART2_IRQHandler();
 
 /**
  * @brief Task Blocking command to send a byte over uart
@@ -52,12 +68,10 @@ static inline void uart_send_init(uart_t *handle, USART_TypeDef *interface, unsi
  * @param timeout The amount of ticks to wait for the interface to become available
  */
 static inline void uart_send_blocking(uart_t *port, uint8_t byte, TickType_t timeout){
-    if(port == NULL)              return;
-    if(port->interface == NULL)   return;
-    if(port->handle == NULL)      return;
-    if(xSemaphoreTake(port->handle, timeout) == pdTRUE){
-        hal_uart_write_byte(port->interface, byte);
-        xSemaphoreGive(port->handle);
+    uart_port_nullcheck(port)
+    if(xSemaphoreTake(port->semaphore, timeout) == pdTRUE){
+        hal_uart_write_byte(port->port, byte);
+        xSemaphoreGive(port->semaphore);
     }
 }
 
@@ -70,11 +84,9 @@ static inline void uart_send_blocking(uart_t *port, uint8_t byte, TickType_t tim
  * @param timeout The amount of ticks to wait for the interface to become available 
  */
 static inline void uart_send_buf_blocking(uart_t *port, char* buf, size_t len, TickType_t timeout){
-    if(port == NULL)              return;
-    if(port->interface == NULL)   return;
-    if(port->handle == NULL)      return;
-    if(xSemaphoreTake(port->handle, timeout) == pdTRUE){
-        hal_uart_write_buf(port->interface, buf, len);
-        xSemaphoreGive(port->handle);
+    uart_port_nullcheck(port)
+    if(xSemaphoreTake(port->semaphore, timeout) == pdTRUE){
+        hal_uart_write_buf(port->port, buf, len);
+        xSemaphoreGive(port->semaphore);
     }
 }

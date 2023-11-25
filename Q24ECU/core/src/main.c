@@ -31,7 +31,7 @@ int main(void){
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
     // hal_uart_init(UART_DEBUG, 9600);
-    uart_setup();
+    os_uart_setup();
     // xSemaphoreGive(debug.handle);
     printf("\nsystem starting tasks...\n");
 
