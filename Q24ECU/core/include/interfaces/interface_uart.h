@@ -13,6 +13,10 @@
 #include "semphr.h"
 #include "stream_buffer.h"
 
+#define UART_WRITE_OK 0
+#define UART_ERR_UNDEF 1
+#define UART_ERR_ACC 2
+
 
 /**
  * @brief UART port typedef
@@ -72,14 +76,16 @@ extern void USART2_IRQHandler();
  * @param byte The Byte to transmit
  * @param timeout The amount of ticks to wait for the interface to become available
  */
-static void uart_send_blocking(uart_t *port, uint8_t byte, TickType_t timeout){
-    if(port == NULL) return;
-    if(port->port == NULL) return;
-    if(port->semaphore == NULL) return;
+static inline int uart_send_blocking(uart_t *port, uint8_t byte, TickType_t timeout){
+    if(port == NULL)            return UART_ERR_UNDEF;
+    if(port->port == NULL)      return UART_ERR_UNDEF;
+    if(port->semaphore == NULL) return UART_ERR_UNDEF;
     if(xSemaphoreTake(port->semaphore, timeout) == pdTRUE){
         hal_uart_write_byte(port->port, byte);
         xSemaphoreGive(port->semaphore);
+        return UART_WRITE_OK;
     }
+    return UART_ERR_ACC;
 }
 
 /**
@@ -90,12 +96,14 @@ static void uart_send_blocking(uart_t *port, uint8_t byte, TickType_t timeout){
  * @param len Length of Data Buffer
  * @param timeout The amount of ticks to wait for the interface to become available 
  */
-static void uart_send_buf_blocking(uart_t *port, char* buf, size_t len, TickType_t timeout){
-    if(port == NULL) return;
-    if(port->port == NULL) return;
-    if(port->semaphore == NULL) return;
+static inline int uart_send_buf_blocking(uart_t *port, char* buf, size_t len, TickType_t timeout){
+    if(port == NULL)            return UART_ERR_UNDEF;
+    if(port->port == NULL)      return UART_ERR_UNDEF;
+    if(port->semaphore == NULL) return UART_ERR_UNDEF;
     if(xSemaphoreTake(port->semaphore, timeout) == pdTRUE){
         hal_uart_write_buf(port->port, buf, len);
         xSemaphoreGive(port->semaphore);
+        return UART_WRITE_OK;
     }
+    return UART_ERR_ACC;
 }
