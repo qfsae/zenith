@@ -54,7 +54,7 @@ extern void os_uart_setup();
  * @param uart the USARTx define from CMSIS headers
  * @param baud USART Baud Rate
  */
-static void uart_send_init(uart_t *port, USART_TypeDef *uart, unsigned long baud){
+static inline void uart_send_init(uart_t *port, USART_TypeDef *uart, unsigned long baud){
     port->semaphore = xSemaphoreCreateBinary();
     if(port->semaphore == NULL) return;
     port->rxbuffer = xStreamBufferCreate(64, 1);

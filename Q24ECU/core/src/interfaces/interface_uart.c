@@ -36,6 +36,16 @@ void os_uart_setup(){
     hal_uart_enable_rxne(port_uart2.port, true);
     NVIC_SetPriority(USART2_IRQn, (NVIC_Priority_MIN-10));
     NVIC_EnableIRQ(USART2_IRQn);
+
+    // Create UART2 (debug) receive task handler
+    xTaskCreate(
+        tsk_USART2_Handler,
+        "u2",
+        1024,
+        NULL,
+        tskIDLE_PRIORITY,
+        &tskh_USART2_Handler
+    );
 }
 
 void USART2_IRQHandler(){
@@ -52,4 +62,19 @@ void USART2_IRQHandler(){
 
     // Check and trigger a context switch if needed
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+void tsk_USART2_Handler(void *param){
+    (void)param;
+    for(;;){
+        uint8_t buf[64];
+        size_t bytes = xStreamBufferReceive(port_uart2.rxbuffer, (void*) &buf, 64, portMAX_DELAY);
+        printf("%s (%d)\n", buf, bytes);
+        // reset the stream buffer
+        for (int i = 0; i < 64; i++)
+        {
+            buf[i] = 0;
+        }
+        
+    }
 }

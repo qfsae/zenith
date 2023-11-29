@@ -11,12 +11,6 @@
 #include "limits.h"
 #include "taskHandlers.h"
 
-// Init global handles for tasks
-
-TaskHandle_t tskh_Test1 = NULL;
-TaskHandle_t tskh_BlinkLED = NULL;
-TaskHandle_t tskh_USART2_Handler = NULL;
-
 int main(void){
     // set up gpio
     gpio_set_mode(debug_led1, GPIO_MODE_OUTPUT);
@@ -33,40 +27,14 @@ int main(void){
     // initialize os interfaces
     os_uart_setup();
 
+    // clear terminal
     printf("\033[2J");
     spin(9999999UL);
     printf("system starting tasks...\n");
-    spin(9999999UL);
-    
-    // Create Sample Blink Task
-    xTaskCreate(
-        tsk_BlinkLED,
-        "blink",
-        1024,
-        NULL,
-        tskIDLE_PRIORITY,
-        &tskh_BlinkLED
-    );
+    spin(9999999UL);  
 
-    // Create Sample Print Task
-    xTaskCreate(
-        tsk_Test1,
-        "tst1",
-        1024,
-        NULL,
-        tskIDLE_PRIORITY,
-        &tskh_Test1
-    );
-    
-    // Create UART2 (debug) receive task handler
-    xTaskCreate(
-        tsk_USART2_Handler,
-        "u2",
-        1024,
-        NULL,
-        tskIDLE_PRIORITY+4,
-        &tskh_USART2_Handler
-    );
+    // Initialize all the tasks
+    os_task_init();
 
     // Start Scheduler
     vTaskStartScheduler();
