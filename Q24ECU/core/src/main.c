@@ -8,87 +8,33 @@
  */
 
 #include "main.h"
-#include "FreeRTOS.h"
-#include "FreeRTOSConfig.h"
-#include "task.h"
-#include "hal/hal_adc.h"
-#include <string.h>
-#include "hal/hal_flash.h"
-
-// set up a basic test task
-TaskHandle_t gTestTask = NULL;
-
-// test task for blinking an led
-void testTask(void *param){
-    (void)(param); // Cast unused variable to void
-    for(;;){
-        // Toggle LED Pin
-        gpio_toggle_pin(debug_led2);
-        // Non Blocking Delay
-        vTaskDelay(1000);
-    }
-}
-
-// Task Handle for Debug print Task
-TaskHandle_t gDebugPrint = NULL;
-
-// Debug Print "HI!" Task
-void debugPrint(void *param){
-    (void)param;
-    gpio_set_mode(PIN_voltageSensor, GPIO_MODE_ANALOG);
-    printf("Task Start: debugPrint\n");
-    adc_init(ADC2);
-    hal_FLASH_WriteHW(0x08060010, 55UL);
-    for(;;){
-        int adcread = *hal_FLASH_Read(0x08060000);//adc_poll(ADC2, 11);
-        printf("Read: %d\n", adcread);
-        // uart_write_buf(USART2, "Hi!\n", 5);
-        //printf("HI!!\n");
-        vTaskDelay(1000);
-    }
-}
-
-void TIM6_DAC_IRQHandler(){
-    // Place at beginning of IQR - Otherwise it causes the NVIC to rerun the IQR
-    TIM6->SR = TIM_SR_CC1IF;
-    gpio_toggle_pin(debug_led1);
-}
+#include "limits.h"
+#include "taskHandlers.h"
 
 int main(void){
-
     // set up gpio
     gpio_set_mode(debug_led1, GPIO_MODE_OUTPUT);
-    gpio_write(debug_led1, true);
+    gpio_write(debug_led1, false);
     gpio_set_mode(debug_led2, GPIO_MODE_OUTPUT);
-    gpio_write(debug_led2, false);
+    gpio_write(debug_led2, true);
     gpio_pull(debug_led1, GPIO_PULLDOWN);
 
     // Enable Timer 6 (Basic Timer) 1Hz (APB2/45000, count to 2000)
     TIM_basic_Init(TIM6, 45000U, 2000U);
-    NVIC_SetPriority(TIM6_DAC_IRQn, 0x03); // Enable Timer IRQ (lowest priority)
+    NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_Priority_MIN); // Enable Timer IRQ (lowest priority)
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
-    uart_init(UART_DEBUG, 9600);
+    // initialize os interfaces
+    os_uart_setup();
 
-    // Create Sample Blink Task
-    uint32_t status_tstTsk = xTaskCreate(
-        testTask,
-        "TestTsk",
-        1024,
-        NULL,
-        tskIDLE_PRIORITY,
-        &gTestTask
-    );
+    // clear terminal
+    printf("\033[2J");
+    spin(9999999UL);
+    printf("system starting tasks...\n");
+    spin(9999999UL);  
 
-    // Create Sample Print Task
-    uint32_t status_dbgPrn = xTaskCreate(
-        debugPrint,
-        "DebugPrint",
-        1024,
-        NULL,
-        tskIDLE_PRIORITY,
-        &gDebugPrint
-    );
+    // Initialize all the tasks
+    os_task_init();
 
     // Start Scheduler
     vTaskStartScheduler();

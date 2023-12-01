@@ -48,7 +48,7 @@ static void hal_FLASH_Lock(void){
 };
 
 // Unlock the flash memory
-static uint8_t hal_FLASH_Unlock(void){
+static inline uint8_t hal_FLASH_Unlock(void){
   // Check if already unlocked
   if(((FLASH->CR) & (FLASH_CR_LOCK)) != 0) {
 
@@ -61,7 +61,7 @@ static uint8_t hal_FLASH_Unlock(void){
             return FLASH_WRITE_NOACC;
         }
   }
-  return NULL;
+  return FLASH_WRITE_OK;
 }
 
 /**
@@ -72,7 +72,7 @@ static uint8_t hal_FLASH_Unlock(void){
  * @param data2 second half of word
  * @returns Flash Write Error
  */
-static uint8_t hal_FLASH_WriteFW(uint32_t Address, uint32_t data1, uint32_t data2){
+static inline uint8_t hal_FLASH_WriteFW(uint32_t Address, uint32_t data1, uint32_t data2){
     // Check if write address is valid
     if(Address < FLASH_USER_START){
         return FLASH_WRITE_ADDR_INVALID;
@@ -110,7 +110,7 @@ static uint8_t hal_FLASH_WriteFW(uint32_t Address, uint32_t data1, uint32_t data
  * @param data The Data
  * @returns Flash Write Error
  */
-static uint8_t hal_FLASH_WriteHW(uint32_t Address, uint32_t data){
+static inline uint8_t hal_FLASH_WriteHW(uint32_t Address, uint32_t data){
     // Check if write address is valid
     if(Address < FLASH_USER_START){
         return FLASH_WRITE_ADDR_INVALID;

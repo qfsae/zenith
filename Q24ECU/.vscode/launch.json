@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "ST-Flash",
+        "type": "cppvsdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/Tools/ST-LINK_CLI.exe",
+        "args": [
+          "-P",
+          "${workspaceFolder}/build/firmware.bin",
+          "0x08000000",
+          "-V",
+          "-RST"
+        ],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "console": "integratedTerminal"
+      }
+    ]
+  }
