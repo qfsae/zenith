@@ -9,6 +9,8 @@
  * 
  */
 
+#pragma once
+
 #include "FreeRTOS.h"
 #include "FreeRTOSConfig.h"
 #include "task.h"
