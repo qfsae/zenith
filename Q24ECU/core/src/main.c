@@ -8,8 +8,10 @@
  */
 
 #include "main.h"
-#include "limits.h"
-#include "taskHandlers.h"
+#include <stdio.h>
+#include "hal/hal_gpio.h"
+#include "hal/hal_tim_basic.h"
+#include "interfaces/interface_uart.h"
 
 int main(void){
     // set up gpio
@@ -46,3 +48,4 @@ int main(void){
     }
     return 0;
 }
+

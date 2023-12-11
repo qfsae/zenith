@@ -11,12 +11,13 @@
 
 #include "taskHandlers.h"
 #include "main.h"
+#include <stdio.h>
 
 void tsk_Test1(void *param){
     (void)(param); // Cast unused variable to void
     for(;;){
         // Print out the systemtick timer once a second
-        printf("%ld\n", xTaskGetTickCount());
+        printf("%ld\n", (long)xTaskGetTickCount());
         vTaskDelay(1000);
     }
 }
@@ -29,3 +30,4 @@ void tsk_BlinkLED(void *param){
         vTaskSuspend(NULL);
     }
 }
+

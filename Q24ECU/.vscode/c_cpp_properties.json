@@ -9,7 +9,9 @@
                 "${workspaceFolder}/FreeRTOS-Kernel/include",
                 "${workspaceFolder}/FreeRTOS-Kernel/portable/GCC/ARM_CM4F",
                 "${workspaceFolder}/core/config",
-                "${workspaceFolder}/core/include/hal"
+                "${workspaceFolder}/core/include/hal",
+                "${workspaceFolder}/core/include",
+                "${workspaceFolder}/core/include"
             ],
             "defines": [
                 "_DEBUG",
@@ -20,7 +22,7 @@
             "compilerPath": "C:/MinGW/bin/gcc.exe",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "intelliSenseMode": "${default}",
+            "intelliSenseMode": "windows-gcc-arm",
             "configurationProvider": "ms-vscode.makefile-tools",
             "mergeConfigurations": false,
             "browse": {

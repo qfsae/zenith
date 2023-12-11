@@ -2,8 +2,6 @@
 
 #include <inttypes.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <sys/stat.h>
 
 #include <stm32f446xx.h>

@@ -80,3 +80,4 @@ static inline void hal_uart_write_byte(USART_TypeDef * uart, uint8_t byte) {
 static inline void hal_uart_write_buf(USART_TypeDef *uart, char *buf, size_t len){
     while(len-- > 0) hal_uart_write_byte(uart, *(uint8_t *) buf++);
 }
+

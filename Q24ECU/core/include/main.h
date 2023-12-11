@@ -9,12 +9,7 @@
  * 
  */
 
-#include "interfaces/interface_uart.h"
-#include "hal/hal_gpio.h"
-#include "hal/hal_adc.h"
-#include "hal/hal_uart.h"
-#include "hal/hal_tim_basic.h"
-#include "hal/hal_flash.h"
+#include <stm32f4xx.h>
 #include "taskHandlers.h"
 #include "nvicConfig.h"
 #include "interrupts.h"

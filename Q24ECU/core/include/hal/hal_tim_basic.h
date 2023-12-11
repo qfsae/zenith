@@ -9,7 +9,8 @@
  * 
  */
 
-#include "hal_gpio.h"
+#include <stm32f4xx.h>
+
 
 /**
  * @brief Init function for basic timers (TIM6/TIM7)
@@ -26,7 +27,7 @@ static inline void TIM_basic_Init(TIM_TypeDef *timer, uint16_t prescaler, uint16
     // Reset and Set Master Mode to Enable (CNT_EN is used as a trigger output)
     timer->CR2 &= ~(7UL << 4U);
     timer->CR2 |= BIT(4); // set timer master mode to enable
-    timer->DIER &= ~(BIT(8) | BIT(0)); // reset interrupt enable reg
+    timer->DIER &= ~(BIT(8U) | BIT(0U)); // reset interrupt enable reg
     timer->DIER |= BIT(0); // enable timer interrupt
     // TIM6->EGR |= BIT(0);
     timer->ARR = (reload_register-1);//(65536);
@@ -34,3 +35,4 @@ static inline void TIM_basic_Init(TIM_TypeDef *timer, uint16_t prescaler, uint16
     timer->CR1 &= ~(TIM_CR1_ARPE | TIM_CR1_OPM | TIM_CR1_URS | TIM_CR1_CEN); // reset timer control register 1
     timer->CR1 |= (TIM_CR1_CEN); // set interrupt source to only overflow | enable timer
 }
+

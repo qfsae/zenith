@@ -29,7 +29,7 @@ uart_t port_uart2;
  * Called in main
  * 
  */
-void os_uart_setup(){
+void os_uart_setup(void){
     // Enable the UART 2 port and setup its IQR handler
     uart_send_init(&port_uart2, USART2, 250000);
     xStreamBufferSetTriggerLevel(port_uart2.rxbuffer, 5); // set the trigger level of the stream buffer. Port Specific.
@@ -48,7 +48,7 @@ void os_uart_setup(){
     );
 }
 
-void USART2_IRQHandler(){
+void USART2_IRQHandler(void){
     // Initialize variable to trigger context switch to false (no context switch)
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
@@ -78,3 +78,4 @@ void tsk_USART2_Handler(void *param){
         
     }
 }
+

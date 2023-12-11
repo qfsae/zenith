@@ -13,4 +13,5 @@
 
 #pragma once
 
-extern void TIM6_DAC_IRQHandler();
+extern void TIM6_DAC_IRQHandler(void);
+

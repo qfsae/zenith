@@ -2,7 +2,7 @@
 // All rights reserved
 
 #include <sys/stat.h>
-
+#include <stm32f4xx.h>
 #include "interfaces/interface_uart.h"
 #include "FreeRTOS.h"
 #include "task.h"
