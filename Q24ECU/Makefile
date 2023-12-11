@@ -12,9 +12,12 @@ all: build
 ${BUILD_DIR}/Makefile:
 	cmake \
 		-B${BUILD_DIR} \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
 		-DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
 		-DCMAKE_TOOLCHAIN_FILE=gcc-arm-none-eabi.cmake \
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+		-DCMAKE_C_COMPILER=clang \
+		-DCMAKE_CXX_COMPILER=clang++ \
 		-DDUMP_ASM=OFF
 
 cmake: ${BUILD_DIR}/Makefile

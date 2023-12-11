@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.21)
 
+# Set LLVM as the compiler
+set(CMAKE_C_COMPILER clang)
+set(CMAKE_CXX_COMPILER clang++)
+
 #set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 include(./gcc-arm-none-eabi.cmake)
 # set(CMAKE_SYSTEM_NAME Generic)
@@ -54,26 +58,34 @@ target_include_directories(${EXECUTABLE} PRIVATE
     ${INCLUDE_DIRECTORIES})
 
 target_compile_options(${EXECUTABLE} PRIVATE
+    -target arm-none-eabi
+    -isysroot "mnt/c/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/arm-none-eabi"
     ${CPU_PARAMETERS}
-    -Wall
-    -Wextra
-    -g
-    -fmessage-length=0
-    -ffunction-sections
-    -fdata-sections
-    --specs=nano.specs
+    # -L/vendor/newlib
+    # -Wall
+    # -Wextra
+    # -Wpedantic
+    # --sysroot= --print-sysroot
+    # -g
+    # -fmessage-length=0
+    # -ffunction-sections
+    # -fdata-sections
+    # -nostdlib
+    # --specs=nano.specs
     #$<$<CONFIG:Debug>:-Os -g3>
     #$<$<CONFIG:Release>:-Os -g0>
     
     )
 
 target_link_options(${EXECUTABLE} PRIVATE
-    -T${MCU_LINKER_SCRIPT}
+-isysroot "/mnt/c/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/arm-none-eabi"
     ${CPU_PARAMETERS}
-    #-nostartfiles
-    -Wall
-    --specs=nano.specs
-    -lgcc
+    -target arm-none-eabi
+    -T${MCU_LINKER_SCRIPT}
+    # --sysroot=/bin
+    # -nostartfiles
+    # -Wall
+    # --specs=nano.specs
     -Wl,--gc-sections
     -Wl,-L./ld
     # Printf floats can be removed in production code

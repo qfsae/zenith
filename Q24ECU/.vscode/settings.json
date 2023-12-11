@@ -17,6 +17,8 @@
         "main.h": "c",
         "interface_uart.h": "c",
         "task.h": "c",
-        "freertosconfig.h": "c"
+        "freertosconfig.h": "c",
+        "stdlib.h": "c",
+        "stdio.h": "c"
     }
 }

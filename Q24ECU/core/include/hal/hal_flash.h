@@ -45,7 +45,7 @@
 
 static void hal_FLASH_Lock(void){
   FLASH->CR |= FLASH_CR_LOCK;
-};
+}
 
 // Unlock the flash memory
 static inline uint8_t hal_FLASH_Unlock(void){
