@@ -11,7 +11,9 @@
 #include <stdio.h>
 #include "hal/hal_gpio.h"
 #include "hal/hal_tim_basic.h"
+#include "hal/hal_uart.h"
 #include "interfaces/interface_uart.h"
+#include "stm32f446xx.h"
 
 int main(void){
     // set up gpio
