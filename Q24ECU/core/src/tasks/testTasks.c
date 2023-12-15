@@ -12,6 +12,10 @@
 #include "taskHandlers.h"
 #include "main.h"
 #include <stdio.h>
+#include "FreeRTOS.h"
+#include "task.h"
+
+long unsigned int counter = 0;
 
 void tsk_Test1(void *param){
     (void)(param); // Cast unused variable to void
@@ -25,9 +29,12 @@ void tsk_Test1(void *param){
 
 void tsk_BlinkLED(void *param){
     (void)param;
+    TickType_t lastWakeTime = xTaskGetTickCount();
     for(;;){
         // This task is currently not used so perma suspend it
-        vTaskSuspend(NULL);
+        lastWakeTime = xTaskGetTickCount();
+        counter++;
+        vTaskDelayUntil(&lastWakeTime, 10);
     }
 }
 
