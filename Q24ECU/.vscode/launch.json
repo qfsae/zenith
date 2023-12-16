@@ -94,8 +94,8 @@
             "enabled": true,
             "samplesPerSecond": 4
         },
-        "runToMain": true, // else it starts at reset handler - not interested
-        "preLaunchTask": "Build all", // configured in tasks.json
+        "runToEntryPoint": "main", // else it starts at reset handler - not interested
+        "preLaunchTask": "cmake-build", // configured in tasks.json
         // "preLaunchCommands": ["Build all"], // you can execute command instead of task
         "svdFile": "", // Include svd to watch device peripherals
         "swoConfig": {} // currently (v1.7.0) not supported
@@ -113,8 +113,8 @@
             "enabled": true,
             "samplesPerSecond": 4
         },
-        "runToMain": true, // else it starts at reset handler - not interested
-        "preLaunchTask": "Build all", // configured in tasks.json
+        "runToEntryPoint": "main", // else it starts at reset handler - not interested
+        "preLaunchTask": "cmake-build", // configured in tasks.json
         // "preLaunchCommands": ["Build all"], // you can execute command instead of task
         "svdFile": "", // Include svd to watch device peripherals
         "swoConfig": {} // currently (v1.7.0) not supported
