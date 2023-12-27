@@ -12,7 +12,6 @@
 #include "hal/hal_gpio.h"
 #include "hal/hal_tim_basic.h"
 #include "hal/hal_uart.h"
-#include "hal/hal_can.h"
 #include "interfaces/interface_uart.h"
 #include "stm32f446xx.h"
 
@@ -31,12 +30,6 @@ int main(void){
 
     // initialize os interfaces
     os_uart_setup();
-    gpio_set_mode(PIN('A', 11), GPIO_MODE_AF);
-    gpio_set_af(PIN('A', 11), 9);
-    gpio_set_mode(PIN('A', 12), GPIO_MODE_AF);
-    gpio_set_af(PIN('A', 12), 9);
-    hal_can_init(CAN1, CAN_1000KBPS);
-
     // clear terminal
     printf("\033[2J");
     spin(9999999UL);
