@@ -75,66 +75,44 @@ CAN_bit_timing_config_t can_configs[6] = {{2, 12, 60}, {2, 12, 30}, {2, 12, 24},
  *
  * @returns HAL_CAN_OK or HAL_CAN_xx_ERR on ERROR
  */
-static inline uint8_t hal_can_setFilter(uint8_t index, uint8_t scale, uint8_t mode, uint8_t fifo, uint32_t bank1, uint32_t bank2){
-    // Return ERROR if filter index out of range
-    if(index > 27) return HAL_CAN_FILTER_SELRNG_ERR;
-    
-    // Enter into Filter configuration mode
-    // CAN1->FMR |= CAN_FMR_FINIT;
-    // Disable the filter
-    CAN1->FA1R &= ~(0x1UL << index);
-    
-    // Select between dual 16 bit or single 32 bit configuration
-    if(scale == 0) CAN1->FS1R &= ~(0x1UL << index); // dual 16 bit scale
-    else CAN1->FS1R |= (0x1UL << index);            // sigle 32 bit mode
+static inline uint8_t hal_can_setFilter(uint8_t index, uint8_t scale, uint8_t mode, uint8_t fifo, uint32_t bank1, uint32_t bank2) {
+    if (index > 27)
+        return HAL_CAN_FILTER_SELRNG_ERR;
 
-    // Select Mask vs List mode
-    if(mode == 0) CAN1->FM1R &= ~(0x1UL << index); // Mask
-    else CAN1->FM1R |= (0x1UL << index);           // List
+    CLEAR_BIT(CAN1->FA1R, (0x1UL << index)); // Deactivate filter
 
-    // Assign filter to CAN bus FIFO
-    if(fifo == 0) CAN1->FFA1R &= ~(0x1UL << index);
-    else CAN1->FFA1R |= (0x1UL << index);
-    
-    // Set filter bank registers
-    CAN1->sFilterRegister[index].FR1 = bank1;
-    CAN1->sFilterRegister[index].FR2 = bank2;
+    if (scale == 0)
+    {
+        CAN1->FS1R &= ~(0x1UL << index); // Set filter to Dual 16-bit scale configuration
+    }
+    else
+    {
+        CAN1->FS1R |= (0x1UL << index); // Set filter to single 32 bit configuration
+    }
+    if (mode == 0)
+    {
+        CAN1->FM1R &= ~(0x1UL << index); // Set filter to Mask mode
+    }
+    else
+    {
+        CAN1->FM1R |= (0x1UL << index); // Set filter to List mode
+    }
 
-    // Activate the filter
-    CAN1->FFA1R |= (0x1UL << index);
-    // Exit from filter configuration mode
-    // CAN1->FMR &= ~(CAN_FMR_FINIT);
+    if (fifo == 0)
+    {
+        CAN1->FFA1R &= ~(0x1UL << index); // Set filter assigned to FIFO 0
+    }
+    else
+    {
+        CAN1->FFA1R |= (0x1UL << index); // Set filter assigned to FIFO 1
+    }
+
+    CAN1->sFilterRegister[index].FR1 = bank1; // Set filter bank registers1
+    CAN1->sFilterRegister[index].FR2 = bank2; // Set filter bank registers2
+
+    SET_BIT(CAN1->FA1R, (0x1UL << index)); // Reactivate the filter
 
     return HAL_CAN_OK;
-}
-
-void CANSetFilter(uint8_t index, uint8_t scale, uint8_t mode, uint8_t fifo, uint32_t bank1, uint32_t bank2) {
-  if (index > 27) return;
-
-  CAN1->FA1R &= ~(0x1UL<<index);               // Deactivate filter
-
-  if (scale == 0) {
-    CAN1->FS1R &= ~(0x1UL<<index);             // Set filter to Dual 16-bit scale configuration
-  } else {
-    CAN1->FS1R |= (0x1UL<<index);              // Set filter to single 32 bit configuration
-  }
-    if (mode == 0) {
-    CAN1->FM1R &= ~(0x1UL<<index);             // Set filter to Mask mode
-  } else {
-    CAN1->FM1R |= (0x1UL<<index);              // Set filter to List mode
-  }
-
-  if (fifo == 0) {
-    CAN1->FFA1R &= ~(0x1UL<<index);            // Set filter assigned to FIFO 0
-  } else {
-    CAN1->FFA1R |= (0x1UL<<index);             // Set filter assigned to FIFO 1
-  }
-
-  CAN1->sFilterRegister[index].FR1 = bank1;    // Set filter bank registers1
-  CAN1->sFilterRegister[index].FR2 = bank2;    // Set filter bank registers2
-
-  CAN1->FA1R |= (0x1UL<<index);                // Activate filter
-
 }
 
 /**
@@ -172,16 +150,17 @@ static inline uint8_t hal_can_init(CAN_TypeDef * CAN, CAN_BITRATE bitrate, bool 
     CLEAR_BIT(CAN->MCR, CAN_MCR_TTCM);
     // Setup bus bitrates
     CAN->BTR &= ~((0x03UL << 24) | (0x07UL << 20) | (0x0FUL << 16) | (0x1FFUL)); // Zero out the register
-    CAN->BTR |=  (((can_configs[bitrate].TS2-1) & 0x07) << 20) | (((can_configs[bitrate].TS1-1) & 0x0F) << 16) | ((can_configs[bitrate].BRP-1) & 0x1FF); // Set up the bit timing
+    CAN->BTR |=  (uint32_t)(((can_configs[bitrate].TS2-1) & 0x07) << 20) | (((can_configs[bitrate].TS1-1) & 0x0F) << 16) | ((can_configs[bitrate].BRP-1) & 0x1FF); // Set up the bit timing
     // Initialize the filter registers
-    CAN1->FMR |= CAN_FMR_FINIT;                 // Enter into initialization mode
-    CAN1->FMR &= 0xFFFFC0FF;
-    // CAN1->FMR &= ~(CAN_FMR_CAN2SB);             // Clear the Filter Selection register
-    CAN1->FMR |= 0xE00;//(0xEUL << CAN_FMR_CAN2SB_Pos); // Set filters (0-13 -> CAN1) & (14-28 -> CAN2)
-    CANSetFilter(0, 1, 0, 0, 0x0UL, 0x0UL);
-    CANSetFilter(14, 1, 0, 0, 0x0UL, 0x0UL);
-    CAN1->FMR &= ~(CAN_FMR_FINIT);              // Deactivate initialization mode
+    SET_BIT(CAN1->FMR, CAN_FMR_FINIT);           // Enter into initialization mode
+    CLEAR_BIT(CAN1->FMR, CAN_FMR_CAN2SB);        // Clear the Filter Selection register
+    CAN1->FMR |= (0xEUL << CAN_FMR_CAN2SB_Pos); // Set filters (0-13 -> CAN1) & (14-28 -> CAN2)
+    uint8_t f1_status = hal_can_setFilter(0, 1, 0, 0, 0x0UL, 0x0UL);
+    uint8_t f2_status = hal_can_setFilter(14, 1, 0, 0, 0x0UL, 0x0UL);
+    CLEAR_BIT(CAN1->FMR, CAN_FMR_FINIT);              // Deactivate initialization mode
 
+    if(f1_status != HAL_CAN_OK) return f1_status;
+    if(f2_status != HAL_CAN_OK) return f2_status;
 
     // Enable the bus
     // Request to leave initialization mode
