@@ -11,7 +11,8 @@
                 "${workspaceFolder}/core/config",
                 "${workspaceFolder}/core/include/hal",
                 "${workspaceFolder}/core/include",
-                "${workspaceFolder}/core/include"
+                "${workspaceFolder}/core/include",
+                "${workspaceFolder}/vendor/cmsis_f4/Include"
             ],
             "defines": [
                 "_DEBUG",
