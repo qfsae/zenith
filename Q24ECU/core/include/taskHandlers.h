@@ -19,6 +19,8 @@ extern TaskHandle_t tskh_Test1;
 extern TaskHandle_t tskh_BlinkLED;
 // UART2 (debug) receive task handler
 extern TaskHandle_t tskh_USART2_Handler;
+// Update Throttle position
+extern TaskHandle_t tskh_UpdateThrottle;
 
 extern void os_task_init(void);
 
@@ -27,3 +29,5 @@ extern void tsk_Test1(void *param);
 extern void tsk_BlinkLED(void *param);
 
 extern void tsk_USART2_Handler(void *param);
+
+extern void tsk_UpdateThrottle(void *param);

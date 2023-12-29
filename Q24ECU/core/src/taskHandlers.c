@@ -16,6 +16,7 @@
 TaskHandle_t tskh_Test1 = NULL;
 TaskHandle_t tskh_BlinkLED = NULL;
 TaskHandle_t tskh_USART2_Handler = NULL;
+TaskHandle_t tskh_UpdateThrottle = NULL;
 
 void os_task_init(){
     // Create Sample Blink Task
@@ -36,5 +37,15 @@ void os_task_init(){
         NULL,
         tskIDLE_PRIORITY,
         &tskh_Test1
+    );
+
+    // Create Throttle Task
+    xTaskCreate(
+        tsk_UpdateThrottle,
+        "throttle",
+        1024,
+        NULL,
+        tskIDLE_PRIORITY,
+        &tskh_UpdateThrottle
     );
 }
