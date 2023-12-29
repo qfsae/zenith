@@ -25,14 +25,10 @@
 // Filter selection out of range (there are only 28 filters)
 #define HAL_CAN_FILTER_SELRNG_ERR 3
 
-#define CAN_EXT_ID_MASK                 0x1FFFFFFFU
-#define CAN_STD_ID_MASK                 0x000007FFU
-
 typedef struct {
     uint32_t id;        /* 29 bit identifier                               */
     uint8_t  data[8];   /* Data field                                      */
     uint8_t  len;       /* Length of data field in bytes                   */
-    uint8_t  ch;        /* Object channel(Not use)                         */
     uint8_t  format;    /* 0 - STANDARD, 1- EXTENDED IDENTIFIER            */
     uint8_t  type;      /* 0 - DATA FRAME, 1 - REMOTE FRAME                */
 } hal_CAN_msg_t;
@@ -125,7 +121,7 @@ static inline uint8_t hal_can_setFilter(uint8_t index, uint8_t scale, uint8_t mo
  * @param pin_rx GPIO PIN (automatic setup for can bus)
  * @returns HAL_CAN_OK or HAL_CAN_xx_ERR upon failure
  */
-static inline uint8_t hal_can_init(CAN_TypeDef * CAN, CAN_BITRATE bitrate, bool NART,uint16_t pin_tx, uint16_t pin_rx){
+static inline uint8_t hal_can_init(CAN_TypeDef * CAN, CAN_BITRATE bitrate, bool NART, uint16_t pin_tx, uint16_t pin_rx){
     // Enable the CAN bus clock
     if(CAN == CAN1) RCC->APB1ENR |= RCC_APB1ENR_CAN1EN;
     if(CAN == CAN2) RCC->APB1ENR |= RCC_APB1ENR_CAN2EN;
@@ -178,38 +174,31 @@ static inline uint8_t hal_can_init(CAN_TypeDef * CAN, CAN_BITRATE bitrate, bool 
 }
 
 static inline void hal_can_receive(CAN_TypeDef * CAN, hal_CAN_msg_t * rx_msg){
-    // Determine Message ID format
-    uint32_t id = CAN->sFIFOMailBox[0].RIR;
-    if((id & (1U << 2U)) == 0){
-        rx_msg->format = STANDARD_FORMAT;
-        rx_msg->id = (CAN_STD_ID_MASK & (id >> 21U));
+    // Determine Message ID format (Identifier Extension)
+    rx_msg->format = (CAN_RI0R_IDE & CAN->sFIFOMailBox[0].RIR);
+    if(rx_msg->format == STANDARD_FORMAT){
+        rx_msg->id = (CAN_RI0R_STID & CAN->sFIFOMailBox[0].RIR) >> CAN_TI0R_STID_Pos;
     }
     else{
-        rx_msg->format = EXTENDED_FORMAT;
-        rx_msg->id = (CAN_EXT_ID_MASK & (id >> 3U));
+        rx_msg->id = ((CAN_RI0R_EXID | CAN_RI0R_STID) & CAN->sFIFOMailBox[0].RIR) >> CAN_RI0R_EXID_Pos;
     }
 
-    if((id & (1U << 1U)) == 0){
-        rx_msg->type = DATA_FRAME;
-    }
-    else{
-        rx_msg->type = REMOTE_FRAME;
-    }
+    // Data Frame = 0 | Remote Frame = 1
+    rx_msg->type = (CAN_RI0R_RTR & CAN->sFIFOMailBox[0].RIR);
 
     // Message data length
-    rx_msg->len = (CAN->sFIFOMailBox[0].RDTR) & 0xFUL;
+    rx_msg->len = (CAN_RDT0R_DLC & CAN->sFIFOMailBox[0].RDTR) >> CAN_RDT0R_DLC_Pos;
 
-    rx_msg->data[0] = 0xFFUL &  CAN->sFIFOMailBox[0].RDLR;
-    rx_msg->data[1] = 0xFFUL & (CAN->sFIFOMailBox[0].RDLR >> 8);
-    rx_msg->data[2] = 0xFFUL & (CAN->sFIFOMailBox[0].RDLR >> 16);
-    rx_msg->data[3] = 0xFFUL & (CAN->sFIFOMailBox[0].RDLR >> 24);
-    rx_msg->data[4] = 0xFFUL &  CAN->sFIFOMailBox[0].RDHR;
-    rx_msg->data[5] = 0xFFUL & (CAN->sFIFOMailBox[0].RDHR >> 8);
-    rx_msg->data[6] = 0xFFUL & (CAN->sFIFOMailBox[0].RDHR >> 16);
-    rx_msg->data[7] = 0xFFUL & (CAN->sFIFOMailBox[0].RDHR >> 24);
+    rx_msg->data[0] = (uint8_t)((CAN_RDL0R_DATA0 & CAN->sFIFOMailBox[0].RDLR) >> CAN_RDL0R_DATA0_Pos);
+    rx_msg->data[1] = (uint8_t)((CAN_RDL0R_DATA1 & CAN->sFIFOMailBox[0].RDLR) >> CAN_RDL0R_DATA1_Pos);
+    rx_msg->data[2] = (uint8_t)((CAN_RDL0R_DATA2 & CAN->sFIFOMailBox[0].RDLR) >> CAN_RDL0R_DATA2_Pos);
+    rx_msg->data[3] = (uint8_t)((CAN_RDL0R_DATA3 & CAN->sFIFOMailBox[0].RDLR) >> CAN_RDL0R_DATA3_Pos);
+    rx_msg->data[4] = (uint8_t)((CAN_RDH0R_DATA4 & CAN->sFIFOMailBox[0].RDHR) >> CAN_RDH0R_DATA4_Pos);
+    rx_msg->data[5] = (uint8_t)((CAN_RDH0R_DATA5 & CAN->sFIFOMailBox[0].RDHR) >> CAN_RDH0R_DATA5_Pos);
+    rx_msg->data[6] = (uint8_t)((CAN_RDH0R_DATA6 & CAN->sFIFOMailBox[0].RDHR) >> CAN_RDH0R_DATA6_Pos);
+    rx_msg->data[7] = (uint8_t)((CAN_RDH0R_DATA7 & CAN->sFIFOMailBox[0].RDHR) >> CAN_RDH0R_DATA7_Pos);
 
-    CAN->RF0R |= CAN_RF0R_RFOM0;
-    
+    SET_BIT(CAN->RF0R, CAN_RF0R_RFOM0);
 }
 
 /**
@@ -219,7 +208,7 @@ static inline void hal_can_receive(CAN_TypeDef * CAN, hal_CAN_msg_t * rx_msg){
  * @returns TRUE if a message is pending
  * @returns FALSE if the FIFO is empty
  */
-static inline bool CANMsgAvail(CAN_TypeDef * CAN)
+static inline bool hal_can_read_ready(CAN_TypeDef * CAN)
 {
     // Check for pending FIFO 0 messages
     return CAN->RF0R & 0x3UL;

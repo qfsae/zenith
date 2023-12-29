@@ -21,11 +21,13 @@ void tsk_Test1(void *param){
     (void)(param); // Cast unused variable to void
     printf("Starting CAN Init..\n");
     int can_status = hal_can_init(CAN1, CAN_1000KBPS, true, PIN('A', 11), PIN('A', 12));
+    hal_CAN_msg_t msg;
     printf("CAN init Finished: %d\n", can_status);
     for (;;)
     {
-        if(CAN1->RF0R & 0x3UL){
-            printf("CAN MSG Recieved\n");
+        if(hal_can_read_ready(CAN1)){
+            hal_can_receive(CAN1, &msg);
+            printf("CAN MSG Received from ID: %d\n", msg.id);
         }
         vTaskDelay(10);
         // Print out the systemtick timer once a second
