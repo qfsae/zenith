@@ -27,7 +27,12 @@ void tsk_Test1(void *param){
     {
         if(hal_can_read_ready(CAN1)){
             hal_can_receive(CAN1, &msg);
-            printf("CAN MSG Received from ID: %d\n", msg.id);
+            printf("ID: %d LEN: %d Data: ", msg.id, msg.len);
+            for (int i = 0; i < msg.len; i++)
+            {
+                printf(" %d ", msg.data[i]);
+            }
+            printf("\n");
         }
         vTaskDelay(10);
         // Print out the systemtick timer once a second
