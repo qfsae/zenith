@@ -16,6 +16,7 @@
 TaskHandle_t tskh_Test1 = NULL;
 TaskHandle_t tskh_BlinkLED = NULL;
 TaskHandle_t tskh_USART2_Handler = NULL;
+TaskHandle_t tskh_CAN1RX_Handler = NULL;
 
 void os_task_init(void){
     // Create Sample Blink Task

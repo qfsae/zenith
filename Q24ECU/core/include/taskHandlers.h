@@ -22,6 +22,8 @@ extern TaskHandle_t tskh_BlinkLED;
 // UART2 (debug) receive task handler
 extern TaskHandle_t tskh_USART2_Handler;
 
+extern TaskHandle_t tskh_CAN1RX_Handler;
+
 extern void os_task_init(void);
 
 extern void tsk_Test1(void *param);
@@ -29,4 +31,8 @@ extern void tsk_Test1(void *param);
 extern void tsk_BlinkLED(void *param);
 
 extern void tsk_USART2_Handler(void *param);
+
+extern void tsk_CAN1_RXBufferHandler(void *param);
+
+
 

@@ -19,26 +19,28 @@ long unsigned int counter = 0;
 
 void tsk_Test1(void *param){
     (void)(param); // Cast unused variable to void
-    printf("Starting CAN Init..\n");
-    int can_status = hal_can_init(CAN1, CAN_1000KBPS, true, PIN('A', 11), PIN('A', 12));
-    hal_CAN_msg_t msg;
-    printf("CAN init Finished: %d\n", can_status);
-    for (;;)
-    {
-        if(hal_can_read_ready(CAN1)){
-            hal_can_receive(CAN1, &msg);
-            printf("ID: %d LEN: %d Data: ", msg.id, msg.len);
-            for (int i = 0; i < msg.len; i++)
-            {
-                printf(" %d ", msg.data[i]);
-            }
-            printf("\n");
-        }
-        vTaskDelay(10);
-        // Print out the systemtick timer once a second
-        // printf("%ld\n", (long)xTaskGetTickCount());
-        // vTaskDelay(1000);
-    }
+    // // printf("Starting CAN Init..\n");
+    // int can_status = hal_can_init(CAN1, CAN_1000KBPS, true, PIN('A', 11), PIN('A', 12));
+    // hal_CAN_msg_t rx_msg, tx_msg;
+    // tx_msg.len = 0;
+    // tx_msg.data[0] = 0;
+    // tx_msg.format = STANDARD_FORMAT;
+    // tx_msg.type = DATA_FRAME;
+    // tx_msg.id = 0;
+    // // printf("CAN init Finished: %d\n", can_status);
+    // for (;;)
+    // {
+    //     tx_msg.id++;
+    //     if(tx_msg.id > 999) tx_msg.id = 0;
+    //     // printf("Sending MSG");
+    //     hal_can_send(CAN1, &tx_msg);
+    //     while(hal_can_send_ready(CAN1) == 0) vTaskDelay(10);
+    //     // printf("\n");
+    //     vTaskDelay(10);
+    //     // Print out the systemtick timer once a second
+    //     // printf("%ld\n", (long)xTaskGetTickCount());
+    //     // vTaskDelay(1000);
+    // }
 }
 
 

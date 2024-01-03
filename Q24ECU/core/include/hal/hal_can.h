@@ -11,10 +11,8 @@
 
 #pragma once
 
-#include "stm32f446xx.h"
 #include "stm32f4xx.h"
 #include "hal_gpio.h"
-#include "pins.h"
 
 // The CAN bus Initialized without Failure
 #define HAL_CAN_OK 0
@@ -23,15 +21,20 @@
 // There was an error initializing the CAN bus
 #define HAL_CAN_INIT_ERR 2
 // Filter selection out of range (there are only 28 filters)
-#define HAL_CAN_FILTER_SELRNG_ERR 3
+#define HAL_CAN_FILTER_SELRNG_ERR 3 // Filter Out of range
+// Mailbox Not Empty
+#define HAL_CAN_MAILBOX_NONEMPTY 4
+
 
 typedef struct {
-    uint32_t id;        /* 29 bit identifier                               */
-    uint8_t  data[8];   /* Data field                                      */
-    uint8_t  len;       /* Length of data field in bytes                   */
-    uint8_t  format;    /* 0 - STANDARD, 1- EXTENDED IDENTIFIER            */
-    uint8_t  type;      /* 0 - DATA FRAME, 1 - REMOTE FRAME                */
-} hal_CAN_msg_t;
+    uint32_t id;
+    uint8_t data[8];
+    uint8_t len;
+    uint8_t format;
+    uint8_t type;
+    uint32_t timestamp;
+} can_msg_t;
+
 
 /* Symbolic names for bit rate of CAN message                                */
 typedef enum can_bitrate {CAN_50KBPS, CAN_100KBPS, CAN_125KBPS, CAN_250KBPS, CAN_500KBPS, CAN_1000KBPS} CAN_BITRATE;
@@ -50,7 +53,7 @@ typedef const struct
 } CAN_bit_timing_config_t;
 
 // CAN bus timing configurations
-CAN_bit_timing_config_t can_configs[6] = {{2, 12, 60}, {2, 12, 30}, {2, 12, 24}, {2, 12, 12}, {2, 12, 6}, {1, 7, 5}};
+static CAN_bit_timing_config_t can_configs[6] = {{2, 12, 60}, {2, 12, 30}, {2, 12, 24}, {2, 12, 12}, {2, 12, 6}, {1, 7, 5}};
 
 
 /**
@@ -134,10 +137,10 @@ static inline uint8_t hal_can_init(CAN_TypeDef * CAN, CAN_BITRATE bitrate, bool 
     // Request the CAN bus to enter into initization mode
     SET_BIT(CAN->MCR, CAN_MCR_INRQ);
     while(!(CAN->MSR & CAN_MSR_INAK));
-    
+
     // Reset All other bits leaving INRQ
     CAN->MCR = 0x1UL; // NOTE: This assignment is meant to clear the register. Use of (=) operand is not a mistake
-    
+
     // Enable automatic bus error management
     SET_BIT(CAN->MCR, CAN_MCR_ABOM);
     // Configure Automatic Retransmission
@@ -146,8 +149,8 @@ static inline uint8_t hal_can_init(CAN_TypeDef * CAN, CAN_BITRATE bitrate, bool 
     CLEAR_BIT(CAN->MCR, CAN_MCR_TTCM);
     // Setup bus bitrates
     CAN->BTR &= ~((0x03UL << 24) | (0x07UL << 20) | (0x0FUL << 16) | (0x1FFUL)); // Zero out the register
-    CAN->BTR |=  (uint32_t)(((can_configs[bitrate].TS2-1) & 0x07) << 20) | (((can_configs[bitrate].TS1-1) & 0x0F) << 16) | ((can_configs[bitrate].BRP-1) & 0x1FF); // Set up the bit timing
-    // Initialize the filter registers
+    CAN->BTR |=  (uint32_t)((((can_configs[bitrate].TS2-1) & 0x07) << 20) | (((can_configs[bitrate].TS1-1) & 0x0F) << 16) | ((can_configs[bitrate].BRP-1) & 0x1FF)); // Set up the bit timing
+                                                                                                                               // Initialize the filter registers
     SET_BIT(CAN1->FMR, CAN_FMR_FINIT);           // Enter into initialization mode
     CLEAR_BIT(CAN1->FMR, CAN_FMR_CAN2SB);        // Clear the Filter Selection register
     CAN1->FMR |= (0xEUL << CAN_FMR_CAN2SB_Pos); // Set filters (0-13 -> CAN1) & (14-28 -> CAN2)
@@ -173,7 +176,7 @@ static inline uint8_t hal_can_init(CAN_TypeDef * CAN, CAN_BITRATE bitrate, bool 
     return HAL_CAN_INIT_ERR;
 }
 
-static inline void hal_can_receive(CAN_TypeDef * CAN, hal_CAN_msg_t * rx_msg){
+static inline void hal_can_read(CAN_TypeDef * CAN, can_msg_t * rx_msg){
     // Determine Message ID format (Identifier Extension)
     rx_msg->format = (CAN_RI0R_IDE & CAN->sFIFOMailBox[0].RIR);
     if(rx_msg->format == STANDARD_FORMAT){
@@ -189,6 +192,7 @@ static inline void hal_can_receive(CAN_TypeDef * CAN, hal_CAN_msg_t * rx_msg){
     // Message data length
     rx_msg->len = (CAN_RDT0R_DLC & CAN->sFIFOMailBox[0].RDTR) >> CAN_RDT0R_DLC_Pos;
 
+    // Unload the data
     rx_msg->data[0] = (uint8_t)((CAN_RDL0R_DATA0 & CAN->sFIFOMailBox[0].RDLR) >> CAN_RDL0R_DATA0_Pos);
     rx_msg->data[1] = (uint8_t)((CAN_RDL0R_DATA1 & CAN->sFIFOMailBox[0].RDLR) >> CAN_RDL0R_DATA1_Pos);
     rx_msg->data[2] = (uint8_t)((CAN_RDL0R_DATA2 & CAN->sFIFOMailBox[0].RDLR) >> CAN_RDL0R_DATA2_Pos);
@@ -198,6 +202,7 @@ static inline void hal_can_receive(CAN_TypeDef * CAN, hal_CAN_msg_t * rx_msg){
     rx_msg->data[6] = (uint8_t)((CAN_RDH0R_DATA6 & CAN->sFIFOMailBox[0].RDHR) >> CAN_RDH0R_DATA6_Pos);
     rx_msg->data[7] = (uint8_t)((CAN_RDH0R_DATA7 & CAN->sFIFOMailBox[0].RDHR) >> CAN_RDH0R_DATA7_Pos);
 
+    // Release the mailbox to hardware control
     SET_BIT(CAN->RF0R, CAN_RF0R_RFOM0);
 }
 
@@ -213,3 +218,60 @@ static inline bool hal_can_read_ready(CAN_TypeDef * CAN)
     // Check for pending FIFO 0 messages
     return CAN->RF0R & 0x3UL;
 }
+
+
+/**
+ * @brief Send a CAN message. Must wait for message to send before attempting another transmission
+ * 
+ * @param CAN the CAN bus to send on
+ * @param tx_msg pointer to the message to send
+ * @return uint8_t HAL_CAN_OK or HAL_CAN_xx_ERR on on error
+ */
+static inline uint8_t hal_can_send(CAN_TypeDef * CAN, can_msg_t * tx_msg) {
+    // Check the mailbox is empty before attempting to send
+    if(CAN->sTxMailBox[0].TIR & CAN_TI0R_TXRQ_Msk) return HAL_CAN_MAILBOX_NONEMPTY;
+
+    // Create temp variable to store mailbox info
+    uint32_t sTxMailBox_TIR = 0;
+    if(tx_msg->format == EXTENDED_FORMAT){
+        // Extended msg frame format
+        sTxMailBox_TIR = (tx_msg->id << CAN_TI0R_EXID_Pos) | CAN_TI0R_IDE;
+    }
+    else{
+        // Standard msg frane format
+        sTxMailBox_TIR = (tx_msg->id << CAN_TI0R_STID_Pos);
+    }
+    
+    // Remote frame
+    if(tx_msg->type == REMOTE_FRAME){
+        SET_BIT(sTxMailBox_TIR, CAN_TI0R_RTR);
+    }
+
+    // Clear and set the message length
+    CLEAR_BIT(CAN->sTxMailBox[0].TDTR, CAN_TDT0R_DLC);
+    SET_BIT(CAN->sTxMailBox[0].TDTR, (tx_msg->len & CAN_TDT0R_DLC));
+
+    // Load the DR's
+    CAN->sTxMailBox[0].TDLR = (((uint32_t) tx_msg->data[3] << CAN_TDL0R_DATA3_Pos) | ((uint32_t) tx_msg->data[2] << CAN_TDL0R_DATA2_Pos) | ((uint32_t) tx_msg->data[1] << CAN_TDL0R_DATA1_Pos) | ((uint32_t) tx_msg->data[0] << CAN_TDL0R_DATA0_Pos));
+    CAN->sTxMailBox[0].TDHR = (((uint32_t) tx_msg->data[7] << CAN_TDH0R_DATA7_Pos) | ((uint32_t) tx_msg->data[6] << CAN_TDH0R_DATA6_Pos) | ((uint32_t) tx_msg->data[5] << CAN_TDH0R_DATA5_Pos) | ((uint32_t) tx_msg->data[4] << CAN_TDH0R_DATA4_Pos));
+
+    CAN->sTxMailBox[0].TIR = (uint32_t)(sTxMailBox_TIR | CAN_TI0R_TXRQ);
+    
+    // Return read OK
+    return HAL_CAN_OK;
+
+}
+
+/**
+ * @brief Get is the Transmit Mailbox is empty
+ * 
+ * @param CAN The CAN bus mailbox to check
+ * @return true if the mailbox is empty
+ * @return false if the mailbox is pending
+ */
+static inline bool hal_can_send_ready(CAN_TypeDef * CAN){
+    // Check to see if mailbox is empty
+    return !(CAN->sTxMailBox[0].TIR & CAN_TI0R_TXRQ_Msk);
+}
+
+

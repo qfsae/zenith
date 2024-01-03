@@ -13,6 +13,7 @@
 #include "hal/hal_tim_basic.h"
 #include "hal/hal_uart.h"
 #include "interfaces/interface_uart.h"
+#include "interfaces/interface_can.h"
 #include "stm32f446xx.h"
 
 int main(void){
@@ -30,6 +31,9 @@ int main(void){
 
     // initialize os interfaces
     os_uart_setup();
+    printf("USART Initialized..\n");
+    os_can_setup();
+    printf("CAN Initialized..\n");
     // clear terminal
     printf("\033[2J");
     spin(9999999UL);
