@@ -10,33 +10,35 @@
  */
 
 #include "taskHandlers.h"
+#include <stdio.h>
 
 // Init global handles for tasks
 
 TaskHandle_t tskh_Test1 = NULL;
 TaskHandle_t tskh_BlinkLED = NULL;
 TaskHandle_t tskh_USART2_Handler = NULL;
-TaskHandle_t tskh_CAN1RX_Handler = NULL;
+TaskHandle_t tskh_CANRX_Handler = NULL;
 
 void os_task_init(void){
     // Create Sample Blink Task
     xTaskCreate(
         tsk_BlinkLED,
         "blink",
-        1024,
+        configMINIMAL_STACK_SIZE,
         NULL,
         tskIDLE_PRIORITY,
         &tskh_BlinkLED
     );
-
+    printf("starting test task\n");
     // Create Sample Print Task
-    xTaskCreate(
+    int i = xTaskCreate(
         tsk_Test1,
         "tst1",
-        1024,
+        configMINIMAL_STACK_SIZE,
         NULL,
-        tskIDLE_PRIORITY,
+        tskIDLE_PRIORITY+2,
         &tskh_Test1
     );
+    printf("Started Task: %d", i);
 }
 

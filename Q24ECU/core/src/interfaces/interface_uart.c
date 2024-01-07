@@ -41,7 +41,7 @@ void os_uart_setup(void){
     xTaskCreate(
         tsk_USART2_Handler,
         "u2",
-        1024,
+        configMINIMAL_STACK_SIZE,
         NULL,
         tskIDLE_PRIORITY,
         &tskh_USART2_Handler

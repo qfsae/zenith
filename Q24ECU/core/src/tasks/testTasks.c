@@ -12,13 +12,20 @@
 #include "taskHandlers.h"
 #include "main.h"
 #include "task.h"
-#include "hal/hal_can.h"
+#include "interfaces/interface_can.h"
 #include <stdio.h>
 
 long unsigned int counter = 0;
 
 void tsk_Test1(void *param){
     (void)(param); // Cast unused variable to void
+    printf("Running Task 1\n");
+    can_msg_t incoming;
+    for(;;){
+        incoming = can_fetch(CAN1, 0x119);
+        printf("RPM: %d\n", incoming.data[0]);
+        vTaskDelay(10);
+    }
     // // printf("Starting CAN Init..\n");
     // int can_status = hal_can_init(CAN1, CAN_1000KBPS, true, PIN('A', 11), PIN('A', 12));
     // hal_CAN_msg_t rx_msg, tx_msg;
