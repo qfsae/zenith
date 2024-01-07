@@ -21,9 +21,10 @@ void tsk_Test1(void *param){
     (void)(param); // Cast unused variable to void
     printf("Running Task 1\n");
     can_msg_t incoming;
+    // printf("setup");
     for(;;){
         incoming = can_fetch(CAN1, 0x119);
-        printf("RPM: %d\n", incoming.data[0]);
+        printf(">RPM:%d\n", incoming.data[0]);
         vTaskDelay(10);
     }
     // // printf("Starting CAN Init..\n");

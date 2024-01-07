@@ -24,6 +24,7 @@ Written for Queen's Formula SAE
 - make
 - VS Code
     - cMake extension
+    - Teleplot extension (for plotting serial data)
 
 ## Debugging
 Debugging requires additional software:

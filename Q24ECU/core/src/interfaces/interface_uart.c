@@ -31,7 +31,7 @@ uart_t port_uart2;
  */
 void os_uart_setup(void){
     // Enable the UART 2 port and setup its IQR handler
-    uart_send_init(&port_uart2, USART2, 250000);
+    uart_send_init(&port_uart2, USART2, 230400);
     xStreamBufferSetTriggerLevel(port_uart2.rxbuffer, 5); // set the trigger level of the stream buffer. Port Specific.
     hal_uart_enable_rxne(port_uart2.port, true);
     NVIC_SetPriority(USART2_IRQn, (NVIC_Priority_MIN-10));
