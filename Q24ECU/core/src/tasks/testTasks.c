@@ -23,9 +23,19 @@ void tsk_Test1(void *param){
     can_msg_t incoming;
     // printf("setup");
     for(;;){
-        incoming = can_fetch(CAN1, 0x119);
+        incoming = can_fetch(CAN1, 200);
         printf(">RPM:%d\n", incoming.data[0]);
-        vTaskDelay(10);
+        incoming.len = 1;
+        //incoming.data[0] = 232;
+        incoming.id = 99;
+        //can_send_msg(CAN1, &incoming);
+        hal_can_send(CAN1, &incoming, 2);
+        //vTaskDelay(10);
+        //incoming.id = 100;
+        //hal_can_send(CAN1, &incoming, 1);
+        while(!hal_can_send_ready(CAN1, 2)) asm("nop");
+        //while(!hal_can_send_ready(CAN1, 1)) asm("nop");
+        vTaskDelay(200);
     }
     // // printf("Starting CAN Init..\n");
     // int can_status = hal_can_init(CAN1, CAN_1000KBPS, true, PIN('A', 11), PIN('A', 12));
@@ -59,7 +69,13 @@ void tsk_BlinkLED(void *param){
         // This task is currently not used so perma suspend it
         lastWakeTime = xTaskGetTickCount();
         counter++;
-        vTaskDelayUntil(&lastWakeTime, 10);
+        can_msg_t msg;
+        msg.id = 98;
+        msg.len = 1;
+        msg.data[0] = 22;
+        hal_can_send(CAN1, &msg, 1);
+        while(hal_can_send_ready(CAN1, 1));
+        vTaskDelayUntil(&lastWakeTime, 100);
     }
 }
 

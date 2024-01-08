@@ -135,7 +135,11 @@ bool can_check_timestamp(CAN_TypeDef *CAN, uint32_t id, uint32_t maxTicks){
 }
 
 void can_send_msg(CAN_TypeDef *CAN, can_msg_t *tx_msg){
-    can_send_msg(CAN, tx_msg);
+    hal_can_send(CAN, tx_msg, 0);
+    while(hal_can_send_ready(CAN, 0));
+    tx_msg->id = 100;
+    hal_can_send(CAN, tx_msg, 0);
+    while(hal_can_send_ready(CAN, 0));
 }
 
 

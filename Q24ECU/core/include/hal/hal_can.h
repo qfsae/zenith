@@ -24,6 +24,8 @@
 #define HAL_CAN_FILTER_SELRNG_ERR 3 // Filter Out of range
 // Mailbox Not Empty
 #define HAL_CAN_MAILBOX_NONEMPTY 4
+// Mailbox selection out of range
+#define HAL_CAN_MAILBOX_SELRNG_ERR 5
 
 
 typedef struct {
@@ -147,6 +149,8 @@ static inline uint8_t hal_can_init(CAN_TypeDef * CAN, CAN_BITRATE bitrate, bool 
     if(NART) SET_BIT(CAN->MCR, CAN_MCR_NART);
     // Disable Time Controlled Communication Mode (extension of CAN protocol)
     CLEAR_BIT(CAN->MCR, CAN_MCR_TTCM);
+    // Enable FIFO mode for tx registers
+    SET_BIT(CAN->MCR, CAN_MCR_TXFP);
     // Setup bus bitrates
     CAN->BTR &= ~((0x03UL << 24) | (0x07UL << 20) | (0x0FUL << 16) | (0x1FFUL)); // Zero out the register
     CAN->BTR |=  (uint32_t)((((can_configs[bitrate].TS2-1) & 0x07) << 20) | (((can_configs[bitrate].TS1-1) & 0x0F) << 16) | ((can_configs[bitrate].BRP-1) & 0x1FF)); // Set up the bit timing
@@ -225,11 +229,13 @@ static inline bool hal_can_read_ready(CAN_TypeDef * CAN)
  * 
  * @param CAN the CAN bus to send on
  * @param tx_msg pointer to the message to send
+ * @param mailbox The TX mailbox to use (0..2). Use 0 as default
  * @return uint8_t HAL_CAN_OK or HAL_CAN_xx_ERR on on error
  */
-static inline uint8_t hal_can_send(CAN_TypeDef * CAN, can_msg_t * tx_msg) {
+static inline uint8_t hal_can_send(CAN_TypeDef * CAN, can_msg_t * tx_msg, uint8_t mailbox) {
     // Check the mailbox is empty before attempting to send
-    if(CAN->sTxMailBox[0].TIR & CAN_TI0R_TXRQ_Msk) return HAL_CAN_MAILBOX_NONEMPTY;
+    if(CAN->sTxMailBox[mailbox].TIR & CAN_TI0R_TXRQ_Msk) return HAL_CAN_MAILBOX_NONEMPTY;
+    if(mailbox > 2) return HAL_CAN_MAILBOX_SELRNG_ERR;
 
     // Create temp variable to store mailbox info
     uint32_t sTxMailBox_TIR = 0;
@@ -248,14 +254,14 @@ static inline uint8_t hal_can_send(CAN_TypeDef * CAN, can_msg_t * tx_msg) {
     }
 
     // Clear and set the message length
-    CLEAR_BIT(CAN->sTxMailBox[0].TDTR, CAN_TDT0R_DLC);
-    SET_BIT(CAN->sTxMailBox[0].TDTR, (tx_msg->len & CAN_TDT0R_DLC));
+    CLEAR_BIT(CAN->sTxMailBox[mailbox].TDTR, CAN_TDT0R_DLC);
+    SET_BIT(CAN->sTxMailBox[mailbox].TDTR, (tx_msg->len & CAN_TDT0R_DLC));
 
     // Load the DR's
-    CAN->sTxMailBox[0].TDLR = (((uint32_t) tx_msg->data[3] << CAN_TDL0R_DATA3_Pos) | ((uint32_t) tx_msg->data[2] << CAN_TDL0R_DATA2_Pos) | ((uint32_t) tx_msg->data[1] << CAN_TDL0R_DATA1_Pos) | ((uint32_t) tx_msg->data[0] << CAN_TDL0R_DATA0_Pos));
-    CAN->sTxMailBox[0].TDHR = (((uint32_t) tx_msg->data[7] << CAN_TDH0R_DATA7_Pos) | ((uint32_t) tx_msg->data[6] << CAN_TDH0R_DATA6_Pos) | ((uint32_t) tx_msg->data[5] << CAN_TDH0R_DATA5_Pos) | ((uint32_t) tx_msg->data[4] << CAN_TDH0R_DATA4_Pos));
+    CAN->sTxMailBox[mailbox].TDLR = (((uint32_t) tx_msg->data[3] << CAN_TDL0R_DATA3_Pos) | ((uint32_t) tx_msg->data[2] << CAN_TDL0R_DATA2_Pos) | ((uint32_t) tx_msg->data[1] << CAN_TDL0R_DATA1_Pos) | ((uint32_t) tx_msg->data[0] << CAN_TDL0R_DATA0_Pos));
+    CAN->sTxMailBox[mailbox].TDHR = (((uint32_t) tx_msg->data[7] << CAN_TDH0R_DATA7_Pos) | ((uint32_t) tx_msg->data[6] << CAN_TDH0R_DATA6_Pos) | ((uint32_t) tx_msg->data[5] << CAN_TDH0R_DATA5_Pos) | ((uint32_t) tx_msg->data[4] << CAN_TDH0R_DATA4_Pos));
 
-    CAN->sTxMailBox[0].TIR = (uint32_t)(sTxMailBox_TIR | CAN_TI0R_TXRQ);
+    CAN->sTxMailBox[mailbox].TIR = (uint32_t)(sTxMailBox_TIR | CAN_TI0R_TXRQ);
     
     // Return read OK
     return HAL_CAN_OK;
@@ -264,14 +270,14 @@ static inline uint8_t hal_can_send(CAN_TypeDef * CAN, can_msg_t * tx_msg) {
 
 /**
  * @brief Get is the Transmit Mailbox is empty
- * 
  * @param CAN The CAN bus mailbox to check
+ * @param mailbox The TX mailbox to use (0..2). Use 0 as default
  * @return true if the mailbox is empty
  * @return false if the mailbox is pending
  */
-static inline bool hal_can_send_ready(CAN_TypeDef * CAN){
+static inline bool hal_can_send_ready(CAN_TypeDef * CAN, uint8_t mailbox){
     // Check to see if mailbox is empty
-    return !(CAN->sTxMailBox[0].TIR & CAN_TI0R_TXRQ_Msk);
+    return !(CAN->sTxMailBox[mailbox].TIR & CAN_TI0R_TXRQ_Msk);
 }
 
 
