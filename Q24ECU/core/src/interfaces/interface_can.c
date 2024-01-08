@@ -3,6 +3,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "stream_buffer.h"
+#include "semphr.h"
 #include "nvicConfig.h"
 #include "taskHandlers.h"
 
@@ -31,7 +32,29 @@ struct can_streambuffer{
 
 // Static Buffers for CAN recieve channels
 static struct can_streambuffer CAN1_RX;
-static struct can_streambuffer CAN2_RX;
+static struct can_streambuffer CAN2_RX; ///    Transmission
+
+// Create Binary semaphores for CAN1 TX mailboxes
+SemaphoreHandle_t        CAN1_TX_Semaphore;         // Counting Semaphore for CAN1 Transmit Mailboxes
+static StaticSemaphore_t CAN1_TX_SemaphoreBuffer;   // Static Buffer for CAN1 Counting Semaphore
+SemaphoreHandle_t        CAN1_TX0_Semaphore;        // CAN1 TX 0 Mailbox
+static StaticSemaphore_t CAN1_TX0_SemaphoreBuffer;  // Static Buffer for TX0 Semaphore
+SemaphoreHandle_t        CAN1_TX1_Semaphore;        // CAN1 TX 1 Mailbox
+static StaticSemaphore_t CAN1_TX1_SemaphoreBuffer;  // Static Buffer for TX1 Semaphore
+SemaphoreHandle_t        CAN1_TX2_Semaphore;        // CAN1 TX 2 Mailbox
+static StaticSemaphore_t CAN1_TX2_SemaphoreBuffer;  // Static Buffer for TX2 Semaphore
+
+
+// Create Binary semaphores for CAN 2 TX mailboxes
+//SemaphoreHandle_t        CAN1_TX_Semaphore;         // Counting Semaphore for CAN1 Transmit Mailboxes
+//static StaticSemaphore_t CAN1_TX_SemaphoreBuffer;   // Static Buffer for CAN1 Counting Semaphore
+//SemaphoreHandle_t        CAN1_TX0_Semaphore;        // CAN1 TX 0 Mailbox
+//static StaticSemaphore_t CAN1_TX0_SemaphoreBuffer;  // Static Buffer for TX0 Semaphore
+//SemaphoreHandle_t CAN1_TX1_Semaphore;               // CAN1 TX 1 Mailbox
+//static StaticSemaphore_t CAN1_TX1_SemaphoreBuffer;  // Static Buffer for TX1 Semaphore
+//SemaphoreHandle_t CAN1_TX2_Semaphore;               // CAN1 TX 2 Mailbox
+//static SemaphoreHandle_t CAN1_TX2_SemaphoreBuffer;  // Static Buffer for TX2 Semaphore
+
 
 
 
@@ -46,21 +69,28 @@ static struct can_streambuffer CAN2_RX;
  * 
  */
 void os_can_setup(void){
+    // NOTE: NART (no automatic re-transmission) should be set to false in application
     uint8_t can1_status = hal_can_init(CAN1, CAN_1000KBPS, true, PIN('A', 11), PIN('A', 12));
     // On event of CAN bus initialization failure
     if(can1_status != HAL_CAN_OK){
         printf("Initialization Failure: CAN Bus Error: %d", can1_status);
         for(;;) asm("nop");
     }
+    
+    // Initialize Semaphores for Transmit Mailboxes
+    CAN1_TX_Semaphore  = xSemaphoreCreateCountingStatic(/*Number of TX mailboxes*/2, 0, &CAN1_TX_SemaphoreBuffer);
+    CAN1_TX0_Semaphore = xSemaphoreCreateBinaryStatic(&CAN1_TX0_SemaphoreBuffer);
+    CAN1_TX1_Semaphore = xSemaphoreCreateBinaryStatic(&CAN1_TX1_SemaphoreBuffer);
+    CAN1_TX2_Semaphore = xSemaphoreCreateBinaryStatic(&CAN1_TX2_SemaphoreBuffer);
+
+    // Create the RX buffer Task
+    // This task unloads the Streambuffers produced by the CAN interrupts
     xTaskCreate(
         tsk_CAN_RXBufferHandler,
         "CAN1RX",
         configMINIMAL_STACK_SIZE,
         NULL,
-        tskIDLE_PRIORITY,
-        &tskh_CANRX_Handler
-    );
-}
+        tskIDLE_PRIORITY, &tskh_CANRX_Handler); }
 
 // CAN1 RX IRQ Handler (loads rx stream buffer)
 void CAN1_RX0_IRQHandler(void){
@@ -133,6 +163,7 @@ bool can_check_timestamp(CAN_TypeDef *CAN, uint32_t id, uint32_t maxTicks){
     if(CAN == CAN1) return CAN1_DATA[can1_hash(id)].timestamp + maxTicks < xTaskGetTickCount();
     return false;
 }
+
 
 void can_send_msg(CAN_TypeDef *CAN, can_msg_t *tx_msg){
     hal_can_send(CAN, tx_msg, 0);
