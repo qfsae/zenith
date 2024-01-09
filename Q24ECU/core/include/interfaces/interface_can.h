@@ -12,6 +12,7 @@
 #include "stm32f4xx.h"
 #include "stdbool.h"
 #include "hal/hal_can.h"
+#include "FreeRTOS.h"
 
 
 /**
@@ -33,6 +34,6 @@ extern can_msg_t can_fetch(CAN_TypeDef *CAN, uint32_t id);
 extern bool can_check_timestamp(CAN_TypeDef *CAN, uint32_t id, uint32_t maxTicks);
 
 
-extern void can_send_msg(CAN_TypeDef *CAN, can_msg_t *tx_msg);
+extern uint8_t can_send_msg(CAN_TypeDef *CAN, can_msg_t *tx_msg, TickType_t timeout);
 
 

@@ -90,7 +90,7 @@ int _getpid(void) {
 int _write(int fd, char *ptr, int len) {
   (void) fd, (void) ptr, (void) len;
   if (fd == 1 || fd == 2){
-    char * callerID = NULL;
+    //char * callerID = NULL;
     // Get the name of the task calling printf - Only run if scheduler has been started
     // if(xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) callerID = pcTaskGetName(NULL);
     // if(port_uart2.port == NULL)          return -1;
