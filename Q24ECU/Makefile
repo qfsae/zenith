@@ -1,6 +1,7 @@
 # Jacob Chisholm
 # Makefile for uploading bare metal code
 # to STMF446 with BlackMagic Probe + GDB
+# Also includes support for ST-Link
 
 .PHONY: all build cmake clean format
 
@@ -44,9 +45,6 @@ BlackMagic-flash:
 
 st-flash: build/firmware.bin
 	./Tools/ST-LINK_CLI.exe -P build/firmware.bin 0x08000000 -V -RST
-
-clean:
-	rm -r build
 
 cmsis_core:
 	git clone --depth 1 -b 5.9.0 https://github.com/ARM-software/CMSIS_5 $@

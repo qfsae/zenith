@@ -18,10 +18,12 @@ TaskHandle_t tskh_Test1 = NULL;
 TaskHandle_t tskh_BlinkLED = NULL;
 TaskHandle_t tskh_USART2_Handler = NULL;
 TaskHandle_t tskh_CANRX_Handler = NULL;
+TaskHandle_t tskh_CAN_send = NULL;
+TaskHandle_t tskh_CAN_recieve = NULL;
 
 void os_task_init(void){
     // Create Sample Blink Task
-    xTaskCreate(
+    (void)xTaskCreate(
         tsk_BlinkLED,
         "blink",
         configMINIMAL_STACK_SIZE,
@@ -29,9 +31,8 @@ void os_task_init(void){
         tskIDLE_PRIORITY,
         &tskh_BlinkLED
     );
-    printf("starting test task\n");
     // Create Sample Print Task
-    int i = xTaskCreate(
+    (void)xTaskCreate(
         tsk_Test1,
         "tst1",
         configMINIMAL_STACK_SIZE,
@@ -39,6 +40,25 @@ void os_task_init(void){
         tskIDLE_PRIORITY+2,
         &tskh_Test1
     );
-    printf("Started Task: %d", i);
+
+    // Create Sample CAN TX task
+    (void)xTaskCreate(
+        tsk_CAN_send,
+        "cRtx",
+        configMINIMAL_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY,
+        &tskh_CAN_send
+    );
+
+    // Create Sample CAN RX Task
+    (void)xTaskCreate(
+        tsk_CAN_recieve,
+        "cRrx",
+        configMINIMAL_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY,
+        &tskh_CAN_recieve
+    );
 }
 
