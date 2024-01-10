@@ -28,12 +28,13 @@ void tsk_Test1(void *param){
         incoming.len = 1;
         //incoming.data[0] = 232;
         incoming.id = 99;
+        can_send_msg(CAN1, &incoming, portMAX_DELAY);
         //can_send_msg(CAN1, &incoming);
-        hal_can_send(CAN1, &incoming, 2);
+        //hal_can_send(CAN1, &incoming, 2);
         //vTaskDelay(10);
         //incoming.id = 100;
         //hal_can_send(CAN1, &incoming, 1);
-        while(!hal_can_send_ready(CAN1, 2)) asm("nop");
+        //while(!hal_can_send_ready(CAN1, 2)) asm("nop");
         //while(!hal_can_send_ready(CAN1, 1)) asm("nop");
         vTaskDelay(200);
     }
@@ -73,8 +74,9 @@ void tsk_BlinkLED(void *param){
         msg.id = 98;
         msg.len = 1;
         msg.data[0] = 22;
-        hal_can_send(CAN1, &msg, 1);
-        while(hal_can_send_ready(CAN1, 1));
+        //hal_can_send(CAN1, &msg, 1);
+        can_send_msg(CAN1, &msg, portMAX_DELAY);
+        //while(hal_can_send_ready(CAN1, 1));
         vTaskDelayUntil(&lastWakeTime, 100);
     }
 }

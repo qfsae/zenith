@@ -85,12 +85,21 @@ void os_can_setup(void){
                 0, // Starting Count (Goes up to Max Count)
                 &CAN1_TX_SemaphoreBuffer[CAN_TX_SEMAPHORE_COUNT] // Pointer to static Buffer
         );
+    xSemaphoreGive(CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_COUNT]);
+    xSemaphoreGive(CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_COUNT]);
+    xSemaphoreGive(CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_COUNT]);
+
     CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_TX0] = 
         xSemaphoreCreateBinaryStatic(&CAN1_TX_SemaphoreBuffer[CAN_TX_SEMAPHORE_TX0]);
+    xSemaphoreGive(CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_TX0]);
+
     CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_TX1] =
         xSemaphoreCreateBinaryStatic(&CAN1_TX_SemaphoreBuffer[CAN_TX_SEMAPHORE_TX1]);
+    xSemaphoreGive(CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_TX1]);
+
     CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_TX2] =
         xSemaphoreCreateBinaryStatic(&CAN1_TX_SemaphoreBuffer[CAN_TX_SEMAPHORE_TX2]);
+    xSemaphoreGive(CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_TX2]);
 
     // Create the RX buffer Task
     // This task unloads the Streambuffers produced by the CAN interrupts
@@ -201,21 +210,25 @@ bool can_check_timestamp(CAN_TypeDef *CAN, uint32_t id, uint32_t maxTicks){
 
 
 uint8_t can_send_msg(CAN_TypeDef *CAN, can_msg_t *tx_msg, TickType_t timeout){
-    // Attempt to aquire one of the transmit mailboxes
+    // Check if a transmit mailbox is available
     if(xSemaphoreTake(CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_COUNT], timeout) != pdTRUE){
         // Return failed to aquire TX mailbox
         return HAL_CAN_MAILBOX_NONEMPTY;
     }
-    for(uint8_t i = 1; i <= 4; i++){
+    // Attempt to aquire one of the transmit mailboxes
+    for(uint8_t i = 1; i < 4; i++){
         if(xSemaphoreTake(CAN1_TX_Semaphore[i], 10) == pdTRUE){
-            hal_can_send(CAN, tx_msg, (i-1));
+            // Utilize the hal to load the selected mailbox
+            hal_can_send(CAN, tx_msg, (i-1)/*mailbox=0..2*/);
+            // Wait for mailbox to be empty
+            while(!hal_can_send_ready(CAN, (i-1)));
+            // Give back the semaphores
+            xSemaphoreGive(CAN1_TX_Semaphore[i]);
+            xSemaphoreGive(CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_COUNT]);
+            // Return OK
             return HAL_CAN_OK;
         }
     }
-    return HAL_CAN_MAILBOX_NONEMPTY;
-}
-
-void CAN1_TX_IRQHandler(void){
-    //TODO: Implement release mechanisms for TX Semaphores
+    return HAL_CAN_FATAL_ERR;
 }
 

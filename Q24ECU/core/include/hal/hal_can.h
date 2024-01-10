@@ -26,6 +26,8 @@
 #define HAL_CAN_MAILBOX_NONEMPTY 4
 // Mailbox selection out of range
 #define HAL_CAN_MAILBOX_SELRNG_ERR 5
+// Fatal Error on bus
+#define HAL_CAN_FATAL_ERR 6
 
 
 typedef struct {
