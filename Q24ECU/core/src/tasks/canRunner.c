@@ -36,6 +36,8 @@ void tsk_CAN_recieve(void *param){
     printf("Running CAN Recieve Task from canRunner.c\n");
     can_msg_t rx_msg;
     for(;;){
+        rx_msg = can_fetch(CAN1, 200);
+        printf(">RPM: %d\n", rx_msg.data[0]);
         vTaskDelay(100);
     }
 }

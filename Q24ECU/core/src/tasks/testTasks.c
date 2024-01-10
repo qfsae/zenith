@@ -20,14 +20,15 @@ long unsigned int counter = 0;
 void tsk_Test1(void *param){
     (void)(param); // Cast unused variable to void
     printf("Running Task 1\n");
+    can_msg_t incoming;
     // printf("setup");
     for(;;){
-        //incoming = can_fetch(CAN1, 200);
-        //printf(">RPM:%d\n", incoming.data[0]);
-        //incoming.len = 1;
+        incoming = can_fetch(CAN1, 200);
+        printf(">RPM:%d\n", incoming.data[0]);
+        incoming.len = 1;
         //incoming.data[0] = 232;
-        //incoming.id = 99;
-        //can_send_msg(CAN1, &incoming, portMAX_DELAY);
+        incoming.id = 99;
+        can_send_msg(CAN1, &incoming, portMAX_DELAY);
         //can_send_msg(CAN1, &incoming);
         //hal_can_send(CAN1, &incoming, 2);
         //vTaskDelay(10);
