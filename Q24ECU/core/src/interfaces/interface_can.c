@@ -16,11 +16,11 @@ can_msg_t CAN1_DATA[CAN_DATA_ARR_SIZE];
 can_msg_t CAN2_DATA[CAN_DATA_ARR_SIZE];
 
 uint32_t can1_hash(uint32_t id){
-    return id;
+    return id % CAN_DATA_ARR_SIZE;
 }
 
 uint32_t can2_hash(uint32_t id){
-    return id;
+    return id % CAN_DATA_ARR_SIZE;
 }
 
 
@@ -103,7 +103,7 @@ void os_can_setup(void){
 
     // Create the RX buffer Task
     // This task unloads the Streambuffers produced by the CAN interrupts
-    xTaskCreate(
+    (void)xTaskCreate(
         tsk_CAN_RXBufferHandler,
         "CAN1RX",
         configMINIMAL_STACK_SIZE,
