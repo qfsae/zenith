@@ -86,8 +86,6 @@ void os_can_setup(void){
                 &CAN1_TX_SemaphoreBuffer[CAN_TX_SEMAPHORE_COUNT] // Pointer to static Buffer
         );
     xSemaphoreGive(CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_COUNT]);
-    xSemaphoreGive(CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_COUNT]);
-    xSemaphoreGive(CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_COUNT]);
 
     CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_TX0] = 
         xSemaphoreCreateBinaryStatic(&CAN1_TX_SemaphoreBuffer[CAN_TX_SEMAPHORE_TX0]);
