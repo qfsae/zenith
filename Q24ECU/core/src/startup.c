@@ -10,6 +10,7 @@
  */
 
 #include "main.h"
+#include "hal/hal_clock.h"
 
 /**
  * @brief Initializes the CPU
@@ -29,3 +30,4 @@ void SystemInit(void){
     // configure system tick (ARM)
     SysTick_Config(SYS_FREQUENCY/1000); // DO NOT USE "SystemClock"
 }
+

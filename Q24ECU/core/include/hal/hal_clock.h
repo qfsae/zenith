@@ -56,3 +56,4 @@ static inline void clock_init(void){
     RCC->CFGR |= 2;                                                       // Set clock source to PLL 
     while (!(RCC->CFGR & RCC_CFGR_SWS_PLL)) asm("nop"); // Wait until done
 }
+

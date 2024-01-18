@@ -10,7 +10,7 @@
  */
 
 #pragma once
-#include "hal/hal_gpio.h"
+#include <stm32f4xx.h>
 
 /** @defgroup FLASH_Program_Parallelism FLASH Program Parallelism
   * @{
@@ -45,7 +45,7 @@
 
 static void hal_FLASH_Lock(void){
   FLASH->CR |= FLASH_CR_LOCK;
-};
+}
 
 // Unlock the flash memory
 static inline uint8_t hal_FLASH_Unlock(void){
@@ -141,3 +141,4 @@ static inline uint8_t hal_FLASH_WriteHW(uint32_t Address, uint32_t data){
  * @return const volatile* 
  */
 #define hal_FLASH_Read(Address) ((const volatile uint32_t*)Address)
+

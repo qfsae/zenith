@@ -1,0 +1,35 @@
+    {
+    "version": "2.0.0",
+    "tasks": [
+        {
+        "label": "cmake-configure",
+        "type": "shell",
+        "command": "cmake",
+        "args": [
+            "-B",
+            "-DCMAKE_BUILD_TYPE=Debug",
+            "-DCMAKE_TOOLCHAIN_FILE=gcc-arm-none-eabi.cmake",
+            "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+        ],
+        "group": {
+            "kind": "build",
+            "isDefault": true
+        }
+        },
+        {
+        "label": "cmake-build",
+        "type": "shell",
+        "command": "cmake",
+        "args": [
+            "--build",
+            "${workspaceFolder}/build",
+            "--config",
+            "Debug"
+        ],
+        "group": {
+            "kind": "build",
+            "isDefault": true
+        }
+        }
+    ]
+    }

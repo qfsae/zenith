@@ -16,6 +16,8 @@
         "limits.h": "c",
         "main.h": "c",
         "interface_uart.h": "c",
-        "task.h": "c"
-    }
+        "task.h": "c",
+        "freertosconfig.h": "c",
+        "hal_can.h": "c"
+    },
 }

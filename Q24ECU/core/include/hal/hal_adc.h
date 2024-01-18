@@ -5,9 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-
+#include "hal_clock.h"
 #include <stm32f446xx.h>
-#include "hal_gpio.h"
 
 static inline void adc_init(ADC_TypeDef *adc){
 
@@ -43,11 +42,11 @@ static inline void adc_init(ADC_TypeDef *adc){
 
 static inline void adc_configChannel(ADC_TypeDef *adc, uint8_t ch, uint8_t rank){
     if(ch > 9){
-        adc->SMPR1 &= ~(0x7 << (3U * (uint32_t)(ch-10U)));
+        adc->SMPR1 &= ~(0x7UL << (3U * ((uint32_t)(ch-10U))));
         adc->SMPR1 |= (0x00000000U << (3U * (uint32_t)(ch-10U)));
     }
     else{
-        adc->SMPR2 &= ~(0x7 << (3U * (uint32_t)(ch)));
+        adc->SMPR2 &= ~(0x7UL << (3U * ((uint32_t)(ch))));
         adc->SMPR2 |= (0x00000000U << (3U * (uint32_t)(ch)));
     }
     if(rank < 7U){
@@ -83,5 +82,7 @@ static inline uint16_t adc_poll(ADC_TypeDef *adc, uint8_t adcCh){
     adc_configChannel(adc, adcCh, 1);
     adc_start(adc);
     while(!(adc->SR & ADC_SR_EOC));
-    return adc->DR;
+    return (uint16_t)(adc->DR);
+
 }
+

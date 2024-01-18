@@ -44,7 +44,7 @@ extern uart_t port_uart2;
  * Called in main
  * 
  */
-extern void os_uart_setup();
+extern void os_uart_setup(void);
 
 
 /**
@@ -67,7 +67,7 @@ static inline void uart_send_init(uart_t *port, USART_TypeDef *uart, unsigned lo
 
 
 // USART2 IQR Handler
-extern void USART2_IRQHandler();
+extern void USART2_IRQHandler(void);
 
 /**
  * @brief Task Blocking command to send a byte over uart
@@ -107,3 +107,4 @@ static inline int uart_send_buf_blocking(uart_t *port, char* buf, size_t len, Ti
     }
     return UART_ERR_ACC;
 }
+

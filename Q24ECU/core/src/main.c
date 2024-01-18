@@ -8,8 +8,13 @@
  */
 
 #include "main.h"
-#include "limits.h"
-#include "taskHandlers.h"
+#include <stdio.h>
+#include "hal/hal_gpio.h"
+#include "hal/hal_tim_basic.h"
+#include "hal/hal_uart.h"
+#include "interfaces/interface_uart.h"
+#include "interfaces/interface_can.h"
+#include "stm32f446xx.h"
 
 int main(void){
     // set up gpio
@@ -24,11 +29,13 @@ int main(void){
     NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_Priority_MIN); // Enable Timer IRQ (lowest priority)
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
-    // initialize os interfaces
-    os_uart_setup();
-
     // clear terminal
     printf("\033[2J");
+    // initialize os interfaces
+    os_uart_setup();
+    printf("USART Initialized..\n");
+    os_can_setup();
+    printf("CAN Initialized..\n");
     spin(9999999UL);
     printf("system starting tasks...\n");
     spin(9999999UL);  
@@ -46,3 +53,4 @@ int main(void){
     }
     return 0;
 }
+

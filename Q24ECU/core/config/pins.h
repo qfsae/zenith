@@ -45,6 +45,8 @@
 // Debug USART (for printf)
 #define UART_DEBUG USART2
 
+#define PIN_CAN1_RX ((uint16_t)(PIN('A', 11)))
+#define PIN_CAN1_TX ((uint16_t)(PIN('A', 12)))
 
 #endif // BOARD_MOCKECU
 

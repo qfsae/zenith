@@ -9,7 +9,10 @@
                 "${workspaceFolder}/FreeRTOS-Kernel/include",
                 "${workspaceFolder}/FreeRTOS-Kernel/portable/GCC/ARM_CM4F",
                 "${workspaceFolder}/core/config",
-                "${workspaceFolder}/core/include/hal"
+                "${workspaceFolder}/core/include/hal",
+                "${workspaceFolder}/core/include",
+                "${workspaceFolder}/core/include",
+                "${workspaceFolder}/vendor/cmsis_f4/Include"
             ],
             "defines": [
                 "_DEBUG",
@@ -17,10 +20,10 @@
                 "_UNICODE"
             ],
             "windowsSdkVersion": "10.0.18362.0",
-            "compilerPath": "C:/MinGW/bin/gcc.exe",
+            "compilerPath": "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\10 2021.10\\bin\\arm-none-eabi-gcc.exe",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "intelliSenseMode": "${default}",
+            "intelliSenseMode": "windows-gcc-arm",
             "configurationProvider": "ms-vscode.makefile-tools",
             "mergeConfigurations": false,
             "browse": {

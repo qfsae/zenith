@@ -29,9 +29,9 @@ uart_t port_uart2;
  * Called in main
  * 
  */
-void os_uart_setup(){
+void os_uart_setup(void){
     // Enable the UART 2 port and setup its IQR handler
-    uart_send_init(&port_uart2, USART2, 250000);
+    uart_send_init(&port_uart2, USART2, 230400);
     xStreamBufferSetTriggerLevel(port_uart2.rxbuffer, 5); // set the trigger level of the stream buffer. Port Specific.
     hal_uart_enable_rxne(port_uart2.port, true);
     NVIC_SetPriority(USART2_IRQn, (NVIC_Priority_MIN-10));
@@ -41,14 +41,14 @@ void os_uart_setup(){
     xTaskCreate(
         tsk_USART2_Handler,
         "u2",
-        1024,
+        configMINIMAL_STACK_SIZE,
         NULL,
         tskIDLE_PRIORITY,
         &tskh_USART2_Handler
     );
 }
 
-void USART2_IRQHandler(){
+void USART2_IRQHandler(void){
     // Initialize variable to trigger context switch to false (no context switch)
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
@@ -78,3 +78,4 @@ void tsk_USART2_Handler(void *param){
         
     }
 }
+
