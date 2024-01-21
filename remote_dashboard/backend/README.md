@@ -67,6 +67,14 @@ Before running the server, make sure you have the following installed:
     yarn start
 The server will be running at http://localhost:3000/
 
+### Documentation
+
+All documentation of the server can be found in the `docs` folder. To generate new documentation run 
+
+    yarn build:docs
+
+The new documentation will be generated in the `docs` folder
+
 
 ### Contributing
 
