@@ -173,3 +173,66 @@ static inline void SPI_PeriClockControl(SPI_TypeDef *pSPIx, uint8_t EnorDi)
         }
     }
 }
+
+// Init and DeInit
+void SPI_Init(SPI_Handle_t *pSPIHandle)
+{
+    // First configure SPI_CR1 register
+    uint32_t tempReg = 0;
+
+    // 1. Configure device mode
+    tempReg |= pSPIHandle->SPIConfig.SPI_DeviceMode << SPI_CR1_MSTR_Pos;
+
+    // 2. Configure bus config
+    if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_FD)
+    {
+        // BIDI mode should be cleared
+        tempReg &= ~(1 << SPI_CR1_BIDIMODE_Pos);
+    }
+    else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_HD)
+    {
+        // BIDI mode should be set
+        tempReg |= (1 << SPI_CR1_BIDIMODE_Pos);
+    }
+    else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_SIMPLEX_RXONLY)
+    {
+        // BIDI mode should be cleared
+        tempReg &= ~(1 << SPI_CR1_BIDIMODE_Pos);
+        // RXONLY bit must be set
+        tempReg |= (1 << SPI_CR1_RXONLY_Pos);
+    }
+
+    // 3. Configure the SPI serial clock speed (baud rate)
+    tempReg |= pSPIHandle->SPIConfig.SPI_SclkSpeed << SPI_CR1_BR_Pos;
+
+    // 4. Configure the DFF
+    tempReg |= pSPIHandle->SPIConfig.SPI_DFF << SPI_CR1_DFF_Pos;
+
+    // 5. Configure the polarity
+    tempReg |= pSPIHandle->SPIConfig.SPI_CPOL << SPI_CR1_CPOL_Pos;
+
+    // 6. Configure the phase
+    tempReg |= pSPIHandle->SPIConfig.SPI_CPHA << SPI_CR1_CPHA_Pos;
+
+    pSPIHandle->pSPIx->CR1 = tempReg;
+}
+
+void SPI_DeInit(SPI_TypeDef *pSPIx)
+{
+    if (pSPIx == SPI1)
+    {
+        SPI1_REG_RESET();
+    }
+    else if (pSPIx == SPI2)
+    {
+        SPI2_REG_RESET();
+    }
+    else if (pSPIx == SPI3)
+    {
+        SPI3_REG_RESET();
+    }
+    else if (pSPIx == SPI4)
+    {
+        SPI4_REG_RESET();
+    }
+}
