@@ -441,3 +441,22 @@ uint8_t SPI_SendData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t L
     }
     return state;
 }
+
+uint8_t SPI_ReceiveData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t Len)
+{
+    uint8_t state = pSPIHandle->RxState;
+    if (state != SPI_BUSY_IN_RX) // check this if state that it's TX and not RX
+    {
+        // 1. Save the Rx buffer address and Len information in some global variables
+        pSPIHandle->pRxBuffer = pRxBuffer;
+        pSPIHandle->TxLen = Len;
+
+        // 2. Mark the SPI state as busy in transmission so that no other code can
+        // take over the same SPI peripheral until transmission is over
+        pSPIHandle->RxState = SPI_BUSY_IN_RX;
+
+        // 3. Enable the RXNEIE control bit to get interrupt whenever RXNE flag is set in SR
+        pSPIHandle->pSPIx->CR2 |= (1 << SPI_CR2_RXNEIE_Pos);
+    }
+    return state;
+}
