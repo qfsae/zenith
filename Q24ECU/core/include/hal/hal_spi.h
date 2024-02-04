@@ -105,3 +105,28 @@
 #define SPI_EVENT_RX_CMPLT 2
 #define SPI_EVENT_OVR_ERR 3
 #define SPI_EVENT_CRC_ERR 4
+
+// Configuration structure for SPIx peripheral
+typedef struct
+{
+    uint8_t SPI_DeviceMode;
+    uint8_t SPI_BusConfig;
+    uint8_t SPI_SclkSpeed;
+    uint8_t SPI_DFF;  // Data frame format
+    uint8_t SPI_CPOL; // Polarity
+    uint8_t SPI_CPHA; // Phase
+    uint8_t SPI_SSM;  // Slave Management (Software or Hardware)
+} SPI_Config_t;
+
+// Handle structure for SPIx peripheral
+typedef struct
+{
+    SPI_TypeDef *pSPIx; // Holds the base address of the SPI peripheral. Struct overlay for the SPI registers.
+    SPI_Config_t SPIConfig;
+    uint8_t *pTxBuffer;
+    uint8_t *pRxBuffer;
+    uint32_t TxLen;
+    uint32_t RxLen;
+    uint8_t TxState;
+    uint8_t RxState;
+} SPI_Handle_t;
