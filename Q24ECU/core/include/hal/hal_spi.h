@@ -315,3 +315,30 @@ __attribute__((weak)) void SPI_ApplicationEventCallback(SPI_Handle_t *pSPIHandle
 
     // This is a weak implementation. The application may override this function.
 }
+
+static void spi_txe_interrupt_handle(SPI_Handle_t *pSPIHandle)
+{
+    // Check DFF in CR1
+    if (pSPIHandle->pSPIx->CR1 & (1 << SPI_CR1_DFF))
+    {
+        // 16 bit dff
+        pSPIHandle->pSPIx->DR = *((uint16_t *)pSPIHandle->pTxBuffer);
+        pSPIHandle->TxLen -= 2;
+        (uint16_t *)pSPIHandle->pTxBuffer++;
+    }
+    else
+    {
+        // 8 bit dff
+        pSPIHandle->pSPIx->DR = *pSPIHandle->pTxBuffer;
+        pSPIHandle->TxLen--;
+        pSPIHandle->pTxBuffer++;
+    }
+
+    if (!pSPIHandle->TxLen)
+        // TxLen is zero, so close the spi communication
+        // and inform app that TX is over
+        // this prevents interrupts from setting up of TXE flag
+        SPI_CloseTransmission(pSPIHandle);
+
+    SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_TX_CMPLT);
+}
