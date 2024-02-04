@@ -130,3 +130,46 @@ typedef struct
     uint8_t TxState;
     uint8_t RxState;
 } SPI_Handle_t;
+
+// Peripheral clocks setup
+static inline void SPI_PeriClockControl(SPI_TypeDef *pSPIx, uint8_t EnorDi)
+{
+    if (EnorDi == ENABLE)
+    {
+        if (pSPIx == SPI1)
+        {
+            SPI1_PCLK_EN();
+        }
+        else if (pSPIx == SPI2)
+        {
+            SPI2_PCLK_EN();
+        }
+        else if (pSPIx == SPI3)
+        {
+            SPI3_PCLK_EN();
+        }
+        else if (pSPIx == SPI4)
+        {
+            SPI4_PCLK_EN();
+        }
+    }
+    else
+    {
+        if (pSPIx == SPI1)
+        {
+            SPI1_PCLK_DI();
+        }
+        else if (pSPIx == SPI2)
+        {
+            SPI2_PCLK_DI();
+        }
+        else if (pSPIx == SPI3)
+        {
+            SPI3_PCLK_DI();
+        }
+        else if (pSPIx == SPI4)
+        {
+            SPI4_PCLK_DI();
+        }
+    }
+}
