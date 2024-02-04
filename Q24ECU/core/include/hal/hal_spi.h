@@ -265,3 +265,31 @@ void SPI_SendData(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
         }
     }
 }
+
+void SPI_ReceiveData(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
+{
+    while (Len > 0)
+    {
+        // 1. Wait until RXNE is set
+        while (SPI_GetFlagStatus(pSPIx, SPI_SR_RXNE) == FLAG_RESET)
+            ;
+
+        // 2. Check the DFF bit in CR1
+        if ((pSPIx->CR1 & (1 << SPI_CR1_DFF_Pos)))
+        {
+            // 16 bit DFF
+            // Load the data
+            *((uint16_t *)pRxBuffer) = pSPIx->DR;
+            Len -= 2;
+            (uint16_t *)pRxBuffer++;
+        }
+        else
+        {
+            // 8 bit DFF
+            // Load the data
+            *(pRxBuffer) = pSPIx->DR;
+            Len--;
+            pRxBuffer++;
+        }
+    }
+}
