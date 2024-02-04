@@ -371,3 +371,19 @@ static void spi_rxne_interrupt_handle(SPI_Handle_t *pSPIHandle)
         SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_RX_CMPLT);
     }
 }
+
+static void spi_ovr_err_interrupt_handle(SPI_Handle_t *pSPIHandle)
+{
+    uint8_t temp;
+    // 1. clear the OVR flag
+    if (pSPIHandle->TxState != SPI_BUSY_IN_TX)
+    {
+        temp = pSPIHandle->pSPIx->DR;
+        temp = pSPIHandle->pSPIx->SR;
+    }
+    (void)temp;
+    // If the SPI is busy in TX, then the error will not be cleared and the application will have to clear bit on own
+    // In this case, application should call SPI_ClearOVRFlag
+    // 2. inform the application
+    SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_OVR_ERR);
+}
