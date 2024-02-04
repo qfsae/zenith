@@ -309,3 +309,9 @@ void SPI_CloseReception(SPI_Handle_t *pSPIHandle)
     pSPIHandle->pRxBuffer = NULL;
     pSPIHandle->RxState = SPI_READY;
 }
+
+__attribute__((weak)) void SPI_ApplicationEventCallback(SPI_Handle_t *pSPIHandle, uint8_t appEvent)
+{
+
+    // This is a weak implementation. The application may override this function.
+}
