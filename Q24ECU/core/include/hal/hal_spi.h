@@ -342,3 +342,32 @@ static void spi_txe_interrupt_handle(SPI_Handle_t *pSPIHandle)
 
     SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_TX_CMPLT);
 }
+
+static void spi_rxne_interrupt_handle(SPI_Handle_t *pSPIHandle)
+{
+    // Check DFF in CR1
+    if (pSPIHandle->pSPIx->CR1 & (1 << SPI_CR1_DFF))
+    {
+        // 16 bit dff
+        *((uint16_t *)pSPIHandle->pRxBuffer) = (uint16_t)pSPIHandle->pSPIx->DR;
+        pSPIHandle->RxLen -= 2;
+        (uint16_t *)pSPIHandle->pTxBuffer++;
+    }
+    else
+    {
+        // 8 bit dff
+        *(pSPIHandle->pRxBuffer) = (uint8_t)pSPIHandle->pSPIx->DR;
+        pSPIHandle->RxLen--;
+        pSPIHandle->pRxBuffer++;
+    }
+
+    if (!pSPIHandle->RxLen)
+    {
+        // TxLen is zero, so close the spi communication
+        // and inform app that TX is over
+        // this precents interrupts from setting up of TXE flag
+        SPI_CloseReception(pSPIHandle);
+
+        SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_RX_CMPLT);
+    }
+}
