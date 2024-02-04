@@ -387,3 +387,57 @@ static void spi_ovr_err_interrupt_handle(SPI_Handle_t *pSPIHandle)
     // 2. inform the application
     SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_OVR_ERR);
 }
+
+void SPI_IRQHandling(SPI_Handle_t *pSPIHandle)
+{
+    uint8_t status, control; // change these?
+
+    // first check for TXE
+    status = pSPIHandle->pSPIx->SR & SPI_SR_TXE;      // will be 1 if TXE is set
+    control = pSPIHandle->pSPIx->CR2 & SPI_CR2_TXEIE; // will be 1 if TXEIE is set
+
+    if (status && control)
+    {
+        // handle TXE
+        spi_txe_interrupt_handle(pSPIHandle);
+    }
+
+    // check for RXNE
+    status = pSPIHandle->pSPIx->SR & SPI_SR_RXNE;      // will be 1 if RXNE is set
+    control = pSPIHandle->pSPIx->CR2 & SPI_CR2_RXNEIE; // will be 1 if RXNEIE is set
+
+    if (status && control)
+    {
+        // handle TXE
+        spi_rxne_interrupt_handle(pSPIHandle);
+    }
+
+    // check for Overun flag
+    status = pSPIHandle->pSPIx->SR & SPI_SR_OVR;      // will be 1 if OVR is set
+    control = pSPIHandle->pSPIx->CR2 & SPI_CR2_ERRIE; // will be 1 if ERRIE is set
+
+    if (status && control)
+    {
+        // handle TXE
+        spi_ovr_err_interrupt_handle(pSPIHandle);
+    }
+}
+
+uint8_t SPI_SendData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t Len)
+{
+    uint8_t state = pSPIHandle->TxState;
+    if (state != SPI_BUSY_IN_TX) // check this if state that it's TX and not RX
+    {
+        // 1. Save the Tx buffer address and Len information in some global variables
+        pSPIHandle->pTxBuffer = pTxBuffer;
+        pSPIHandle->TxLen = Len;
+
+        // 2. Mark the SPI state as busy in transmission so that no other code can
+        // take over the same SPI peripheral until transmission is over
+        pSPIHandle->TxState = SPI_BUSY_IN_TX;
+
+        // 3. Enable the TXEIE control bit to get interrupt whenever TXE flag is set in SR
+        pSPIHandle->pSPIx->CR2 |= (1 << SPI_CR2_TXEIE_Pos);
+    }
+    return state;
+}
