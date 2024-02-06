@@ -14,6 +14,7 @@
 #define GPIO(bank) ((GPIO_TypeDef *) (GPIOA_BASE + 0x400U * (bank)))
 enum GPIO_MODE_IO   { GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_AF, GPIO_MODE_ANALOG };
 enum GPIO_PULL_MODE { GPIO_RESET, GPIO_PULLUP, GPIO_PULLDOWN};
+enum GPIO_AF_MODE { GPIO_AF_SYS = 0, GPIO_AF_TIM1 = 1, GPIO_AF_TIM2 = 1, GPIO_AF_TIM3_5 = 2, GPIO_AF_TIM8_11 = 3, GPIO_AF_I2C = 4, GPIO_AF_SPI = 6, GPIO_AF_UART = 7, GPIO_AF_CAN = 9};
 
 
 
@@ -38,11 +39,11 @@ static inline void gpio_set_mode(uint16_t pin, enum GPIO_MODE_IO mode) {
  * @param pin 
  * @param af_num 
  */
-static inline void gpio_set_af(uint16_t pin, uint8_t af_num) {
+static inline void gpio_set_af(uint16_t pin, enum GPIO_AF_MODE af) {
     GPIO_TypeDef *gpio = GPIO(PINBANK(pin));
     int n = PINNO(pin);
     gpio->AFR[n >> 3] &= ~(15UL << ((n & 7) * 4));
-    gpio->AFR[n >> 3] |= ((uint32_t) af_num) << ((n & 7) * 4);
+    gpio->AFR[n >> 3] |= ((uint32_t) af) << ((n & 7) * 4);
 }
 
 /**

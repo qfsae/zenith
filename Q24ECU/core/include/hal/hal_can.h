@@ -12,23 +12,8 @@
 #pragma once
 
 #include "stm32f4xx.h"
+#include "errors.h"
 #include "hal_gpio.h"
-
-// The CAN bus Initialized without Failure
-#define HAL_CAN_OK 0
-// CAN1 must be enabled before CAN2
-#define HAL_CAN1_UNINIT_ERR 1
-// There was an error initializing the CAN bus
-#define HAL_CAN_INIT_ERR 2
-// Filter selection out of range (there are only 28 filters)
-#define HAL_CAN_FILTER_SELRNG_ERR 3 // Filter Out of range
-// Mailbox Not Empty
-#define HAL_CAN_MAILBOX_NONEMPTY 4
-// Mailbox selection out of range
-#define HAL_CAN_MAILBOX_SELRNG_ERR 5
-// Fatal Error on bus
-#define HAL_CAN_FATAL_ERR 6
-
 
 typedef struct {
     uint32_t id;
@@ -115,7 +100,7 @@ static inline uint8_t hal_can_setFilter(uint8_t index, uint8_t scale, uint8_t mo
 
     SET_BIT(CAN1->FA1R, (0x1UL << index)); // Reactivate the filter
 
-    return HAL_CAN_OK;
+    return SYS_OK;
 }
 
 /**
@@ -134,9 +119,9 @@ static inline uint8_t hal_can_init(CAN_TypeDef * CAN, CAN_BITRATE bitrate, bool 
     if(CAN == CAN2) RCC->APB1ENR |= RCC_APB1ENR_CAN2EN;
     // Set up the GPIO pins
     gpio_set_mode(pin_tx, GPIO_MODE_AF);
-    gpio_set_af(pin_tx, 9); // GPIO Alternate function 9 -> CAN Bus
+    gpio_set_af(pin_tx, GPIO_AF_CAN); // GPIO Alternate function 9 -> CAN Bus
     gpio_set_mode(pin_rx, GPIO_MODE_AF);
-    gpio_set_af(pin_rx, 9);
+    gpio_set_af(pin_rx, GPIO_AF_CAN);
 
     // Request the CAN bus to enter into initization mode
     SET_BIT(CAN->MCR, CAN_MCR_INRQ);
@@ -164,8 +149,8 @@ static inline uint8_t hal_can_init(CAN_TypeDef * CAN, CAN_BITRATE bitrate, bool 
     uint8_t f2_status = hal_can_setFilter(14, 1, 0, 0, 0x0UL, 0x0UL);
     CLEAR_BIT(CAN1->FMR, CAN_FMR_FINIT);              // Deactivate initialization mode
 
-    if(f1_status != HAL_CAN_OK) return f1_status;
-    if(f2_status != HAL_CAN_OK) return f2_status;
+    if(f1_status != SYS_OK) return f1_status;
+    if(f2_status != SYS_OK) return f2_status;
 
     // Enable the bus
     // Request to leave initialization mode
@@ -174,7 +159,7 @@ static inline uint8_t hal_can_init(CAN_TypeDef * CAN, CAN_BITRATE bitrate, bool 
     for(uint32_t wait_ack = 0; wait_ack < timeout; wait_ack++){
         if((CAN->MSR & CAN_MSR_INAK) == 0){
             // Return: Success if CAN enables sucessfully
-            return HAL_CAN_OK;
+            return SYS_OK;
         }
         for(uint32_t spin = 0; spin < timeout; spin++);
     }
@@ -266,7 +251,7 @@ static inline uint8_t hal_can_send(CAN_TypeDef * CAN, can_msg_t * tx_msg, uint8_
     CAN->sTxMailBox[mailbox].TIR = (uint32_t)(sTxMailBox_TIR | CAN_TI0R_TXRQ);
     
     // Return read OK
-    return HAL_CAN_OK;
+    return SYS_OK;
 
 }
 
