@@ -1,6 +1,7 @@
 /**
  * @file hal_can.h
- * @author Jacob Chisholm (https://Jchisholm204.github.io) Ethan Peterson (https://portfolio.petetech.net)
+ * @author Jacob Chisholm (https://Jchisholm204.github.io/)
+ * @author Ethan Peterson (https://portfolio.petetech.net/)
  * @brief STM32F4 CAN Hardware Abstraction Layer (Adaptation of Ethan Peterson's STM32F4 CAN library for Arduino HAL)
  * @version 0.1
  * @date 2023-12-01
@@ -123,7 +124,7 @@ static inline uint8_t hal_can_init(CAN_TypeDef * CAN, CAN_BITRATE bitrate, bool 
     gpio_set_mode(pin_rx, GPIO_MODE_AF);
     gpio_set_af(pin_rx, GPIO_AF_CAN);
 
-    // Request the CAN bus to enter into initization mode
+    // Request the CAN bus to enter into initialization mode
     SET_BIT(CAN->MCR, CAN_MCR_INRQ);
     while(!(CAN->MSR & CAN_MSR_INAK));
 
@@ -141,7 +142,7 @@ static inline uint8_t hal_can_init(CAN_TypeDef * CAN, CAN_BITRATE bitrate, bool 
     // Setup bus bitrates
     CAN->BTR &= ~((0x03UL << 24) | (0x07UL << 20) | (0x0FUL << 16) | (0x1FFUL)); // Zero out the register
     CAN->BTR |=  (uint32_t)((((can_configs[bitrate].TS2-1) & 0x07) << 20) | (((can_configs[bitrate].TS1-1) & 0x0F) << 16) | ((can_configs[bitrate].BRP-1) & 0x1FF)); // Set up the bit timing
-                                                                                                                               // Initialize the filter registers
+    // Initialize the filter registers
     SET_BIT(CAN1->FMR, CAN_FMR_FINIT);           // Enter into initialization mode
     CLEAR_BIT(CAN1->FMR, CAN_FMR_CAN2SB);        // Clear the Filter Selection register
     CAN1->FMR |= (0xEUL << CAN_FMR_CAN2SB_Pos); // Set filters (0-13 -> CAN1) & (14-28 -> CAN2)
@@ -158,7 +159,7 @@ static inline uint8_t hal_can_init(CAN_TypeDef * CAN, CAN_BITRATE bitrate, bool 
     uint32_t timeout = 9999;
     for(uint32_t wait_ack = 0; wait_ack < timeout; wait_ack++){
         if((CAN->MSR & CAN_MSR_INAK) == 0){
-            // Return: Success if CAN enables sucessfully
+            // Return: Success if CAN enables successfully
             return SYS_OK;
         }
         for(uint32_t spin = 0; spin < timeout; spin++);
@@ -231,7 +232,7 @@ static inline uint8_t hal_can_send(CAN_TypeDef * CAN, can_msg_t * tx_msg, uint8_
         sTxMailBox_TIR = (tx_msg->id << CAN_TI0R_EXID_Pos) | CAN_TI0R_IDE;
     }
     else{
-        // Standard msg frane format
+        // Standard msg frame format
         sTxMailBox_TIR = (tx_msg->id << CAN_TI0R_STID_Pos);
     }
     
