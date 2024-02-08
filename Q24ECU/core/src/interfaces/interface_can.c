@@ -73,7 +73,7 @@ void os_can_setup(void){
     // NOTE: NART (no automatic re-transmission) should be set to false in application
     uint8_t can1_status = hal_can_init(CAN1, CAN_1000KBPS, true, PIN('A', 11), PIN('A', 12));
     // On event of CAN bus initialization failure
-    if(can1_status != HAL_CAN_OK){
+    if(can1_status != SYS_OK){
         printf("Initialization Failure: CAN Bus Error: %d", can1_status);
         for(;;) __asm__("nop");
     }
@@ -224,7 +224,7 @@ uint8_t can_send_msg(CAN_TypeDef *CAN, can_msg_t *tx_msg, TickType_t timeout){
             xSemaphoreGive(CAN1_TX_Semaphore[i]);
             xSemaphoreGive(CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_COUNT]);
             // Return OK
-            return HAL_CAN_OK;
+            return SYS_OK;
         }
     }
     return HAL_CAN_FATAL_ERR;

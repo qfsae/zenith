@@ -61,7 +61,7 @@ static inline void uart_send_init(uart_t *port, USART_TypeDef *uart, unsigned lo
     if(port->rxbuffer == NULL) return;
     port->port = uart;
     if(port->port == NULL) return;
-    hal_uart_init(port->port, baud);
+    hal_uart_init(port->port, baud, PIN('A', 2), PIN('A', 3));
     xSemaphoreGive(port->semaphore);
 }
 

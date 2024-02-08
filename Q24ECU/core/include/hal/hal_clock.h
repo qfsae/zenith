@@ -45,15 +45,15 @@ static inline void clock_init(void){
     
     RCC->CR &= ~(BIT(0) | BIT(16) | BIT(18));                               // clear hsi on, hse on, hse byp / not needed
     RCC->CR |= BIT(16);                                                     // set HSE ON
-    while(!(RCC->CR & RCC_CR_HSERDY)) asm("nop");                // wait for HSE ready
+    while(!(RCC->CR & RCC_CR_HSERDY)) __asm__("nop");                // wait for HSE ready
     RCC->PLLCFGR &= ~(BIT(17)-1);                                           // clear PLL multipliers
     RCC->PLLCFGR |= (RCC_PLLCFGR_PLLSRC_HSE);
     //RCC->PLLCFGR |= (((PLL_P - 2) / 2) & 3) << 16;                          // Set PLL_P
     RCC->PLLCFGR |= PLL_M | (PLL_N << 6);                                     // Set PLL_M and PLL_N
     RCC->CR |= BIT(24);                                                 // Enable PLL
     RCC->CFGR = (APB1_PRE << 10) | (APB2_PRE << 13);                       // Set prescalers 
-    while (!(RCC->CR & RCC_CR_PLLRDY)) asm("nop");                              // Wait until done
+    while (!(RCC->CR & RCC_CR_PLLRDY)) __asm__("nop");                              // Wait until done
     RCC->CFGR |= 2;                                                       // Set clock source to PLL 
-    while (!(RCC->CFGR & RCC_CFGR_SWS_PLL)) asm("nop"); // Wait until done
+    while (!(RCC->CFGR & RCC_CFGR_SWS_PLL)) __asm__("nop"); // Wait until done
 }
 
