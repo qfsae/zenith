@@ -37,7 +37,7 @@
 #define SPI3_PCLK_DI() (RCC->APB1ENR &= ~RCC_APB1ENR_SPI3EN)
 #define SPI4_PCLK_DI() (RCC->APB2ENR &= ~RCC_APB2ENR_SPI4EN)
 
-// Register Reset - TODO: check if the right registers were used
+// Register Reset
 #define SPI1_REG_RESET()                          \
     do                                            \
     {                                             \
