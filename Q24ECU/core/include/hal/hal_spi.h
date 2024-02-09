@@ -118,19 +118,6 @@ typedef struct
     uint8_t SPI_SSM;  // Slave Management (Software or Hardware)
 } SPI_Config_t;
 
-// Handle structure for SPIx peripheral
-typedef struct
-{
-    SPI_TypeDef *pSPIx; // Holds the base address of the SPI peripheral. Struct overlay for the SPI registers.
-    SPI_Config_t SPIConfig;
-    uint8_t *pTxBuffer;
-    uint8_t *pRxBuffer;
-    uint32_t TxLen;
-    uint32_t RxLen;
-    uint8_t TxState;
-    uint8_t RxState;
-} SPI_Handle_t;
-
 // Peripheral clocks setup
 static inline void HAL_SPI_PeriClockControl(SPI_TypeDef *pSPIx, bool enable)
 {

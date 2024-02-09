@@ -2,6 +2,19 @@
 #include "hal/hal_spi.h"
 #include <stm32f446xx.h>
 
+// Handle structure for SPIx peripheral
+typedef struct
+{
+    SPI_TypeDef *pSPIx; // Holds the base address of the SPI peripheral. Struct overlay for the SPI registers.
+    SPI_Config_t SPIConfig;
+    uint8_t *pTxBuffer;
+    uint8_t *pRxBuffer;
+    uint32_t TxLen;
+    uint32_t RxLen;
+    uint8_t TxState;
+    uint8_t RxState;
+} SPI_Handle_t;
+
 void SPI_CloseTransmission(SPI_Handle_t *pSPIHandle)
 {
     pSPIHandle->pSPIx->CR2 &= ~SPI_CR2_TXEIE;
