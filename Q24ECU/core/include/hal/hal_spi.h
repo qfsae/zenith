@@ -296,7 +296,7 @@ void SPI_ReceiveData(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
 
 void SPI_CloseTransmission(SPI_Handle_t *pSPIHandle)
 {
-    pSPIHandle->pSPIx->CR2 &= ~(1 << SPI_CR2_TXEIE);
+    pSPIHandle->pSPIx->CR2 &= ~SPI_CR2_TXEIE;
     pSPIHandle->TxLen = 0;
     pSPIHandle->pTxBuffer = NULL;
     pSPIHandle->TxState = SPI_READY;
@@ -304,7 +304,7 @@ void SPI_CloseTransmission(SPI_Handle_t *pSPIHandle)
 
 void SPI_CloseReception(SPI_Handle_t *pSPIHandle)
 {
-    pSPIHandle->pSPIx->CR2 &= ~(1 << SPI_CR2_RXNEIE);
+    pSPIHandle->pSPIx->CR2 &= ~SPI_CR2_RXNEIE;
     pSPIHandle->RxLen = 0;
     pSPIHandle->pRxBuffer = NULL;
     pSPIHandle->RxState = SPI_READY;
