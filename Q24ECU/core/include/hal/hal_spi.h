@@ -26,7 +26,7 @@
 #define FLAG_RESET RESET
 #define FLAG_SET SET
 
-// Clock macros -- check if this is correct for this MCU
+// Clock macros
 #define SPI1_PCLK_EN() (RCC->APB2ENR |= RCC_APB2ENR_SPI1EN)
 #define SPI2_PCLK_EN() (RCC->APB1ENR |= RCC_APB1ENR_SPI2EN)
 #define SPI3_PCLK_EN() (RCC->APB1ENR |= RCC_APB1ENR_SPI3EN)
@@ -38,32 +38,32 @@
 #define SPI4_PCLK_DI() (RCC->APB2ENR &= ~RCC_APB2ENR_SPI4EN)
 
 // Register Reset - TODO: check if the right registers were used
-#define SPI1_REG_RESET()               \
-    do                                 \
-    {                                  \
-        (RCC->APB2RSTR |= (1 << 12));  \
-        (RCC->APB2RSTR &= ~(1 << 12)); \
+#define SPI1_REG_RESET()                          \
+    do                                            \
+    {                                             \
+        (RCC->APB2RSTR |= RCC_APB2RSTR_SPI1RST);  \
+        (RCC->APB2RSTR &= ~RCC_APB2RSTR_SPI1RST); \
     } while (0)
 
-#define SPI2_REG_RESET()               \
-    do                                 \
-    {                                  \
-        (RCC->APB1RSTR |= (1 << 14));  \
-        (RCC->APB1RSTR &= ~(1 << 14)); \
+#define SPI2_REG_RESET()                          \
+    do                                            \
+    {                                             \
+        (RCC->APB1RSTR |= RCC_APB1RSTR_SPI2RST);  \
+        (RCC->APB1RSTR &= ~RCC_APB1RSTR_SPI2RST); \
     } while (0)
 
-#define SPI3_REG_RESET()               \
-    do                                 \
-    {                                  \
-        (RCC->APB1RSTR |= (1 << 15));  \
-        (RCC->APB1RSTR &= ~(1 << 15)); \
+#define SPI3_REG_RESET()                          \
+    do                                            \
+    {                                             \
+        (RCC->APB1RSTR |= RCC_APB1RSTR_SPI3RST);  \
+        (RCC->APB1RSTR &= ~RCC_APB1RSTR_SPI3RST); \
     } while (0)
 
-#define SPI4_REG_RESET()               \
-    do                                 \
-    {                                  \
-        (RCC->APB2RSTR |= (1 << 13));  \
-        (RCC->APB2RSTR &= ~(1 << 13)); \
+#define SPI4_REG_RESET()                          \
+    do                                            \
+    {                                             \
+        (RCC->APB2RSTR |= RCC_APB2RSTR_SPI4RST);  \
+        (RCC->APB2RSTR &= ~RCC_APB2RSTR_SPI4RST); \
     } while (0)
 
 // SPI_DeviceMode
