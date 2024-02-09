@@ -132,7 +132,7 @@ typedef struct
 } SPI_Handle_t;
 
 // Peripheral clocks setup
-static inline void SPI_PeriClockControl(SPI_TypeDef *pSPIx, bool enable)
+static inline void HAL_SPI_PeriClockControl(SPI_TypeDef *pSPIx, bool enable)
 {
     if (enable)
     {
@@ -175,7 +175,7 @@ static inline void SPI_PeriClockControl(SPI_TypeDef *pSPIx, bool enable)
 }
 
 // Init and DeInit
-void SPI_Init(SPI_Handle_t *pSPIHandle)
+void HAL_SPI_Init(SPI_Handle_t *pSPIHandle)
 {
     // First configure SPI_CR1 register
     uint32_t tempReg = 0;
@@ -217,7 +217,7 @@ void SPI_Init(SPI_Handle_t *pSPIHandle)
     pSPIHandle->pSPIx->CR1 = tempReg;
 }
 
-void SPI_DeInit(SPI_TypeDef *pSPIx)
+void HAL_SPI_DeInit(SPI_TypeDef *pSPIx)
 {
     if (pSPIx == SPI1)
     {
@@ -238,7 +238,7 @@ void SPI_DeInit(SPI_TypeDef *pSPIx)
 }
 
 // Data send and receive - blocking call
-void SPI_SendData(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
+void HAL_SPI_SendData(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 {
     while (Len > 0)
     {
@@ -266,7 +266,7 @@ void SPI_SendData(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
     }
 }
 
-void SPI_ReceiveData(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
+void HAL_SPI_ReceiveData(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
 {
     while (Len > 0)
     {
@@ -292,6 +292,15 @@ void SPI_ReceiveData(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
             pRxBuffer++;
         }
     }
+}
+
+uint8_t SPI_GetFlagStatus(SPI_TypeDef *pSPIx, uint32_t FlagName)
+{
+    if (pSPIx->SR & FlagName)
+    {
+        return FLAG_SET;
+    }
+    return FLAG_RESET;
 }
 
 void SPI_CloseTransmission(SPI_Handle_t *pSPIHandle)
@@ -459,13 +468,4 @@ uint8_t SPI_ReceiveData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_
         pSPIHandle->pSPIx->CR2 |= (1 << SPI_CR2_RXNEIE_Pos);
     }
     return state;
-}
-
-uint8_t SPI_GetFlagStatus(SPI_TypeDef *pSPIx, uint32_t FlagName)
-{
-    if (pSPIx->SR & FlagName)
-    {
-        return FLAG_SET;
-    }
-    return FLAG_RESET;
 }
