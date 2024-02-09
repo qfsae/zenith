@@ -10,6 +10,7 @@
  */
 
 #pragma once
+#include "errors.h"
 #include <stm32f4xx.h>
 
 /** @defgroup FLASH_Program_Parallelism FLASH Program Parallelism
@@ -33,15 +34,6 @@
 // User Flash Start defined in linker script
 #define FLASH_USER_START 0x08060000
 
-// Flash write successful
-#define FLASH_WRITE_OK 0
-// Invalid Flash Address given
-#define FLASH_WRITE_ADDR_INVALID 1
-// Failed to assert write permissions on the flash memory
-#define FLASH_WRITE_NOACC 1
-// Data Requested does not exist
-#define FLASH_WRITE_NODAT 2
-
 
 static void hal_FLASH_Lock(void){
   FLASH->CR |= FLASH_CR_LOCK;
@@ -61,7 +53,7 @@ static inline uint8_t hal_FLASH_Unlock(void){
             return FLASH_WRITE_NOACC;
         }
   }
-  return FLASH_WRITE_OK;
+  return SYS_OK;
 }
 
 /**
@@ -100,7 +92,7 @@ static inline uint8_t hal_FLASH_WriteFW(uint32_t Address, uint32_t data1, uint32
     hal_FLASH_Lock();
 
     // Return OK
-    return FLASH_WRITE_OK;
+    return SYS_OK;
 }
 
 /**
@@ -131,7 +123,7 @@ static inline uint8_t hal_FLASH_WriteHW(uint32_t Address, uint32_t data){
     hal_FLASH_Lock();
 
     // Return OK
-    return FLASH_WRITE_OK;
+    return SYS_OK;
 }
 
 /**
