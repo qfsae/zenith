@@ -175,26 +175,26 @@ static inline void HAL_SPI_PeriClockControl(SPI_TypeDef *pSPIx, bool enable)
 }
 
 // Init and DeInit
-void HAL_SPI_Init(SPI_Handle_t *pSPIHandle)
+void HAL_SPI_Init(SPI_TypeDef *pSPIx, SPI_Config_t *pSPIConfig)
 {
     // First configure SPI_CR1 register
     uint32_t tempReg = 0;
 
     // 1. Configure device mode
-    tempReg |= pSPIHandle->SPIConfig.SPI_DeviceMode << SPI_CR1_MSTR_Pos;
+    tempReg |= pSPIConfig->SPI_DeviceMode << SPI_CR1_MSTR_Pos;
 
     // 2. Configure bus config
-    if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_FD)
+    if (pSPIConfig->SPI_BusConfig == SPI_BUS_CONFIG_FD)
     {
         // BIDI mode should be cleared
         tempReg &= ~(SPI_CR1_BIDIMODE);
     }
-    else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_HD)
+    else if (pSPIConfig->SPI_BusConfig == SPI_BUS_CONFIG_HD)
     {
         // BIDI mode should be set
         tempReg |= SPI_CR1_BIDIMODE;
     }
-    else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_SIMPLEX_RXONLY)
+    else if (pSPIConfig->SPI_BusConfig == SPI_BUS_CONFIG_SIMPLEX_RXONLY)
     {
         // BIDI mode should be cleared
         tempReg &= ~(SPI_CR1_BIDIMODE);
@@ -203,18 +203,18 @@ void HAL_SPI_Init(SPI_Handle_t *pSPIHandle)
     }
 
     // 3. Configure the SPI serial clock speed (baud rate)
-    tempReg |= pSPIHandle->SPIConfig.SPI_SclkSpeed << SPI_CR1_BR_Pos;
+    tempReg |= pSPIConfig->SPI_SclkSpeed << SPI_CR1_BR_Pos;
 
     // 4. Configure the DFF
-    tempReg |= pSPIHandle->SPIConfig.SPI_DFF << SPI_CR1_DFF_Pos;
+    tempReg |= pSPIConfig->SPI_DFF << SPI_CR1_DFF_Pos;
 
     // 5. Configure the polarity
-    tempReg |= pSPIHandle->SPIConfig.SPI_CPOL << SPI_CR1_CPOL_Pos;
+    tempReg |= pSPIConfig->SPI_CPOL << SPI_CR1_CPOL_Pos;
 
     // 6. Configure the phase
-    tempReg |= pSPIHandle->SPIConfig.SPI_CPHA << SPI_CR1_CPHA_Pos;
+    tempReg |= pSPIConfig->SPI_CPHA << SPI_CR1_CPHA_Pos;
 
-    pSPIHandle->pSPIx->CR1 = tempReg;
+    pSPIx->CR1 = tempReg;
 }
 
 void HAL_SPI_DeInit(SPI_TypeDef *pSPIx)
