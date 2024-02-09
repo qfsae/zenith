@@ -1,4 +1,14 @@
 
+/**
+ * @file interface_spi.h
+ * @author Josh Allen
+ * @brief
+ * @version 0.1
+ * @date 2024-02-06
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 #include "hal/hal_spi.h"
 #include <stm32f446xx.h>
 
