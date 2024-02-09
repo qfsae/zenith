@@ -12,10 +12,12 @@ all: build
 
 ${BUILD_DIR}/Makefile:
 	cmake \
+		-DCMAKE_C_COMPILER=arm-none-eabi-gcc \
 		-B${BUILD_DIR} \
 		-DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
 		-DCMAKE_TOOLCHAIN_FILE=gcc-arm-none-eabi.cmake \
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+		-G "Unix Makefiles" \
 
 cmake: ${BUILD_DIR}/Makefile
 
