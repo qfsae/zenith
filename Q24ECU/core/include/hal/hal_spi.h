@@ -119,7 +119,7 @@ typedef struct
 } SPI_Config_t;
 
 // Peripheral clocks setup
-static inline void HAL_SPI_PeriClockControl(SPI_TypeDef *pSPIx, bool enable)
+static inline void hal_spi_peri_clock_control(SPI_TypeDef *pSPIx, bool enable)
 {
     if (enable)
     {
@@ -162,7 +162,7 @@ static inline void HAL_SPI_PeriClockControl(SPI_TypeDef *pSPIx, bool enable)
 }
 
 // Init and DeInit
-void HAL_SPI_Init(SPI_TypeDef *pSPIx, SPI_Config_t *pSPIConfig)
+void hal_spi_init(SPI_TypeDef *pSPIx, SPI_Config_t *pSPIConfig)
 {
     // First configure SPI_CR1 register
     uint32_t tempReg = 0;
@@ -204,7 +204,7 @@ void HAL_SPI_Init(SPI_TypeDef *pSPIx, SPI_Config_t *pSPIConfig)
     pSPIx->CR1 = tempReg;
 }
 
-void HAL_SPI_DeInit(SPI_TypeDef *pSPIx)
+void hal_spi_deinit(SPI_TypeDef *pSPIx)
 {
     if (pSPIx == SPI1)
     {
@@ -225,12 +225,12 @@ void HAL_SPI_DeInit(SPI_TypeDef *pSPIx)
 }
 
 // Data send and receive - blocking call
-void HAL_SPI_SendData(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
+void hal_spi_send(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 {
     while (Len > 0)
     {
         // 1. Wait until TXE is set
-        while (SPI_GetFlagStatus(pSPIx, SPI_SR_TXE) == FLAG_RESET)
+        while (hal_spi_get_flag_status(pSPIx, SPI_SR_TXE) == FLAG_RESET)
             ;
 
         // 2. Check the DFF bit in CR1
@@ -253,12 +253,12 @@ void HAL_SPI_SendData(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
     }
 }
 
-void HAL_SPI_ReceiveData(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
+void hal_spi_receive(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
 {
     while (Len > 0)
     {
         // 1. Wait until RXNE is set
-        while (SPI_GetFlagStatus(pSPIx, SPI_SR_RXNE) == FLAG_RESET)
+        while (hal_spi_get_flag_status(pSPIx, SPI_SR_RXNE) == FLAG_RESET)
             ;
 
         // 2. Check the DFF bit in CR1
@@ -281,7 +281,7 @@ void HAL_SPI_ReceiveData(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
     }
 }
 
-uint8_t SPI_GetFlagStatus(SPI_TypeDef *pSPIx, uint32_t FlagName)
+uint8_t hal_spi_get_flag_status(SPI_TypeDef *pSPIx, uint32_t FlagName)
 {
     if (pSPIx->SR & FlagName)
     {
