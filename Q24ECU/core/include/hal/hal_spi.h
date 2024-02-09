@@ -27,15 +27,15 @@
 #define FLAG_SET SET
 
 // Clock macros -- check if this is correct for this MCU
-#define SPI1_PCLK_EN() (RCC->APB2ENR |= (1 << 12))
-#define SPI2_PCLK_EN() (RCC->APB1ENR |= (1 << 14))
-#define SPI3_PCLK_EN() (RCC->APB1ENR |= (1 << 15))
-#define SPI4_PCLK_EN() (RCC->APB2ENR |= (1 << 13))
+#define SPI1_PCLK_EN() (RCC->APB2ENR |= RCC_APB2ENR_SPI1EN)
+#define SPI2_PCLK_EN() (RCC->APB1ENR |= RCC_APB1ENR_SPI2EN)
+#define SPI3_PCLK_EN() (RCC->APB1ENR |= RCC_APB1ENR_SPI3EN)
+#define SPI4_PCLK_EN() (RCC->APB2ENR |= RCC_APB2ENR_SPI4EN)
 
-#define SPI1_PCLK_DI() (RCC->APB2ENR &= ~(1 << 12))
-#define SPI2_PCLK_DI() (RCC->APB1ENR &= ~(1 << 14))
-#define SPI3_PCLK_DI() (RCC->APB1ENR &= ~(1 << 15))
-#define SPI4_PCLK_DI() (RCC->APB2ENR &= ~(1 << 13))
+#define SPI1_PCLK_DI() (RCC->APB2ENR &= ~RCC_APB2ENR_SPI1EN)
+#define SPI2_PCLK_DI() (RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN)
+#define SPI3_PCLK_DI() (RCC->APB1ENR &= ~RCC_APB1ENR_SPI3EN)
+#define SPI4_PCLK_DI() (RCC->APB2ENR &= ~RCC_APB2ENR_SPI4EN)
 
 // Register Reset - TODO: check if the right registers were used
 #define SPI1_REG_RESET()               \
