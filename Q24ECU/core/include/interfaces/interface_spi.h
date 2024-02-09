@@ -27,7 +27,7 @@ __attribute__((weak)) void SPI_ApplicationEventCallback(SPI_Handle_t *pSPIHandle
 static void spi_txe_interrupt_handle(SPI_Handle_t *pSPIHandle)
 {
     // Check DFF in CR1
-    if (pSPIHandle->pSPIx->CR1 & (1 << SPI_CR1_DFF))
+    if (pSPIHandle->pSPIx->CR1 & SPI_CR1_DFF)
     {
         // 16 bit dff
         pSPIHandle->pSPIx->DR = *((uint16_t *)pSPIHandle->pTxBuffer);
@@ -54,7 +54,7 @@ static void spi_txe_interrupt_handle(SPI_Handle_t *pSPIHandle)
 static void spi_rxne_interrupt_handle(SPI_Handle_t *pSPIHandle)
 {
     // Check DFF in CR1
-    if (pSPIHandle->pSPIx->CR1 & (1 << SPI_CR1_DFF))
+    if (pSPIHandle->pSPIx->CR1 & SPI_CR1_DFF)
     {
         // 16 bit dff
         *((uint16_t *)pSPIHandle->pRxBuffer) = (uint16_t)pSPIHandle->pSPIx->DR;
