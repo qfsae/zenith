@@ -132,9 +132,9 @@ typedef struct
 } SPI_Handle_t;
 
 // Peripheral clocks setup
-static inline void SPI_PeriClockControl(SPI_TypeDef *pSPIx, uint8_t EnorDi)
+static inline void SPI_PeriClockControl(SPI_TypeDef *pSPIx, uint8_t enOrDi)
 {
-    if (EnorDi == ENABLE)
+    if (enOrDi == ENABLE)
     {
         if (pSPIx == SPI1)
         {
