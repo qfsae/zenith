@@ -187,19 +187,19 @@ void HAL_SPI_Init(SPI_Handle_t *pSPIHandle)
     if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_FD)
     {
         // BIDI mode should be cleared
-        tempReg &= ~(1 << SPI_CR1_BIDIMODE_Pos);
+        tempReg &= ~(SPI_CR1_BIDIMODE);
     }
     else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_HD)
     {
         // BIDI mode should be set
-        tempReg |= (1 << SPI_CR1_BIDIMODE_Pos);
+        tempReg |= SPI_CR1_BIDIMODE;
     }
     else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_SIMPLEX_RXONLY)
     {
         // BIDI mode should be cleared
-        tempReg &= ~(1 << SPI_CR1_BIDIMODE_Pos);
+        tempReg &= ~(SPI_CR1_BIDIMODE);
         // RXONLY bit must be set
-        tempReg |= (1 << SPI_CR1_RXONLY_Pos);
+        tempReg |= SPI_CR1_RXONLY;
     }
 
     // 3. Configure the SPI serial clock speed (baud rate)
@@ -247,7 +247,7 @@ void HAL_SPI_SendData(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
             ;
 
         // 2. Check the DFF bit in CR1
-        if ((pSPIx->CR1 & (1 << SPI_CR1_DFF_Pos)))
+        if (pSPIx->CR1 & SPI_CR1_DFF)
         {
             // 16 bit DFF
             // Load the data
@@ -275,7 +275,7 @@ void HAL_SPI_ReceiveData(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
             ;
 
         // 2. Check the DFF bit in CR1
-        if ((pSPIx->CR1 & (1 << SPI_CR1_DFF_Pos)))
+        if (pSPIx->CR1 & SPI_CR1_DFF_Pos)
         {
             // 16 bit DFF
             // Load the data
