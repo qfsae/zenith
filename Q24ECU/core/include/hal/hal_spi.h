@@ -233,6 +233,10 @@ uint8_t hal_spi_get_flag_status(SPI_TypeDef *pSPIx, uint32_t FlagName)
     return FLAG_RESET;
 }
 
+static inline uint8_t hal_spi_send_ready(SPI_TypeDef *pSPIx){
+    return pSPIx->SR & SPI_SR_TXE;
+}
+
 // Data send and receive - blocking call
 void hal_spi_send(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 {
