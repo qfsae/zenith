@@ -289,3 +289,21 @@ void hal_spi_receive(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
         }
     }
 }
+
+static inline void hal_spi_enable_txe(SPI_TypeDef *pSPIx, bool enable){
+    if(enable){
+        pSPIx->CR2 |= SPI_CR2_TXEIE;
+    }
+    else{
+        pSPIx->CR2 &= ~(SPI_CR2_TXEIE);
+    }
+}
+
+static inline void hal_spi_enable_rxne(SPI_TypeDef *pSPIx, bool enable){
+    if(enable){
+        pSPIx->CR2 |= SPI_CR2_RXNEIE;
+    }
+    else{
+        pSPIx->CR2 &= ~(SPI_CR2_RXNEIE);
+    }
+}
