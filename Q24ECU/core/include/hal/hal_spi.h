@@ -162,7 +162,7 @@ static inline void hal_spi_peri_clock_control(SPI_TypeDef *pSPIx, bool enable)
 }
 
 // Init and DeInit
-void hal_spi_init(SPI_TypeDef *pSPIx, SPI_Config_t *pSPIConfig)
+static inline void hal_spi_init(SPI_TypeDef *pSPIx, SPI_Config_t *pSPIConfig)
 {
     // First configure SPI_CR1 register
     uint32_t tempReg = 0;
@@ -204,7 +204,7 @@ void hal_spi_init(SPI_TypeDef *pSPIx, SPI_Config_t *pSPIConfig)
     pSPIx->CR1 = tempReg;
 }
 
-void hal_spi_deinit(SPI_TypeDef *pSPIx)
+static inline void hal_spi_deinit(SPI_TypeDef *pSPIx)
 {
     if (pSPIx == SPI1)
     {
@@ -233,12 +233,12 @@ uint8_t hal_spi_get_flag_status(SPI_TypeDef *pSPIx, uint32_t FlagName)
     return FLAG_RESET;
 }
 
-static inline uint8_t hal_spi_send_ready(SPI_TypeDef *pSPIx){
+uint8_t hal_spi_send_ready(SPI_TypeDef *pSPIx){
     return pSPIx->SR & SPI_SR_TXE;
 }
 
 // Data send and receive - blocking call
-void hal_spi_send(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
+static inline void hal_spi_send(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 {
     while (Len > 0)
     {
@@ -266,7 +266,7 @@ void hal_spi_send(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
     }
 }
 
-void hal_spi_receive(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
+static inline void hal_spi_receive(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
 {
     while (Len > 0)
     {
