@@ -224,6 +224,15 @@ void hal_spi_deinit(SPI_TypeDef *pSPIx)
     }
 }
 
+uint8_t hal_spi_get_flag_status(SPI_TypeDef *pSPIx, uint32_t FlagName)
+{
+    if (pSPIx->SR & FlagName)
+    {
+        return FLAG_SET;
+    }
+    return FLAG_RESET;
+}
+
 // Data send and receive - blocking call
 void hal_spi_send(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 {
@@ -279,13 +288,4 @@ void hal_spi_receive(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
             pRxBuffer++;
         }
     }
-}
-
-uint8_t hal_spi_get_flag_status(SPI_TypeDef *pSPIx, uint32_t FlagName)
-{
-    if (pSPIx->SR & FlagName)
-    {
-        return FLAG_SET;
-    }
-    return FLAG_RESET;
 }
