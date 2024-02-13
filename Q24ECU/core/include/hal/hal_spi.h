@@ -17,6 +17,7 @@
 #include <sys/stat.h>
 
 #include <stm32f446xx.h>
+#include "hal_gpio.h"
 
 // Generic Macros - may move somewhere else
 #define ENABLE 1
@@ -158,6 +159,39 @@ static inline void hal_spi_peri_clock_control(SPI_TypeDef *pSPIx, bool enable)
         {
             SPI4_PCLK_DI();
         }
+    }
+}
+
+void hal_spi_set_gpio(uint16_t sclk, uint16_t mosi, uint16_t miso){
+    // set clock pin
+    gpio_set_mode(sclk, GPIO_MODE_AF);
+    gpio_set_af(sclk, GPIO_AF_SPI);
+
+    // set mosi pin
+    gpio_set_mode(mosi, GPIO_MODE_AF);
+    gpio_set_af(mosi, GPIO_AF_SPI);
+    
+    // set miso pin
+    gpio_set_mode(miso, GPIO_MODE_AF);
+    gpio_set_af(miso, GPIO_AF_SPI);
+}
+
+void hal_spi_gpio_init(SPI_TypeDef *pSPIx){
+    if (pSPIx == SPI1)
+    {
+        hal_spi_set_gpio();
+    }
+    else if (pSPIx == SPI2)
+    {
+        hal_spi_set_gpio();
+    }
+    else if (pSPIx == SPI3)
+    {
+        hal_spi_set_gpio();
+    }
+    else if (pSPIx == SPI4)
+    {
+        hal_spi_set_gpio();
     }
 }
 
