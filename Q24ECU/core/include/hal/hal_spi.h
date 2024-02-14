@@ -257,6 +257,11 @@ uint8_t hal_spi_send_ready(SPI_TypeDef *pSPIx)
     return pSPIx->SR & SPI_SR_TXE;
 }
 
+uint8_t hal_spi_receive_ready(SPI_TypeDef *pSPIx)
+{
+    return pSPIx->SR & SPI_SR_RXNE;
+}
+
 // Data send and receive - blocking call
 static inline void hal_spi_send(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 {
