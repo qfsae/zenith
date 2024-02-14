@@ -111,7 +111,12 @@ typedef struct
     uint8_t SPI_SSM;  // Slave Management (Software or Hardware)
 } SPI_Config_t;
 
-// Peripheral clocks setup
+/**
+ * @brief enable or disable SPI clock in RCC for the corresponding SPI peripheral
+ *
+ * @param pSPIx a pointer to the SPI peripheral's base address
+ * @param enable a boolean to enable or disable the clock
+ */
 static inline void hal_spi_peri_clock_control(SPI_TypeDef *pSPIx, bool enable)
 {
     if (enable)
@@ -154,6 +159,13 @@ static inline void hal_spi_peri_clock_control(SPI_TypeDef *pSPIx, bool enable)
     }
 }
 
+/**
+ * @brief Helper function to set the serial clock, mosi, and miso GPIO pins
+ *
+ * @param sclk the serial clock pin
+ * @param mosi the mosi pin
+ * @param miso the miso pin
+ */
 void hal_spi_set_gpio(uint16_t sclk, uint16_t mosi, uint16_t miso)
 {
     // set clock pin
@@ -169,7 +181,15 @@ void hal_spi_set_gpio(uint16_t sclk, uint16_t mosi, uint16_t miso)
     gpio_set_af(miso, GPIO_AF_SPI);
 }
 
-// Init and DeInit
+/**
+ * @brief Initialize the SPI instance
+ *
+ * @param pSPIx pointer to the SPI peripheral
+ * @param pSPIConfig pointer to the config struct
+ * @param sclk the serial clock pin
+ * @param mosi the mosi pin
+ * @param miso the miso pin
+ */
 static inline void hal_spi_init(SPI_TypeDef *pSPIx, SPI_Config_t *pSPIConfig, uint16_t sclk, uint16_t mosi, uint16_t miso)
 {
     // Initialize GPIO pins
@@ -215,6 +235,11 @@ static inline void hal_spi_init(SPI_TypeDef *pSPIx, SPI_Config_t *pSPIConfig, ui
     pSPIx->CR1 = tempReg;
 }
 
+/**
+ * @brief Deinitialize the spi peripheral
+ *
+ * @param pSPIx pointer to the SPI peripheral
+ */
 static inline void hal_spi_deinit(SPI_TypeDef *pSPIx)
 {
     if (pSPIx == SPI1)
@@ -235,17 +260,35 @@ static inline void hal_spi_deinit(SPI_TypeDef *pSPIx)
     }
 }
 
+/**
+ * @brief check if the TXE bit in the status register is set
+ *
+ * @param pSPIx pointer to the SPI peripheral
+ * @return uint8_t either 1 or 0 depending on if the bit is set or not
+ */
 uint8_t hal_spi_send_ready(SPI_TypeDef *pSPIx)
 {
     return pSPIx->SR & SPI_SR_TXE;
 }
 
+/**
+ * @brief check if the RXNE bit in the status register is set
+ *
+ * @param pSPIx pointer to the SPI peripheral
+ * @return uint8_t either 1 or 0 depending on if the bit is set or not
+ */
 uint8_t hal_spi_receive_ready(SPI_TypeDef *pSPIx)
 {
     return pSPIx->SR & SPI_SR_RXNE;
 }
 
-// Data send and receive - blocking call
+/**
+ * @brief Blocking SPI send call
+ *
+ * @param pSPIx pointer to the SPI peripheral
+ * @param pTxBuffer pointer to the tx buffer
+ * @param Len length of the data in bytes.
+ */
 static inline void hal_spi_send(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 {
     while (Len > 0)
@@ -274,6 +317,13 @@ static inline void hal_spi_send(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t
     }
 }
 
+/**
+ * @brief Blocking SPI receive call
+ *
+ * @param pSPIx pointer to the SPI peripheral
+ * @param pTxBuffer pointer to the rx buffer
+ * @param Len length of the data in bytes.
+ */
 static inline void hal_spi_receive(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
 {
     while (Len > 0)
@@ -302,6 +352,12 @@ static inline void hal_spi_receive(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint3
     }
 }
 
+/**
+ * @brief enable or disable SPI TXE interrupt
+ *
+ * @param pSPIx a pointer to the SPI peripheral's base address
+ * @param enable a boolean to enable or disable the interrupt
+ */
 static inline void hal_spi_enable_txe(SPI_TypeDef *pSPIx, bool enable)
 {
     if (enable)
@@ -314,6 +370,12 @@ static inline void hal_spi_enable_txe(SPI_TypeDef *pSPIx, bool enable)
     }
 }
 
+/**
+ * @brief enable or disable SPI RXNE interrupt
+ *
+ * @param pSPIx a pointer to the SPI peripheral's base address
+ * @param enable a boolean to enable or disable the interrupt
+ */
 static inline void hal_spi_enable_rxne(SPI_TypeDef *pSPIx, bool enable)
 {
     if (enable)
