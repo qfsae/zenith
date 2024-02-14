@@ -243,15 +243,6 @@ static inline void hal_spi_deinit(SPI_TypeDef *pSPIx)
     }
 }
 
-uint8_t hal_spi_get_flag_status(SPI_TypeDef *pSPIx, uint32_t FlagName)
-{
-    if (pSPIx->SR & FlagName)
-    {
-        return FLAG_SET;
-    }
-    return FLAG_RESET;
-}
-
 uint8_t hal_spi_send_ready(SPI_TypeDef *pSPIx)
 {
     return pSPIx->SR & SPI_SR_TXE;
@@ -268,7 +259,7 @@ static inline void hal_spi_send(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t
     while (Len > 0)
     {
         // 1. Wait until TXE is set
-        while (hal_spi_get_flag_status(pSPIx, SPI_SR_TXE) == FLAG_RESET)
+        while (!hal_spi_send_ready(pSPIx))
             ;
 
         // 2. Check the DFF bit in CR1
@@ -296,7 +287,7 @@ static inline void hal_spi_receive(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint3
     while (Len > 0)
     {
         // 1. Wait until RXNE is set
-        while (hal_spi_get_flag_status(pSPIx, SPI_SR_RXNE) == FLAG_RESET)
+        while (!hal_spi_receive_ready(pSPIx))
             ;
 
         // 2. Check the DFF bit in CR1
