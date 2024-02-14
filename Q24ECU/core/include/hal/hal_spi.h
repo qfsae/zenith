@@ -19,14 +19,6 @@
 #include <stm32f446xx.h>
 #include "hal_gpio.h"
 
-// Generic Macros - may move somewhere else
-#define ENABLE 1
-#define DISABLE 0
-#define SET ENABLE
-#define RESET DISABLE
-#define FLAG_RESET RESET
-#define FLAG_SET SET
-
 // Clock macros
 #define SPI1_PCLK_EN() (RCC->APB2ENR |= RCC_APB2ENR_SPI1EN)
 #define SPI2_PCLK_EN() (RCC->APB1ENR |= RCC_APB1ENR_SPI2EN)
