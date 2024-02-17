@@ -13,31 +13,42 @@
 #include "taskHandlers.h"
 #include "task.h"
 #include "interfaces/interface_can.h"
+#include "interfaces/interface_uart.h"
 #include <stdio.h>
+#include <string.h>
 
-void tsk_CAN_send(void *param){
+void vTask_CAN_send(void *param){
     (void)param;
-    printf("Running CAN Send Task from canRunner.c\n");
+    vTaskDelay(1);
+    printf("Initializing TX\n");
+    uart_send_buf_blocking(&port_uart4, "Running CAN TX Task from canRunner.c\n", 38U, 1000U);
     can_msg_t tx_msg;
     tx_msg.id = 33;
     tx_msg.len = 1;
     tx_msg.data[0] = 0;
 
     for(;;){
-        can_send_msg(CAN1, &tx_msg, portMAX_DELAY);
+        // char buf[40];
+        // snprintf(buf, 40, "Sending: %d\n", tx_msg.data[0]);
+        // uart_send_buf_blocking(&port_uart4, buf, strlen(buf), 1000);
+        (void)can_send_msg(CAN1, &tx_msg, portMAX_DELAY);
         tx_msg.data[0]++;
         if(tx_msg.data[0] > 200) tx_msg.data[0] = 0;
-        vTaskDelay(100);
+        vTaskDelay(200);
     }
 }
 
-void tsk_CAN_recieve(void *param){
+void vTask_CAN_receive(void *param){
     (void)param;
-    printf("Running CAN Recieve Task from canRunner.c\n");
+    vTaskDelay(1);
+    printf("Initializing RX\n");
+    uart_send_buf_blocking(&port_uart4, "Running CAN RX Task from canRunner.c\n", 38U, 1000U);    
     can_msg_t rx_msg;
     for(;;){
         rx_msg = can_fetch(CAN1, 200);
-        printf(">RPM: %d\n", rx_msg.data[0]);
+        char buf[40];
+        snprintf(buf, 40, "%ld: %d\n", rx_msg.id, rx_msg.data[0]);
+        uart_send_buf_blocking(&port_uart4, buf, strlen(buf), 1000);
         vTaskDelay(100);
     }
 }
