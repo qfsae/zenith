@@ -20,6 +20,6 @@
 void TIM6_DAC_IRQHandler(void){
     // Place at beginning of IQR - Otherwise it causes the NVIC to rerun the IQR
     TIM6->SR = TIM_SR_CC1IF;
-    gpio_toggle_pin(debug_led1);
+    // gpio_toggle_pin(debug_led1);
 }
 

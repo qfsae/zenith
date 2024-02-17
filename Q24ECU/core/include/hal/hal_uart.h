@@ -25,6 +25,9 @@ static inline void hal_uart_init(USART_TypeDef *uart, unsigned long baud, uint16
     if (uart == USART1) RCC->APB2ENR |= BIT(4);
     if (uart == USART2) RCC->APB1ENR |= BIT(17);
     if (uart == USART3) RCC->APB1ENR |= BIT(18);
+    if (uart == UART4) RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
+    if (uart == UART5) RCC->APB1ENR |= BIT(20);
+    if (uart == USART6) RCC->APB2ENR |= BIT(5);
 
     gpio_set_mode(pin_tx, GPIO_MODE_AF);
     gpio_set_af(pin_tx, GPIO_AF_UART);

@@ -17,6 +17,7 @@
 
 // UART OS Handlers
 uart_t port_uart2;
+uart_t port_uart4;
 
 
 /**
@@ -31,21 +32,12 @@ uart_t port_uart2;
  */
 void os_uart_setup(void){
     // Enable the UART 2 port and setup its IQR handler
-    uart_send_init(&port_uart2, USART2, 230400);
+    uart_send_init(&port_uart2, USART2, 230400, PIN_USART2_TX, PIN_USART2_RX);
+    //uart_send_init(&port_uart4, UART4, 230400, PIN_UART4_TX, PIN_UART4_RX);
     xStreamBufferSetTriggerLevel(port_uart2.rxbuffer, 5); // set the trigger level of the stream buffer. Port Specific.
     hal_uart_enable_rxne(port_uart2.port, true);
     NVIC_SetPriority(USART2_IRQn, (NVIC_Priority_MIN-10));
     NVIC_EnableIRQ(USART2_IRQn);
-
-    // Create UART2 (debug) receive task handler
-    xTaskCreate(
-        tsk_USART2_Handler,
-        "u2",
-        configMINIMAL_STACK_SIZE,
-        NULL,
-        tskIDLE_PRIORITY,
-        &tskh_USART2_Handler
-    );
 }
 
 void USART2_IRQHandler(void){
@@ -64,7 +56,7 @@ void USART2_IRQHandler(void){
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
-void tsk_USART2_Handler(void *param){
+void vTask_USART2_Handler(void *param){
     (void)param;
     for(;;){
         uint8_t buf[64];

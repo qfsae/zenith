@@ -22,13 +22,12 @@ void loop() {
     unsigned char len = 0;
     unsigned char buf[8];
     if (CAN_MSGAVAIL == can.checkReceive()) {
+        uint32_t id = can.getCanId();
+        Serial.print("ID: ");
+        Serial.println(id);
         can.readMsgBuf(&len, buf);
-        Serial.println("CAN BUS Data Received:");
-        for (int i = 0; i < len; i++) {
-            Serial.print(buf[i]);
-            Serial.print("\t");
-        }
-        Serial.println();
-        can.sendMsgBuf(0x00, 0, 8, bufO);
+        
+    }else{
+        can.sendMsgBuf(200, 0, 8, bufO);
     }
 }

@@ -18,16 +18,16 @@
 
 int main(void){
     // set up gpio
-    gpio_set_mode(debug_led1, GPIO_MODE_OUTPUT);
-    gpio_write(debug_led1, false);
-    gpio_set_mode(debug_led2, GPIO_MODE_OUTPUT);
-    gpio_write(debug_led2, true);
-    gpio_pull(debug_led1, GPIO_PULLDOWN);
+    // gpio_set_mode(debug_led1, GPIO_MODE_OUTPUT);
+    // gpio_write(debug_led1, false);
+    // gpio_set_mode(debug_led2, GPIO_MODE_OUTPUT);
+    // gpio_write(debug_led2, true);
+    // gpio_pull(debug_led1, GPIO_PULLDOWN);
 
     // Enable Timer 6 (Basic Timer) 1Hz (APB2/45000, count to 2000)
-    TIM_basic_Init(TIM6, 45000U, 2000U);
-    NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_Priority_MIN); // Enable Timer IRQ (lowest priority)
-    NVIC_EnableIRQ(TIM6_DAC_IRQn);
+    // TIM_basic_Init(TIM6, 45000U, 2000U);
+    // NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_Priority_MIN); // Enable Timer IRQ (lowest priority)
+    // NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
     // clear terminal
     printf("\033[2J");
@@ -43,13 +43,42 @@ int main(void){
     // Initialize all the tasks
     os_task_init();
 
+    for (int i = 0; i < eTask_TaskCount; i++)
+    {
+        printf("Task %d: %s\t", i, pcTaskGetName(xTaskHandles[i]));
+        switch(eTaskGetState(xTaskHandles[i])) {
+            case eRunning:
+                printf("RUNNING\n");
+                break;
+            case eReady:
+                printf("READY\n");
+                break;
+            case eBlocked:
+                printf("BLOCKED\n");
+                break;
+            case eSuspended:    
+                printf("SUSPENDED\n");
+                break;
+            case eDeleted:   
+                printf("DELETED\n");
+                break;
+            case eInvalid:   
+                printf("INVALID\n");
+                break;
+            default:
+                printf("UNKNOWN\n");
+                break;
+        }
+    }
+    
+
     // Start Scheduler
     vTaskStartScheduler();
 
     // System Main loop (Should never run -> Scheduler runs infinitely)
     for(;;) {
         // Write out Error LED
-        gpio_write(debug_led2, false);
+        // gpio_write(debug_led2, false);
     }
     return 0;
 }

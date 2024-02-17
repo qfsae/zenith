@@ -15,36 +15,35 @@
 #include "FreeRTOSConfig.h"
 #include "task.h"
 
-// Test Task 1
-extern TaskHandle_t tskh_Test1;
-// Blink LED example Task
-extern TaskHandle_t tskh_BlinkLED;
-// UART2 (debug) receive task handler
-extern TaskHandle_t tskh_USART2_Handler;
-// CAN RX Stream Handler
-extern TaskHandle_t tskh_CANRX_Handler;
-// CAN Runner transmit task
-extern TaskHandle_t tskh_CAN_send;
-// CAN Runner recieve task
-extern TaskHandle_t tskh_CAN_recieve;
+enum Tasks{
+    eTask_Test1,
+    eTask_BlinkLED,
+    eTask_USART2_Handler,
+    eTask_CAN_send,
+    eTask_CAN_receive,
+    eTask_CAN_rxBufferHandler,
+    eTask_TaskCount // Keep this last
+};
+
+extern TaskHandle_t xTaskHandles[eTask_TaskCount];
 
 extern void os_task_init(void);
 
 // Located in testTasks.c
-extern void tsk_Test1(void *param);
+extern void vTask_Test1(void *param);
 
 // Located in testTasks.c
-extern void tsk_BlinkLED(void *param);
+extern void vTask_BlinkLED(void *param);
 
 // Located in interface_uart.c
-extern void tsk_USART2_Handler(void *param);
+extern void vTask_USART2_Handler(void *param);
 
 // Located in interface_can.c
-extern void tsk_CAN_RXBufferHandler(void *param);
+extern void vTask_CAN_RXBufferHandler(void *param);
 
 // Located in canRunner.c
-extern void tsk_CAN_send(void *param);
+extern void vTask_CAN_send(void *param);
 
 // Located in canRunner.c
-extern void tsk_CAN_recieve(void *param);
+extern void vTask_CAN_receive(void *param);
 

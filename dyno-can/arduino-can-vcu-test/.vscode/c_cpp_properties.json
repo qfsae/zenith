@@ -8,9 +8,9 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "C:/Users/Jacob/Documents/GitHub/QFSAE/zenith/ArduinoCANtest/arduino-can-monitor/include",
-                "C:/Users/Jacob/Documents/GitHub/QFSAE/zenith/ArduinoCANtest/arduino-can-monitor/src",
-                "C:/Users/Jacob/Documents/GitHub/QFSAE/zenith/ArduinoCANtest/arduino-can-monitor/.pio/libdeps/uno/CAN_BUS_Shield/src",
+                "C:/Users/Jacob/Documents/GitHub/QFSAE/zenith/dyno-can/arduino-can-vcu-test/include",
+                "C:/Users/Jacob/Documents/GitHub/QFSAE/zenith/dyno-can/arduino-can-vcu-test/src",
+                "C:/Users/Jacob/Documents/GitHub/QFSAE/zenith/dyno-can/arduino-can-vcu-test/.pio/libdeps/uno/CAN_BUS_Shield/src",
                 "C:/Users/Jacob/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
                 "C:/Users/Jacob/.platformio/packages/framework-arduino-avr/cores/arduino",
                 "C:/Users/Jacob/.platformio/packages/framework-arduino-avr/variants/standard",
@@ -23,9 +23,9 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "C:/Users/Jacob/Documents/GitHub/QFSAE/zenith/ArduinoCANtest/arduino-can-monitor/include",
-                    "C:/Users/Jacob/Documents/GitHub/QFSAE/zenith/ArduinoCANtest/arduino-can-monitor/src",
-                    "C:/Users/Jacob/Documents/GitHub/QFSAE/zenith/ArduinoCANtest/arduino-can-monitor/.pio/libdeps/uno/CAN_BUS_Shield/src",
+                    "C:/Users/Jacob/Documents/GitHub/QFSAE/zenith/dyno-can/arduino-can-vcu-test/include",
+                    "C:/Users/Jacob/Documents/GitHub/QFSAE/zenith/dyno-can/arduino-can-vcu-test/src",
+                    "C:/Users/Jacob/Documents/GitHub/QFSAE/zenith/dyno-can/arduino-can-vcu-test/.pio/libdeps/uno/CAN_BUS_Shield/src",
                     "C:/Users/Jacob/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
                     "C:/Users/Jacob/.platformio/packages/framework-arduino-avr/cores/arduino",
                     "C:/Users/Jacob/.platformio/packages/framework-arduino-avr/variants/standard",

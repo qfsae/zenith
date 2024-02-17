@@ -14,51 +14,76 @@
 
 // Init global handles for tasks
 
-TaskHandle_t tskh_Test1 = NULL;
-TaskHandle_t tskh_BlinkLED = NULL;
-TaskHandle_t tskh_USART2_Handler = NULL;
-TaskHandle_t tskh_CANRX_Handler = NULL;
-TaskHandle_t tskh_CAN_send = NULL;
-TaskHandle_t tskh_CAN_recieve = NULL;
+TaskHandle_t xTaskHandles[eTask_TaskCount];
+
+StaticTask_t xTaskBuffers[eTask_TaskCount];
+
+StackType_t xTaskStacks[eTask_TaskCount][configMINIMAL_STACK_SIZE];
 
 void os_task_init(void){
     // Create Sample Blink Task
-    (void)xTaskCreate(
-        tsk_BlinkLED,
-        "blink",
+    xTaskHandles[eTask_Test1] = xTaskCreateStatic(
+        vTask_Test1,
+        "CANtx",
         configMINIMAL_STACK_SIZE,
         NULL,
         tskIDLE_PRIORITY,
-        &tskh_BlinkLED
+        xTaskStacks[eTask_Test1],
+        &xTaskBuffers[eTask_Test1]
     );
     // Create Sample Print Task
-    (void)xTaskCreate(
-        tsk_Test1,
-        "tst1",
+    xTaskHandles[eTask_BlinkLED] = xTaskCreateStatic(
+        vTask_BlinkLED,
+        "CANtx",
         configMINIMAL_STACK_SIZE,
         NULL,
-        tskIDLE_PRIORITY+2,
-        &tskh_Test1
+        tskIDLE_PRIORITY,
+        xTaskStacks[eTask_BlinkLED],
+        &xTaskBuffers[eTask_BlinkLED]
     );
 
     // Create Sample CAN TX task
-    (void)xTaskCreate(
-        tsk_CAN_send,
-        "cRtx",
+    xTaskHandles[eTask_CAN_send] = xTaskCreateStatic(
+        vTask_CAN_send,
+        "CANtx",
         configMINIMAL_STACK_SIZE,
         NULL,
         tskIDLE_PRIORITY,
-        &tskh_CAN_send
+        xTaskStacks[eTask_CAN_send],
+        &xTaskBuffers[eTask_CAN_send]
     );
 
     // Create Sample CAN RX Task
-    (void)xTaskCreate(
-        tsk_CAN_recieve,
-        "cRrx",
+    xTaskHandles[eTask_CAN_receive] = xTaskCreateStatic(
+        vTask_CAN_receive,
+        "CANrx",
         configMINIMAL_STACK_SIZE,
         NULL,
         tskIDLE_PRIORITY,
-        &tskh_CAN_recieve
+        xTaskStacks[eTask_CAN_receive],
+        &xTaskBuffers[eTask_CAN_receive]
     );
+    
+    // Create Task to empty CAN RX Buffer (Part of interface_can.c)
+    xTaskHandles[eTask_CAN_rxBufferHandler] = xTaskCreateStatic(
+        vTask_CAN_RXBufferHandler,
+        "CAN IRQ RX Handler",
+        configMINIMAL_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY,
+        xTaskStacks[eTask_CAN_rxBufferHandler],
+        &xTaskBuffers[eTask_CAN_rxBufferHandler]
+    );
+
+    xTaskHandles[eTask_USART2_Handler] = xTaskCreateStatic(
+        vTask_USART2_Handler,
+        "CAN IRQ RX Handler",
+        configMINIMAL_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY,
+        xTaskStacks[eTask_USART2_Handler],
+        &xTaskBuffers[eTask_USART2_Handler]
+    );
+
 }
 
