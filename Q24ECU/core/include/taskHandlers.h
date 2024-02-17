@@ -22,7 +22,8 @@ enum Tasks{
     eTask_CAN_send,
     eTask_CAN_receive,
     eTask_CAN_rxBufferHandler,
-    eTask_TaskCount // Keep this last
+    // Keep this last
+    eTask_TaskCount // Number of tasks running on the system (`taskHandlers.h`)
 };
 
 extern TaskHandle_t xTaskHandles[eTask_TaskCount];

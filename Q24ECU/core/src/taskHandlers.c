@@ -12,6 +12,7 @@
 #include "taskHandlers.h"
 #include <stdio.h>
 
+
 // Init global handles for tasks
 
 TaskHandle_t xTaskHandles[eTask_TaskCount];

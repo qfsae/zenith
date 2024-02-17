@@ -6,22 +6,31 @@ Author: Jacob Chisholm
 Written for Queen's Formula SAE
 
 ## V2 Notes
-- Built with RTOS
+- Built with FreeRTOS
 - CMAKE compiling/linking with GCC
 - Makefile uploading (binary blobs produced cross compatible)
 
 ## Running
+
+#### VS Code
 1. Select correct compiler kit in VS code cMake extension
 2. Allow cMake automatic configuration
 3. Select flash method in the makefile
 3. Run `make flash` or upload code with another method
+
+#### MakeFile
+1. Run `make cmake` to generate cmake configuration files
+2. Run `make build` to build the project
+3. Select the flash method in the makefile
+4. Run `make flash`
+
 
 ## Required Softwares:
 - GCC
 - arm-none-eabi-gcc
 - arm-none-eabi-objcopy
 - arm-none-eabi-gdb
-- make
+- GNU make
 - VS Code
     - cMake extension
     - Teleplot extension (for plotting serial data)

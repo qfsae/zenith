@@ -42,9 +42,6 @@
 // Vin Voltage Divider
 #define PIN_voltageSensor ((uint16_t)(PIN('C', 1)))
 
-// Debug USART (for printf)
-#define UART_DEBUG USART2
-
 #define PIN_CAN1_RX ((uint16_t)(PIN('A', 11)))
 #define PIN_CAN1_TX ((uint16_t)(PIN('A', 12)))
 

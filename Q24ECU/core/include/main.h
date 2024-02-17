@@ -14,6 +14,10 @@
 #include "nvicConfig.h"
 #include "interrupts.h"
 
+// Comment this out to remove task names from the debug print
+#define DEBUG_PRINTF_TASK_NAME
+
+
 extern void SystemInit(void);
 
 extern int main(void);
