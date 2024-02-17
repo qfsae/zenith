@@ -129,7 +129,8 @@ void CAN1_RX0_IRQHandler(void){
 void vTask_CAN_RXBufferHandler(void *param){
     // Unused
     (void)(param);
-    printf("\nRunning CAN Interface Task\n");
+    printf("CAN Interface Task Running\n");
+    
 
     // Create the Recieve Stream buffers
     CAN1_RX.streamHandle = xStreamBufferCreateStatic(
@@ -170,7 +171,7 @@ void vTask_CAN_RXBufferHandler(void *param){
             CAN1_DATA[can1_hash(msg.id)] = msg;
             // Timestamp the message
             CAN1_DATA[can1_hash(msg.id)].timestamp = xTaskGetTickCount();
-            printf("%d\n", CAN1_DATA[can1_hash(msg.id)].id);
+            // printf("%d\n", CAN1_DATA[can1_hash(msg.id)].id);
         }
         // while(xStreamBufferBytesAvailable(CAN2_RX.streamHandle) > 0){
         //     // Temp message to store the data comming out of the buffer

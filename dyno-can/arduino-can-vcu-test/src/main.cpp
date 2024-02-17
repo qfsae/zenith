@@ -19,15 +19,23 @@ void setup() {
 unsigned char bufO[8] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 
 void loop() {
+    can.sendMsgBuf(200, 0, 1, bufO);
+    bufO[0]++;
+    if(bufO[0] > 222) bufO[0] = 0x00;
+    delay(100);
     unsigned char len = 0;
-    unsigned char buf[8];
-    if (CAN_MSGAVAIL == can.checkReceive()) {
-        uint32_t id = can.getCanId();
+    unsigned char bufI[8];
+    unsigned int canId = 0;
+    if(can.checkReceive() == CAN_MSGAVAIL) {
+        can.readMsgBuf(&len, bufI);
+        canId = can.getCanId();
         Serial.print("ID: ");
-        Serial.println(id);
-        can.readMsgBuf(&len, buf);
-        
-    }else{
-        can.sendMsgBuf(200, 0, 8, bufO);
+        Serial.print(canId);
+        Serial.print(" Data: ");
+        for(int i = 0; i < len; i++) {
+            Serial.print(bufI[i]);
+            Serial.print(" ");
+        }
+        Serial.println();
     }
 }

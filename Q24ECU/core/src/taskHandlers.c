@@ -21,10 +21,22 @@ StaticTask_t xTaskBuffers[eTask_TaskCount];
 StackType_t xTaskStacks[eTask_TaskCount][configMINIMAL_STACK_SIZE];
 
 void os_task_init(void){
+
+    // Create Task to empty CAN RX Buffer (Part of interface_can.c)
+    xTaskHandles[eTask_CAN_rxBufferHandler] = xTaskCreateStatic(
+        vTask_CAN_RXBufferHandler,
+        "CAN IRQ RX",
+        configMINIMAL_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY+2,
+        xTaskStacks[eTask_CAN_rxBufferHandler],
+        &xTaskBuffers[eTask_CAN_rxBufferHandler]
+    );
+
     // Create Sample Blink Task
     xTaskHandles[eTask_Test1] = xTaskCreateStatic(
         vTask_Test1,
-        "CANtx",
+        "TEST1",
         configMINIMAL_STACK_SIZE,
         NULL,
         tskIDLE_PRIORITY,
@@ -34,7 +46,7 @@ void os_task_init(void){
     // Create Sample Print Task
     xTaskHandles[eTask_BlinkLED] = xTaskCreateStatic(
         vTask_BlinkLED,
-        "CANtx",
+        "BLINK",
         configMINIMAL_STACK_SIZE,
         NULL,
         tskIDLE_PRIORITY,
@@ -63,21 +75,10 @@ void os_task_init(void){
         xTaskStacks[eTask_CAN_receive],
         &xTaskBuffers[eTask_CAN_receive]
     );
-    
-    // Create Task to empty CAN RX Buffer (Part of interface_can.c)
-    xTaskHandles[eTask_CAN_rxBufferHandler] = xTaskCreateStatic(
-        vTask_CAN_RXBufferHandler,
-        "CAN IRQ RX Handler",
-        configMINIMAL_STACK_SIZE,
-        NULL,
-        tskIDLE_PRIORITY,
-        xTaskStacks[eTask_CAN_rxBufferHandler],
-        &xTaskBuffers[eTask_CAN_rxBufferHandler]
-    );
 
     xTaskHandles[eTask_USART2_Handler] = xTaskCreateStatic(
         vTask_USART2_Handler,
-        "CAN IRQ RX Handler",
+        "USART2 IRQ RX",
         configMINIMAL_STACK_SIZE,
         NULL,
         tskIDLE_PRIORITY,

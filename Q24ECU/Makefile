@@ -47,6 +47,8 @@ BlackMagic-flash:
 
 st-flash: build/firmware.bin
 	./Tools/ST-LINK_CLI.exe -P build/firmware.bin 0x08000000 -V -RST
+st-reset:
+	./Tools/ST-LINK_CLI.exe -RST
 
 cmsis_core:
 	git clone --depth 1 -b 5.9.0 https://github.com/ARM-software/CMSIS_5 $@

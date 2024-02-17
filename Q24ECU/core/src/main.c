@@ -34,6 +34,8 @@ int main(void){
     // initialize os interfaces
     os_uart_setup();
     printf("USART Initialized..\n");
+    // hal_uart_init(UART4, 115200, PIN('A', 0), PIN('A', 1));
+     
     os_can_setup();
     printf("CAN Initialized..\n");
     spin(9999999UL);
