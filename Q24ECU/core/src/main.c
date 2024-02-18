@@ -14,6 +14,7 @@
 #include "hal/hal_uart.h"
 #include "interfaces/interface_uart.h"
 #include "interfaces/interface_can.h"
+#include "interfaces/interface_sysError.h"
 #include "stm32f446xx.h"
 
 int main(void){
@@ -33,6 +34,9 @@ int main(void){
     printf("\033[2J");
     printf("\n");
     printf("USART Initialized..\n");
+
+    os_sysError_setup();
+    printf("System Error Handler Initialized..\n");
 
     os_can_setup();
     printf("CAN Bus Initialized..\n");

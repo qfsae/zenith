@@ -8,6 +8,9 @@
  * @copyright Copyright (c) 2023
  * 
  */
+
+#pragma once
+
 #include "hal/hal_uart.h"
 #include "FreeRTOS.h"
 #include "semphr.h"

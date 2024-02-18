@@ -87,5 +87,14 @@ void os_task_init(void){
         &xTaskBuffers[eTask_USART2_Handler]
     );
 
+    xTaskHandles[eTask_SysError] = xTaskCreateStatic(
+        vTask_SysError,
+        "SysError",
+        configMINIMAL_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY,
+        xTaskStacks[eTask_SysError],
+        &xTaskBuffers[eTask_SysError]
+    );
 }
 

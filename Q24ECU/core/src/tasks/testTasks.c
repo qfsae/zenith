@@ -14,6 +14,7 @@
 #include "task.h"
 #include "interfaces/interface_uart.h"
 #include "interfaces/interface_can.h"
+#include "interfaces/interface_sysError.h"
 #include <stdio.h>
 
 long unsigned int counter = 0;
@@ -31,7 +32,10 @@ void vTask_Test1(void *param){
     //     can_send_msg(CAN1, &incoming, portMAX_DELAY);
     //     vTaskDelay(200);
     // }
-    vTaskDelay(portMAX_DELAY);
+    vTaskDelay(5000);
+    sysError_report(SYS_ERROR_MAX);
+    vTaskDelay(5000);
+    //sysError_clear(SYS_ERROR_MAX);
 }
 
 

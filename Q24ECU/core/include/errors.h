@@ -40,5 +40,8 @@ enum SYS_ERROR {
     // The UART port is not initialized
     UART_UNINIT_ERR,
     // The UART Semaphore could not be taken
-    UART_ACC_ERR
+    UART_ACC_ERR,
+
+    // Maximum Error Number
+    SYS_ERROR_MAX // 99
 };
