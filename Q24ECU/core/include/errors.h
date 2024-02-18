@@ -36,5 +36,9 @@ enum SYS_ERROR {
     // Mailbox selection out of range
     HAL_CAN_MAILBOX_SELRNG_ERR,
     // Fatal Error on bus
-    HAL_CAN_FATAL_ERR
+    HAL_CAN_FATAL_ERR,
+    // The UART port is not initialized
+    UART_UNINIT_ERR,
+    // The UART Semaphore could not be taken
+    UART_ACC_ERR
 };
