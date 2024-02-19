@@ -42,6 +42,10 @@ Debugging requires additional software:
     - Cortex Debug Extension
 - GDB (version > 9.0)
 
+### Debugging on Windows with Cube IDE
+Open the project in Cube IDE and select debug. Should just work. May need to open the project as an "Existing Cmake Project".
+
+### Debugging on Windows with VS Code
 If debugging on windows, WSL 2 must be used and the ST-Link must be forwarded through to WSL through [these instructions](https://learn.microsoft.com/en-us/windows/wsl/connect-usb). STM32 Cube must be installed in WSL in addition to all of the aforementioned tools.
 
 This is because MinGW does not currently have support for GDB version > 9.0 required by the Cortex Debug extension.

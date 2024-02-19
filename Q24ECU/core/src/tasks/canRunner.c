@@ -48,7 +48,7 @@ void vTask_CAN_receive(void *param){
         rx_msg = can_fetch(CAN1, 200);
         char buf[40];
         snprintf(buf, 40, "%ld: %d\n", rx_msg.id, rx_msg.data[0]);
-        uart_send_buf_blocking(&port_uart4, buf, strlen(buf), 1000);
+        // uart_send_buf_blocking(&port_uart4, buf, strlen(buf), 1000);
         vTaskDelay(100);
     }
 }
