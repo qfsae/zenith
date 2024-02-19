@@ -21,6 +21,10 @@
 
 enum SYS_ERROR {
     SYS_OK = 0,
+    // Task has decided to shut down
+    TASK_SHUTDOWN,
+    // A Task has encountered a critical error and the system must shut down
+    TASK_SHUTDOWN_CRITICAL,
     // Invalid Flash Address given
     FLASH_WRITE_ADDR_INVALID,
     // Failed to assert write permissions to the flash memory

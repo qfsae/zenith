@@ -7,6 +7,11 @@
  * 
  * @copyright Copyright (c) 2023
  * 
+ * vTaskDelete() is used to delete a task. The handle to the task to be deleted is passed in as the parameter.
+ * This can be used as a method to prevent a task from running at all.
+ * 
+ * Task information is displayed out to UART2 on startup (printed from main.c)
+ * 
  */
 
 #include "taskHandlers.h"
@@ -44,6 +49,8 @@ void os_task_init(void){
         xTaskStacks[eTask_Test1],
         &xTaskBuffers[eTask_Test1]
     );
+    // vTaskDelete(xTaskHandles[eTask_Test1]);
+
     // Create Sample Print Task
     xTaskHandles[eTask_BlinkLED] = xTaskCreateStatic(
         vTask_BlinkLED,
@@ -54,6 +61,7 @@ void os_task_init(void){
         xTaskStacks[eTask_BlinkLED],
         &xTaskBuffers[eTask_BlinkLED]
     );
+    vTaskDelete(xTaskHandles[eTask_BlinkLED]);
 
     // Create Sample CAN TX task
     xTaskHandles[eTask_CAN_send] = xTaskCreateStatic(
@@ -96,5 +104,6 @@ void os_task_init(void){
         xTaskStacks[eTask_SysError],
         &xTaskBuffers[eTask_SysError]
     );
+    // vTaskDelete(xTaskHandles[eTask_SysError]);
 }
 

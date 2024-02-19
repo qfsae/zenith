@@ -17,6 +17,8 @@
 // Comment this out to remove task names from the debug print
 #define DEBUG_PRINTF_TASK_NAME
 
+// Located in shutdown.c
+extern void system_critical_shutdown(void);
 
 extern void SystemInit(void);
 

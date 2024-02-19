@@ -32,10 +32,7 @@ void vTask_Test1(void *param){
     //     can_send_msg(CAN1, &incoming, portMAX_DELAY);
     //     vTaskDelay(200);
     // }
-    vTaskDelay(5000);
-    sysError_report(SYS_ERROR_MAX);
-    vTaskDelay(5000);
-    //sysError_clear(SYS_ERROR_MAX);
+    vTaskSuspend(NULL);
 }
 
 
@@ -53,6 +50,6 @@ void vTask_BlinkLED(void *param){
     //     can_send_msg(CAN1, &msg, portMAX_DELAY);
     //     vTaskDelayUntil(&lastWakeTime, 100);
     // }
-    vTaskDelay(portMAX_DELAY);
+    vTaskSuspend(NULL);
 }
 
