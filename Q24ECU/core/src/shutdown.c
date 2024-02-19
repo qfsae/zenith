@@ -25,6 +25,20 @@
 #include "interfaces/interface_sysError.h"
 #include "stm32f4xx.h"
 
+/**
+ * @brief Shutdown the VCU
+ * 
+ * This function should be called when a critical error is detected
+ * This function will disable all power output and shutdown the scheduler
+ * 
+ * The system should only reach this function when a non-recoverable,
+ * internal error is detected. This function provides NO GUARANTEES that
+ * the system will be in a safe state after execution, or that the HV system
+ * will be shut down.
+ * 
+ * @note This function will not return
+ * 
+ */
 void system_critical_shutdown(void){
     // Disable all interrupts
     printf("INVOKING CRITICAL SHUTDOWN\n");
