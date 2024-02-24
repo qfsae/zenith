@@ -1,88 +1,132 @@
+/**
+ * @file hal_adc.h
+ * @author Jacob Chisholm (https://Jchisholm204.github.io)
+ * @brief 
+ * @version 0.1
+ * @date 2024-02-18
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
+
 #pragma once
 
-#include <inttypes.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include "hal_clock.h"
-#include <stm32f446xx.h>
+#include "stm32f4xx.h"
+#include "errors.h"
+#include "stdbool.h"
 
-static inline void adc_init(ADC_TypeDef *adc){
+// ADC Sampling Resolution
+enum ADC_RESOLUTION {
+    ADC_RESOLUTION_12_BIT = 0x0,
+    ADC_RESOLUTION_10_BIT = 0x1,
+    ADC_RESOLUTION_8_BIT  = 0x2,
+    ADC_RESOLUTION_6_BIT  = 0x3
+};
 
-    // enable the selected adc interface
-    if(adc==ADC1) RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
-    if(adc==ADC2) RCC->APB2ENR |= RCC_APB2ENR_ADC2EN;
-    if(adc==ADC3) RCC->APB2ENR |= RCC_APB2ENR_ADC3EN;
+enum ADC_CHANNEL {
+    ADC_CHANNEL_1,
+    ADC_CHANNEL_2,
+    ADC_CHANNEL_3,
+    ADC_CHANNEL_4,
+    ADC_CHANNEL_5,
+    ADC_CHANNEL_6,
+    ADC_CHANNEL_7,
+    ADC_CHANNEL_8,
+    ADC_CHANNEL_9,
+    ADC_CHANNEL_10,
+    ADC_CHANNEL_11,
+    ADC_CHANNEL_12,
+    ADC_CHANNEL_13,
+    ADC_CHANNEL_14,
+    ADC_CHANNEL_15,
+    ADC_CHANNEL_16,
+    ADC_CHANNEL_17,
+    ADC_CHANNEL_18,
+};
+
+enum ADC_SEQUENCE {
+    ADC_SQ1,
+    ADC_SQ2,
+    ADC_SQ3,
+    ADC_SQ4,
+    ADC_SQ5,
+    ADC_SQ6,
+    ADC_SQ7,
+    ADC_SQ8,
+    ADC_SQ9,
+    ADC_SQ10,
+    ADC_SQ11,
+    ADC_SQ12,
+    ADC_SQ13,
+    ADC_SQ14,
+    ADC_SQ15,
+    ADC_SQ16
+
+};
 
 
-    // Set the ADC clock prescaler
-    ADC123_COMMON->CCR &= ~(ADC_CCR_ADCPRE);
-    ADC123_COMMON->CCR |= 0x00000000U; 
-    // Set the ADC Resolution
-    adc->CR1 &= ~(ADC_CR1_SCAN);
-    adc->CR1 |= (0 << 8U); 
-    // Set the ADC data alignment (bitwise right align)
-    adc->CR2 &= ~(ADC_CR2_ALIGN);
-    adc->CR2 |= 0x00000000U; 
-    //reset the ADC trigger to software
-    adc->CR2 &= ~(ADC_CR2_EXTSEL);
-    adc->CR2 &= ~(ADC_CR2_EXTEN);
-    // Disable continuous conversion mode
-    adc->CR2 &= ~(ADC_CR2_CONT);
-    adc->CR1 &= ~(ADC_CR1_DISCEN); //disables discont mode
-    // set number of conversions
-    adc->SQR1 &= ~(ADC_SQR1_L);
-    adc->SQR1 |= (1UL << 20U);
-    // disable ADC DMA continuous request
-    adc->CR2 &= ~(ADC_CR2_DDS);
-    // end of conversion selection
-    adc->CR2 |= (ADC_CR2_EOCS);
+static inline uint8_t hal_adc_init(ADC_TypeDef *adc, enum ADC_RESOLUTION resolution){
+    if(adc == ADC1) SET_BIT(RCC->APB2ENR, RCC_APB2ENR_ADC1EN);
+    if(adc == ADC2) SET_BIT(RCC->APB2ENR, RCC_APB2ENR_ADC2EN);
+    if(adc == ADC3) SET_BIT(RCC->APB2ENR, RCC_APB2ENR_ADC3EN);
+
+    // Disable ADC Overrun Interrupt
+    CLEAR_BIT(adc->CR1, ADC_CR1_OVRIE);
+    // Set ADC Resolution
+    SET_BIT(adc->CR1, (uint32_t)(resolution << ADC_CR1_RES_Pos));
+    // Disable Analog watchdog
+    CLEAR_BIT(adc->CR1, ADC_CR1_AWDEN); // Regular channels
+    CLEAR_BIT(adc->CR1, ADC_CR1_AWDEN); // Injected channels
+    // Reset Discontinuous Channel selection
+    CLEAR_BIT(adc->CR1, ADC_CR1_DISCNUM);
+    CLEAR_BIT(adc->CR1, ADC_CR1_JDISCEN);
+    // Disable Discontinuous mode on regular channels
+    CLEAR_BIT(adc->CR1, ADC_CR1_DISCEN);
+    // Disable automatic injected group conversion
+    CLEAR_BIT(adc->CR1, ADC_CR1_JAUTO);
+    // Set scan mode
+    SET_BIT(adc->CR1, ADC_CR1_SCAN);
+    // Disable JEOC Interrupt
+    CLEAR_BIT(adc->CR1, ADC_CR1_JEOCIE);
+    // Disable the Analog Watchdog Interrupt
+    CLEAR_BIT(adc->CR1, ADC_CR1_AWDIE);
+    // Disable EOC Interrupt
+    CLEAR_BIT(adc->CR1, ADC_CR1_EOCIE);
+    
+    // Reset Software Start bit for regular channels
+    CLEAR_BIT(adc->CR2, ADC_CR2_SWSTART);
+    // Disable External trigger for regular channels
+    CLEAR_BIT(adc->CR2, ADC_CR2_EXTEN);
+    // Reset Software start for injected channes
+    CLEAR_BIT(adc->CR2, ADC_CR2_JSWSTART);
+    // Disable External trigger for injected channels
+    CLEAR_BIT(adc->CR2, ADC_CR2_JEXTEN);
+    // Set data alignment (Right Align)
+    CLEAR_BIT(adc->CR2, ADC_CR2_ALIGN);
+    // EOC Bit enable
+    SET_BIT(adc->CR2, ADC_CR2_EOCS);
+    // Disable DMA
+    CLEAR_BIT(adc->CR2, ADC_CR2_DMA);
+    // Set Continous conversion
+    SET_BIT(adc->CR2, ADC_CR2_CONT);
+
+    // Leave ADC Off
+    CLEAR_BIT(adc->CR2, ADC_CR2_ADON);
+
+    return SYS_OK;
 }
 
-static inline void adc_configChannel(ADC_TypeDef *adc, uint8_t ch, uint8_t rank){
-    if(ch > 9){
-        adc->SMPR1 &= ~(0x7UL << (3U * ((uint32_t)(ch-10U))));
-        adc->SMPR1 |= (0x00000000U << (3U * (uint32_t)(ch-10U)));
+
+static inline void hal_adc_adon(ADC_TypeDef *adc, bool adon){
+    if(adon == true) {
+        SET_BIT(adc->CR2, ADC_CR2_ADON);
     }
-    else{
-        adc->SMPR2 &= ~(0x7UL << (3U * ((uint32_t)(ch))));
-        adc->SMPR2 |= (0x00000000U << (3U * (uint32_t)(ch)));
-    }
-    if(rank < 7U){
-        adc->SQR3 &= ~(uint32_t)(0x1FU << (5U * ((rank) - 1U)));
-        adc->SQR3 |= (uint32_t)(ch << (5U * ((rank) - 1U)));
-    }
-    else if(rank < 13U){
-        adc->SQR2 &= ~(uint32_t)(0x1FU << (5U * ((rank) - 7U)));
-        adc->SQR2 |= (uint32_t)(ch << (5U * ((rank) - 7U)));
-    }
-    else{
-        adc->SQR1 &= ~(uint32_t)(0x1FU << (5U * ((rank) - 13U)));
-        adc->SQR1 |= (uint32_t)(ch << (5U * ((rank) - 13U)));
+    else {
+        CLEAR_BIT(adc->CR2, ADC_CR2_ADON);
     }
 }
 
-static inline void adc_start(ADC_TypeDef *adc){
-    if(!(adc->CR2 & ADC_CR2_ADON)){
-        adc->CR2 |= ADC_CR2_ADON;
-        volatile uint32_t counter = 0U;
-        counter = 3U * (SYS_FREQUENCY/1000000U);
-        // wait for adc to stabilize
-        while (counter != 0U) counter--;
-    }
-    adc->CR2 |= ADC_CR2_SWSTART;    
-}
-
-static inline void adc_stop(ADC_TypeDef *adc){
-    adc->CR2 &= ~(ADC_CR2_SWSTART);
-}
-
-static inline uint16_t adc_poll(ADC_TypeDef *adc, uint8_t adcCh){
-    adc_configChannel(adc, adcCh, 1);
-    adc_start(adc);
-    while(!(adc->SR & ADC_SR_EOC));
-    return (uint16_t)(adc->DR);
+static inline void hal_adc_configChannel(ADC_TypeDef *adc, enum ADC_CHANNEL channel, enum ADC_SEQUENCE rank){
 
 }
 
