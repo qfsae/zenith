@@ -97,7 +97,7 @@ static inline uint8_t hal_adc_init(ADC_TypeDef *adc, enum ADC_RESOLUTION resolut
     CLEAR_BIT(adc->CR2, ADC_CR2_SWSTART);
     // Disable External trigger for regular channels
     CLEAR_BIT(adc->CR2, ADC_CR2_EXTEN);
-    // Reset Software start for injected channes
+    // Reset Software start for injected channels
     CLEAR_BIT(adc->CR2, ADC_CR2_JSWSTART);
     // Disable External trigger for injected channels
     CLEAR_BIT(adc->CR2, ADC_CR2_JEXTEN);
@@ -107,7 +107,7 @@ static inline uint8_t hal_adc_init(ADC_TypeDef *adc, enum ADC_RESOLUTION resolut
     SET_BIT(adc->CR2, ADC_CR2_EOCS);
     // Disable DMA
     CLEAR_BIT(adc->CR2, ADC_CR2_DMA);
-    // Set Continous conversion
+    // Set Continuous conversion
     SET_BIT(adc->CR2, ADC_CR2_CONT);
 
     // Leave ADC Off
