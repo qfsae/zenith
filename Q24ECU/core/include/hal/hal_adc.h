@@ -24,27 +24,6 @@ enum ADC_RESOLUTION {
     ADC_RESOLUTION_6_BIT  = 0x3
 };
 
-enum ADC_CHANNEL {
-    ADC_CHANNEL_1,
-    ADC_CHANNEL_2,
-    ADC_CHANNEL_3,
-    ADC_CHANNEL_4,
-    ADC_CHANNEL_5,
-    ADC_CHANNEL_6,
-    ADC_CHANNEL_7,
-    ADC_CHANNEL_8,
-    ADC_CHANNEL_9,
-    ADC_CHANNEL_10,
-    ADC_CHANNEL_11,
-    ADC_CHANNEL_12,
-    ADC_CHANNEL_13,
-    ADC_CHANNEL_14,
-    ADC_CHANNEL_15,
-    ADC_CHANNEL_16,
-    ADC_CHANNEL_17,
-    ADC_CHANNEL_18,
-};
-
 enum ADC_SAMPLE_TIME {
     ADC_CYCLES_3,
     ADC_CYCLES_15,
@@ -59,7 +38,7 @@ enum ADC_SAMPLE_TIME {
 #define ADC_SAMPLE_TIME_DEFAULT ADC_CYCLES_56
 
 enum ADC_SEQUENCE {
-    ADC_SQ1,
+    ADC_SQ1 = 1,
     ADC_SQ2,
     ADC_SQ3,
     ADC_SQ4,
@@ -143,7 +122,7 @@ static inline void hal_adc_disable(ADC_TypeDef *adc){
 
 static inline void hal_adc_startConversions(ADC_TypeDef *adc){
     hal_adc_enable(adc);
-    for (unsigned int i = 0; i < (3U * (SYS_FREQUENCY/1000000U)); i++) __asm__("nop");
+    //for (unsigned int i = 0; i < (3U * (SYS_FREQUENCY/1000000U)); i++) __asm__("nop");
     SET_BIT(adc->CR2, ADC_CR2_SWSTART);
 }
 
@@ -151,17 +130,18 @@ static inline void hal_adc_stopConversions(ADC_TypeDef *adc){
     CLEAR_BIT(adc->CR2, ADC_CR2_SWSTART);
 }
 
-static inline void hal_adc_configChannel(ADC_TypeDef *adc, enum ADC_CHANNEL channel, enum ADC_SAMPLE_TIME cycles, enum ADC_SEQUENCE rank){
+static inline void hal_adc_configChannel(ADC_TypeDef *adc, uint8_t channel, enum ADC_SAMPLE_TIME cycles, enum ADC_SEQUENCE rank){
+    (void)cycles;
     // Setup Channel Sample Time
-    if(channel > 9U) { // High Channel Register
+    if(channel > 9) { // High Channel Register
                       // Reset Sample Time
-        CLEAR_BIT(adc->SMPR1, (0x7UL << (3U * (uint32_t)(channel-10U))));
+        CLEAR_BIT(adc->SMPR1, (uint32_t)(0x7UL << (3U * (uint32_t)(channel-10U))));
         // Set Sample Time
-        SET_BIT(adc->SMPR1, (cycles << (3U * (uint32_t)(channel-10U))));
+        SET_BIT(adc->SMPR1, (uint32_t)(cycles << (3U * (uint32_t)(channel-10U))));
     }
     else { // Low Channel Register
-        CLEAR_BIT(adc->SMPR2, (0x7UL << (3U * (uint32_t)(channel-10U))));
-        SET_BIT(adc->SMPR2, (cycles << (3U * (uint32_t)(channel-10U))));
+        CLEAR_BIT(adc->SMPR2, (uint32_t)(0x7UL << (3U * (uint32_t)(channel))));
+        SET_BIT(adc->SMPR2, (uint32_t)(cycles << (3U * (uint32_t)(channel))));
     }
 
     // Add Channel to the Sequence Register
@@ -170,21 +150,22 @@ static inline void hal_adc_configChannel(ADC_TypeDef *adc, enum ADC_CHANNEL chan
         SET_BIT(adc->SQR3, (uint32_t)(channel << (5U * ((rank) - 1U))));
     }
     else if(rank < 13U) {
-        CLEAR_BIT(adc->SQR2, (uint32_t)(0x1FU << (5U * ((rank) - 1U))));
-        SET_BIT(adc->SQR2, (uint32_t)(channel << (5U * ((rank) - 1U))));
+        CLEAR_BIT(adc->SQR2, (uint32_t)(0x1FU << (5U * ((rank) - 7U))));
+        SET_BIT(adc->SQR2, (uint32_t)(channel << (5U * ((rank) - 7U))));
     }
     else{
-        CLEAR_BIT(adc->SQR1, (uint32_t)(0x1FU << (5U * ((rank) - 1U))));
-        SET_BIT(adc->SQR1, (uint32_t)(channel << (5U * ((rank) - 1U))));
+        CLEAR_BIT(adc->SQR1, (uint32_t)(0x1FU << (5U * ((rank) - 13U))));
+        SET_BIT(adc->SQR1, (uint32_t)(channel << (5U * ((rank) - 13U))));
     }
 }
 
 static inline void hal_adc_set_sequence_len(ADC_TypeDef *adc, uint8_t len){
     CLEAR_BIT(adc->SQR1, ADC_SQR1_L);
-    SET_BIT(adc->SQR1, (uint32_t)(len << ADC_SQR1_L_Pos));
+    SET_BIT(adc->SQR1, (uint32_t)((len - 1) << ADC_SQR1_L_Pos));
 }
 
 static inline uint16_t hal_adc_readConversion(ADC_TypeDef *adc){
+    CLEAR_BIT(ADC1->SR, ADC_SR_EOC);
     return adc->DR & ADC_DR_DATA;
 }
 

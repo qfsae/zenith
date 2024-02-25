@@ -15,3 +15,5 @@
 
 extern void TIM6_DAC_IRQHandler(void);
 
+extern void ADC_IRQHandler(void);
+

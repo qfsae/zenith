@@ -23,6 +23,7 @@ enum Tasks{
     eTask_CAN_receive,
     eTask_CAN_rxBufferHandler,
     eTask_SysError,
+    eTask_ADCMonitor,
     // Keep this last
     eTask_TaskCount // Number of tasks running on the system (`taskHandlers.h`)
 };
@@ -51,4 +52,7 @@ extern void vTask_CAN_receive(void *param);
 
 // Located in interface_sysError.c
 extern void vTask_SysError(void *param);
+
+// Located in interface_adc.c
+extern void vTask_ADCMonitor(void *param);
 

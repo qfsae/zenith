@@ -15,6 +15,7 @@
 #include "interfaces/interface_uart.h"
 #include "interfaces/interface_can.h"
 #include "interfaces/interface_sysError.h"
+#include "interfaces/interface_adc.h"
 #include "stm32f446xx.h"
 
 int main(void){
@@ -40,6 +41,9 @@ int main(void){
 
     os_can_setup();
     printf("CAN Bus Initialized..\n");
+
+    os_adc_setup();
+    printf("ADC Initialized..\n");
 
     spin(9999999UL);
 

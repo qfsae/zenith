@@ -45,6 +45,8 @@ enum SYS_ERROR {
     UART_UNINIT_ERR,
     // The UART Semaphore could not be taken
     UART_ACC_ERR,
+    // ADC Overflow (ADC is running faster than the system can monitor it)
+    ADC_OVERFLOW,
 
     // Maximum Error Number
     SYS_ERROR_MAX // 99

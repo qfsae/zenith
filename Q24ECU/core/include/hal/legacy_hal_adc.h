@@ -91,8 +91,8 @@ static inline void legacy_hal_adc_stop(ADC_TypeDef *adc){
 }
 
 static inline uint16_t legacy_hal_adc_poll(ADC_TypeDef *adc, uint8_t adcCh){
-    adc_configChannel(adc, adcCh, 1);
-    adc_start(adc);
+    legacy_hal_adc_configChannel(adc, adcCh, 1);
+    legacy_hal_adc_start(adc);
     while(!(adc->SR & ADC_SR_EOC));
     return (uint16_t)(adc->DR);
 
