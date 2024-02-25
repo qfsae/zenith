@@ -21,6 +21,8 @@
 
 enum SYS_ERROR {
     SYS_OK = 0,
+    // An invalid parameter was passed to a function
+    SYS_INVALID_ARG,
     // Task has decided to shut down
     TASK_SHUTDOWN,
     // A Task has encountered a critical error and the system must shut down
