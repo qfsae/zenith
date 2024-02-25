@@ -49,7 +49,7 @@ void os_adc_setup(void) {
     // Setup Interrupt
     SET_BIT(ADC1->CR1, ADC_CR1_EOCIE);
     NVIC_EnableIRQ(ADC_IRQn);
-    NVIC_SetPriority(ADC_IRQn, NVIC_Priority_MIN);
+    NVIC_SetPriority(ADC_IRQn, NVIC_Priority_MIN-10);
 
     spin(9999999UL); // Wait for ADC to stabilize
 
@@ -61,12 +61,14 @@ void vTask_ADCMonitor(void *param) {
     (void)(param); // Cast unused variable to void
     vTaskDelay(5);
     printf("ADC Monitor Task Running\n");
+    // hal_adc_startConversions(ADC1);
     for(;;) {
         // Print ADC Readings
         if(READ_BIT(ADC1->SR, ADC_SR_OVR)) sysError_report(ADC_OVERFLOW);
         if(sysError_check(ADC_OVERFLOW) == true){
             // Attempt to clear the overflow
             hal_adc_stopConversions(ADC1);
+            ADC_READING_CURRENT = 0;
             vTaskDelay(5);
             CLEAR_BIT(ADC1->SR, ADC_SR_OVR);
             vTaskDelay(5);
