@@ -13,6 +13,7 @@
 
 #include "stm32f4xx.h"
 #include "errors.h"
+#include "hal_clock.h"
 #include "stdbool.h"
 
 // ADC Sampling Resolution
@@ -43,6 +44,19 @@ enum ADC_CHANNEL {
     ADC_CHANNEL_17,
     ADC_CHANNEL_18,
 };
+
+enum ADC_SAMPLE_TIME {
+    ADC_CYCLES_3,
+    ADC_CYCLES_15,
+    ADC_CYCLES_28,
+    ADC_CYCLES_56,
+    ADC_CYCLES_84,
+    ADC_CYCLES_112,
+    ADC_CYCLES_144,
+    ADC_CYCLES_480
+};
+
+#define ADC_SAMPLE_TIME_DEFAULT ADC_CYCLES_56
 
 enum ADC_SEQUENCE {
     ADC_SQ1,
@@ -116,17 +130,61 @@ static inline uint8_t hal_adc_init(ADC_TypeDef *adc, enum ADC_RESOLUTION resolut
     return SYS_OK;
 }
 
-
-static inline void hal_adc_adon(ADC_TypeDef *adc, bool adon){
-    if(adon == true) {
+static inline void hal_adc_enable(ADC_TypeDef *adc){
+    if(!READ_BIT(adc->CR2, ADC_CR2_ADON))
         SET_BIT(adc->CR2, ADC_CR2_ADON);
-    }
-    else {
+}
+
+
+static inline void hal_adc_disable(ADC_TypeDef *adc){
+    if(READ_BIT(adc->CR2, ADC_CR2_ADON))
         CLEAR_BIT(adc->CR2, ADC_CR2_ADON);
+}
+
+static inline void hal_adc_startConversions(ADC_TypeDef *adc){
+    hal_adc_enable(adc);
+    for (unsigned int i = 0; i < (3U * (SYS_FREQUENCY/1000000U)); i++) __asm__("nop");
+    SET_BIT(adc->CR2, ADC_CR2_SWSTART);
+}
+
+static inline void hal_adc_stopConversions(ADC_TypeDef *adc){
+    CLEAR_BIT(adc->CR2, ADC_CR2_SWSTART);
+}
+
+static inline void hal_adc_configChannel(ADC_TypeDef *adc, enum ADC_CHANNEL channel, enum ADC_SAMPLE_TIME cycles, enum ADC_SEQUENCE rank){
+    // Setup Channel Sample Time
+    if(channel > 9U) { // High Channel Register
+                      // Reset Sample Time
+        CLEAR_BIT(adc->SMPR1, (0x7UL << (3U * (uint32_t)(channel-10U))));
+        // Set Sample Time
+        SET_BIT(adc->SMPR1, (cycles << (3U * (uint32_t)(channel-10U))));
+    }
+    else { // Low Channel Register
+        CLEAR_BIT(adc->SMPR2, (0x7UL << (3U * (uint32_t)(channel-10U))));
+        SET_BIT(adc->SMPR2, (cycles << (3U * (uint32_t)(channel-10U))));
+    }
+
+    // Add Channel to the Sequence Register
+    if(rank < 7U) {
+        CLEAR_BIT(adc->SQR3, (uint32_t)(0x1FU << (5U * ((rank) - 1U))));
+        SET_BIT(adc->SQR3, (uint32_t)(channel << (5U * ((rank) - 1U))));
+    }
+    else if(rank < 13U) {
+        CLEAR_BIT(adc->SQR2, (uint32_t)(0x1FU << (5U * ((rank) - 1U))));
+        SET_BIT(adc->SQR2, (uint32_t)(channel << (5U * ((rank) - 1U))));
+    }
+    else{
+        CLEAR_BIT(adc->SQR1, (uint32_t)(0x1FU << (5U * ((rank) - 1U))));
+        SET_BIT(adc->SQR1, (uint32_t)(channel << (5U * ((rank) - 1U))));
     }
 }
 
-static inline void hal_adc_configChannel(ADC_TypeDef *adc, enum ADC_CHANNEL channel, enum ADC_SEQUENCE rank){
+static inline void hal_adc_set_sequence_len(ADC_TypeDef *adc, uint8_t len){
+    CLEAR_BIT(adc->SQR1, ADC_SQR1_L);
+    SET_BIT(adc->SQR1, (uint32_t)(len << ADC_SQR1_L_Pos));
+}
 
+static inline uint16_t hal_adc_readConversion(ADC_TypeDef *adc){
+    return adc->DR & ADC_DR_DATA;
 }
 
