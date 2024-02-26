@@ -79,7 +79,7 @@ void vTask_Test1(void *param){
             // hal_adc_startConversions(ADC1);
             // SET_BIT(ADC1->CR2, ADC_CR2_SWSTART);
             // while(!(ADC1->SR & ADC_SR_EOC));
-            snprintf(buf, 40, "%0.4f %0.4f\n", adc_fetch(ADC_CHANNEL_5V1), adc_fetch(ADC_CHANNEL_5V2));
+            snprintf(buf, 40, "%d %d\n", adc_fetch(ADC_CHANNEL_5V1), ADC1->DR);
             uart_send_buf_blocking(&port_uart4, buf, strlen(buf), 10U);
         //     CLEAR_BIT(ADC1->SR, ADC_SR_EOC);
             // SET_BIT(ADC1->CR2, ADC_CR2_SWSTART);

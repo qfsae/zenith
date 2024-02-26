@@ -106,7 +106,8 @@ static inline enum SYS_ERROR hal_adc_init(ADC_TypeDef *adc, enum ADC_RESOLUTION 
     // EOC Bit enable
     SET_BIT(adc->CR2, ADC_CR2_EOCS);
     // Disable DMA
-    CLEAR_BIT(adc->CR2, ADC_CR2_DMA);
+    SET_BIT(adc->CR2, ADC_CR2_DMA);
+    SET_BIT(adc->CR2, ADC_CR2_DDS);
     // Set Continuous conversion
     SET_BIT(adc->CR2, ADC_CR2_CONT);
 
