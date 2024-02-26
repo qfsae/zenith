@@ -56,4 +56,4 @@ extern void os_adc_setup(void);
  * @param channel the channel to draw from
  * @returns the voltage of the channel
  */
-extern uint16_t adc_fetch(enum ADC_CHANNEL channel);
+extern double adc_fetch(enum ADC_CHANNEL channel);

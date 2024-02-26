@@ -41,10 +41,10 @@ void os_adc_setup(void) {
     // Setup ADC1
     hal_adc_init(ADC1, ADC_RESOLUTION_12_BIT);
     // Setup Channel Sequence
-    hal_adc_configChannel(ADC1, 4, ADC_CYCLES_480, ADC_SQ1);
-    //hal_adc_configChannel(ADC1, 5, ADC_CYCLES_480, ADC_SQ2);
+    hal_adc_configChannel(ADC1, 4, ADC_CYCLES_15, ADC_SQ1);
+    hal_adc_configChannel(ADC1, 5, ADC_CYCLES_15, ADC_SQ2);
     // Set Sequence Length
-    hal_adc_set_sequence_len(ADC1, 1);
+    hal_adc_set_sequence_len(ADC1, 2);
 
     // DMA Code
     SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_DMA2EN); // Enable DMA2 Clock
@@ -55,15 +55,15 @@ void os_adc_setup(void) {
     // SET_BIT(DMA2_Stream0->CR, DMA_SxCR_PL);
     CLEAR_BIT(DMA2_Stream0->CR, 1 << DMA_SxCR_PSIZE);
     SET_BIT(DMA2_Stream0->CR, 1 << DMA_SxCR_PSIZE_Pos);
-    CLEAR_BIT(DMA2_Stream0->CR, DMA_SxCR_MINC);
+    SET_BIT(DMA2_Stream0->CR, DMA_SxCR_MINC);
     CLEAR_BIT(DMA2_Stream0->CR, DMA_SxCR_PINC);
     SET_BIT(DMA2_Stream0->CR, DMA_SxCR_CIRC);
     // CLEAR_BIT(DMA2_Stream0->CR, DMA_SxCR_DIR);
     // CLEAR_BIT(DMA2_Stream0->CR, DMA_SxCR_PFCTRL);
 
-    DMA2_Stream0->NDTR = 1;
+    DMA2_Stream0->NDTR = 2;
     DMA2_Stream0->PAR = (uint32_t)&(ADC1->DR);
-    DMA2_Stream0->M0AR = (uint32_t)&(ADC_READING_CURRENT);
+    DMA2_Stream0->M0AR = (uint32_t)(ADC_READINGS);
     CLEAR_BIT(DMA2_Stream0->FCR, DMA_SxFCR_DMDIS);
 
 
@@ -121,9 +121,9 @@ void vTask_ADCMonitor(void *param) {
 // }
 
 
-extern uint16_t adc_fetch(enum ADC_CHANNEL channel){
+extern double adc_fetch(enum ADC_CHANNEL channel){
     //if(channel > ADC_CHANNEL_MAX) return 0.0;
     // TODO: add scaling for 12v/5v
-    return ADC_READING_CURRENT;
-    //return ADC_READINGS[channel]*3.3/4096.0;
+    // return ADC_READINGS[channel];
+    return ADC_READINGS[channel]*3.3/4096.0;
 }
