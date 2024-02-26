@@ -54,12 +54,14 @@
  */
 #if defined(BOARD_VCU_V1)
 
+// CAN Pins
 #define PIN_CAN1_RX ((uint16_t)(PIN('A', 11)))
 #define PIN_CAN1_TX ((uint16_t)(PIN('A', 12)))
 
 #define PIN_CAN2_RX ((uint16_t)(PIN('B', 12)))
 #define PIN_CAN2_TX ((uint16_t)(PIN('B', 13)))
 
+// UART Pins
 #define PIN_USART1_TX ((uint16_t)(PIN('B', 6)))
 #define PIN_USART1_RX ((uint16_t)(PIN('B', 7)))
 
@@ -72,6 +74,7 @@
 #define PIN_UART5_TX ((uint16_t)(PIN('E', 7)))
 #define PIN_UART5_RX ((uint16_t)(PIN('E', 8)))
 
+// Analog Input Pins
 #define PIN_A12Vin_1 ((uint16_t)(PIN('C', 0)))
 #define PIN_A12Vin_2 ((uint16_t)(PIN('C', 1)))
 #define PIN_A12Vin_3 ((uint16_t)(PIN('B', 1)))
@@ -84,12 +87,11 @@
 #define PIN_A5Vin_3 ((uint16_t)(PIN('A', 7)))
 #define PIN_A5Vin_4 ((uint16_t)(PIN('A', 7)))
 
-#define ADC_CH_5V1 ((uint16_t)(4))
-#define ADC_CH_5V2 ((uint16_t)(5))
+// ADC Channels for Analog Inputs
+#define PIN_A5Vin_1_ADCCH 4U
+#define PIN_A5Vin_2_ADCCH 5U
 
 
 
 #endif // BOARD_VCU_V1
-
-
 

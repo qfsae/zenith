@@ -42,8 +42,8 @@ void os_adc_setup(void) {
     // Setup ADC1
     hal_adc_init(ADC1, ADC_RESOLUTION_12_BIT);
     // Setup Channel Sequence
-    hal_adc_configChannel(ADC1, ADC_CH_5V1, ADC_CYCLES_480, ADC_SQ1);
-    hal_adc_configChannel(ADC1, ADC_CH_5V2, ADC_CYCLES_480, ADC_SQ2);
+    hal_adc_configChannel(ADC1, PIN_A5Vin_1_ADCCH, ADC_CYCLES_480, ADC_SQ1);
+    hal_adc_configChannel(ADC1, PIN_A5Vin_2_ADCCH, ADC_CYCLES_480, ADC_SQ2);
     // Set Sequence Length
     hal_adc_set_sequence_len(ADC1, 2);
 
