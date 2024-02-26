@@ -5,6 +5,10 @@
  * @version 0.1
  * @date 2024-02-18
  * 
+ * ADC Hardware Abstraction Layer designed to be used in tandem with DMA HAL.
+ *
+ * For Simple Polling ADC usage, the Legacy HAL is also provided in another file.
+ *
  * @copyright Copyright (c) 2024
  * 
  */
@@ -14,9 +18,8 @@
 #include "stm32f4xx.h"
 #include "errors.h"
 #include "hal_clock.h"
-#include "stdbool.h"
 
-// ADC Sampling Resolution
+// ADC Sampling Resolution (Should always be 12bit)
 enum ADC_RESOLUTION {
     ADC_RESOLUTION_12_BIT = 0x0,
     ADC_RESOLUTION_10_BIT = 0x1,
@@ -24,7 +27,10 @@ enum ADC_RESOLUTION {
     ADC_RESOLUTION_6_BIT  = 0x3
 };
 
-// ADC Sampling Time (Cycles)
+/** ADC Sampling Time (Clock Cycles)
+ * More samples = More Accurate
+ * Less samples = Shorter Delay between conversions
+ */
 enum ADC_SAMPLE_TIME {
     ADC_CYCLES_3,
     ADC_CYCLES_15,
@@ -36,9 +42,15 @@ enum ADC_SAMPLE_TIME {
     ADC_CYCLES_480
 };
 
-// Default ADC Sampling Time
+// Default ADC Sampling Time (MUST be 480 on VCU V1)
 #define ADC_SAMPLE_TIME_DEFAULT ADC_CYCLES_480
 
+
+/**
+ * @brief ADC Sequence Positions
+ *
+ * There can be a maximum of 16 channels added to an ADC Sequence
+ */
 enum ADC_SEQUENCE {
     ADC_SQ1 = 1,
     ADC_SQ2,
@@ -59,7 +71,7 @@ enum ADC_SEQUENCE {
 };
 
 /**
- * @brief Initialize ADC Hardware
+ * @brief Initialize ADC Hardware for use with DMA + Continuous Conversions of Sequenced Channels
  * 
  * @param adc The ADC to Initialize
  * @param resolution The resolution of the ADC (in bits)
@@ -84,13 +96,13 @@ static inline enum SYS_ERROR hal_adc_init(ADC_TypeDef *adc, enum ADC_RESOLUTION 
     CLEAR_BIT(adc->CR1, ADC_CR1_DISCEN);
     // Disable automatic injected group conversion
     CLEAR_BIT(adc->CR1, ADC_CR1_JAUTO);
-    // Set scan mode
+    // Set scan mode (Forces the ADC to loop through the Sequence)
     SET_BIT(adc->CR1, ADC_CR1_SCAN);
-    // Disable JEOC Interrupt
+    // Disable End of Conversion Interrupt for Injected Channels
     CLEAR_BIT(adc->CR1, ADC_CR1_JEOCIE);
     // Disable the Analog Watchdog Interrupt
     CLEAR_BIT(adc->CR1, ADC_CR1_AWDIE);
-    // Disable EOC Interrupt
+    // Disable End of Conversion Interrupt
     CLEAR_BIT(adc->CR1, ADC_CR1_EOCIE);
     
     // Reset Software Start bit for regular channels
@@ -103,12 +115,12 @@ static inline enum SYS_ERROR hal_adc_init(ADC_TypeDef *adc, enum ADC_RESOLUTION 
     CLEAR_BIT(adc->CR2, ADC_CR2_JEXTEN);
     // Set data alignment (Right Align)
     CLEAR_BIT(adc->CR2, ADC_CR2_ALIGN);
-    // EOC Bit enable
+    // End of Conversion Bit enable
     SET_BIT(adc->CR2, ADC_CR2_EOCS);
-    // Disable DMA
+    // Enable DMA + Repeat DMA Requests
     SET_BIT(adc->CR2, ADC_CR2_DMA);
     SET_BIT(adc->CR2, ADC_CR2_DDS);
-    // Set Continuous conversion
+    // Set Continuous conversion (ADC Loops back to first conversion after completing the Sequence)
     SET_BIT(adc->CR2, ADC_CR2_CONT);
 
     // Leave ADC Off

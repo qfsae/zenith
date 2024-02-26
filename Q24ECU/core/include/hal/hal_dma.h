@@ -5,6 +5,11 @@
  * @version 0.1
  * @date 2024-02-25
  * 
+ * Direct Memory Access Hardware Abstraction Layer
+ *
+ * This is a relatively basic implementation of the DMA that can be used to
+ * transfer memory from a fixed 
+ *
  * @copyright Copyright (c) 2024
  * 
  */
@@ -12,7 +17,6 @@
 #pragma once
 
 #include "stm32f4xx.h"
-#include "hal_gpio.h"
 #include "errors.h"
 
 enum DMA_CHANNEL {
@@ -109,3 +113,5 @@ static inline void hal_dma_start(DMA_Stream_TypeDef *stream) {
 static inline void hal_dma_stop(DMA_Stream_TypeDef *stream) {
     CLEAR_BIT(stream->CR, DMA_SxCR_EN);
 }
+
+
