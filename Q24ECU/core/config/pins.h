@@ -84,6 +84,9 @@
 #define PIN_A5Vin_3 ((uint16_t)(PIN('A', 7)))
 #define PIN_A5Vin_4 ((uint16_t)(PIN('A', 7)))
 
+#define ADC_CH_5V1 ((uint16_t)(4))
+#define ADC_CH_5V2 ((uint16_t)(5))
+
 
 
 #endif // BOARD_VCU_V1

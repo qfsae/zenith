@@ -17,9 +17,9 @@
 #include "interfaces/interface_sysError.h"
 #include "nvicConfig.h"
 #include "interrupts.h"
+#include "hal/hal_dma.h"
 
 uint16_t ADC_READINGS[ADC_CHANNEL_MAX];
-uint16_t  ADC_READING_CURRENT = 99;
 
 
 void os_adc_setup(void) {
@@ -29,78 +29,52 @@ void os_adc_setup(void) {
     {
         ADC_READINGS[i] = 0;
     }
-    
 
     // Reduce the ADC Clock to APB2/8
-    // SET_BIT(ADC123_COMMON->CCR, 3 << 16);
+    SET_BIT(ADC123_COMMON->CCR, 3 << 16);
 
     // Configure Analog GPIO Pins
     gpio_set_mode(PIN_A5Vin_1, GPIO_MODE_ANALOG);
     gpio_set_mode(PIN_A5Vin_2, GPIO_MODE_ANALOG);
 
+    // Setup DMA for ADC1
+    hal_dma_init(DMA2, DMA2_Stream0, DMA_CHANNEL_0, DMA_PRIORITY_LOW, DMA_MEM_SIZE_16, &(ADC1->DR), ADC_READINGS, 2);
     // Setup ADC1
     hal_adc_init(ADC1, ADC_RESOLUTION_12_BIT);
     // Setup Channel Sequence
-    hal_adc_configChannel(ADC1, 4, ADC_CYCLES_15, ADC_SQ1);
-    hal_adc_configChannel(ADC1, 5, ADC_CYCLES_15, ADC_SQ2);
+    hal_adc_configChannel(ADC1, ADC_CH_5V1, ADC_CYCLES_480, ADC_SQ1);
+    hal_adc_configChannel(ADC1, ADC_CH_5V2, ADC_CYCLES_480, ADC_SQ2);
     // Set Sequence Length
     hal_adc_set_sequence_len(ADC1, 2);
 
-    // DMA Code
-    SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_DMA2EN); // Enable DMA2 Clock
-
-    // DMA2 Stream Setup
-    CLEAR_BIT(DMA2_Stream0->CR, DMA_SxCR_EN);
-    CLEAR_BIT(DMA2_Stream0->CR, DMA_SxCR_CHSEL);
-    // SET_BIT(DMA2_Stream0->CR, DMA_SxCR_PL);
-    CLEAR_BIT(DMA2_Stream0->CR, 1 << DMA_SxCR_PSIZE);
-    SET_BIT(DMA2_Stream0->CR, 1 << DMA_SxCR_PSIZE_Pos);
-    SET_BIT(DMA2_Stream0->CR, DMA_SxCR_MINC);
-    CLEAR_BIT(DMA2_Stream0->CR, DMA_SxCR_PINC);
-    SET_BIT(DMA2_Stream0->CR, DMA_SxCR_CIRC);
-    // CLEAR_BIT(DMA2_Stream0->CR, DMA_SxCR_DIR);
-    // CLEAR_BIT(DMA2_Stream0->CR, DMA_SxCR_PFCTRL);
-
-    DMA2_Stream0->NDTR = 2;
-    DMA2_Stream0->PAR = (uint32_t)&(ADC1->DR);
-    DMA2_Stream0->M0AR = (uint32_t)(ADC_READINGS);
-    CLEAR_BIT(DMA2_Stream0->FCR, DMA_SxFCR_DMDIS);
-
-
-
-    SET_BIT(DMA2_Stream0->CR, DMA_SxCR_EN);
-
-    // SET_BIT(ADC1->CR2, ADC_CR2_DDS);
-
-
-
-
-    // Setup Interrupt
-    // SET_BIT(ADC1->CR1, ADC_CR1_EOCIE);
-    // NVIC_EnableIRQ(ADC_IRQn);
-    // NVIC_SetPriority(ADC_IRQn, NVIC_Priority_MIN-10);
-
     spin(9999999UL); // Wait for ADC to stabilize
 
+    // Enable the DMA Stream
+    hal_dma_start(DMA2_Stream0);
     // Enable ADC and Start Conversions
     hal_adc_startConversions(ADC1);
 }
 
 void vTask_ADCMonitor(void *param) {
     (void)(param); // Cast unused variable to void
-    vTaskDelay(5);
-    printf("ADC Monitor Task Running\n");
-    // hal_adc_startConversions(ADC1);
+    vTaskDelay(10);
+    printf("Starting Conversions\n");
+    // Enable the DMA Stream
+    hal_dma_start(DMA2_Stream0);
+    // Enable ADC and Start Conversions
+    hal_adc_startConversions(ADC1);
+
     for(;;) {
         // Print ADC Readings
         if(READ_BIT(ADC1->SR, ADC_SR_OVR)) sysError_report(ADC_OVERFLOW);
         if(sysError_check(ADC_OVERFLOW) == true){
             // Attempt to clear the overflow
             hal_adc_stopConversions(ADC1);
-            //ADC_READING_CURRENT = 0;
+            hal_dma_stop(DMA2_Stream0);
             vTaskDelay(5);
             CLEAR_BIT(ADC1->SR, ADC_SR_OVR);
             vTaskDelay(5);
+            hal_dma_start(DMA2_Stream0);
             hal_adc_startConversions(ADC1);
             if(READ_BIT(ADC1->SR, ADC_SR_STRT)){
                 sysError_clear(ADC_OVERFLOW);
@@ -108,17 +82,9 @@ void vTask_ADCMonitor(void *param) {
         }
         // Trigger a new round of conversions
         // SET_BIT(ADC1->CR2, ADC_CR2_SWSTART);
-        vTaskDelay(50);
+        vTaskDelay(500);
     }
 }
-
-// void ADC_IRQHandler(void){
-//     if(READ_BIT(ADC1->SR, ADC_SR_EOC)){
-//         ADC_READINGS[ADC_READING_CURRENT] = hal_adc_readConversion(ADC1);
-//         ADC_READING_CURRENT++;
-//         if(ADC_READING_CURRENT == ADC_CHANNEL_MAX) ADC_READING_CURRENT = 0;
-//     }
-// }
 
 
 extern double adc_fetch(enum ADC_CHANNEL channel){

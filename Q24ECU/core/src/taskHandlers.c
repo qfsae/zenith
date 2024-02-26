@@ -111,7 +111,7 @@ void os_task_init(void){
         "ADCMonitor",
         configMINIMAL_STACK_SIZE,
         NULL,
-        tskIDLE_PRIORITY,
+        tskIDLE_PRIORITY+4,
         xTaskStacks[eTask_ADCMonitor],
         &xTaskBuffers[eTask_ADCMonitor]
     );

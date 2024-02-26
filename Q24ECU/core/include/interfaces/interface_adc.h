@@ -16,6 +16,7 @@
 #include "float.h"
 #include "hal/hal_adc.h"
 #include "FreeRTOS.h"
+#include "pins.h"
 
 #define ADC_5V_RATIO (double)(1.0)
 #define ADC_12V_RATIO (double)(1.0)
