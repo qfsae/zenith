@@ -71,6 +71,8 @@ static StaticSemaphore_t CAN1_TX_SemaphoreBuffer[4];   // Static Buffer for CAN1
  */
 void os_can_setup(void){
     // NOTE: NART (no automatic re-transmission) should be set to false in application
+    gpio_set_mode(PIN('A', 10), GPIO_MODE_OUTPUT);
+    gpio_write(PIN('A', 10), false);
     uint8_t can1_status = hal_can_init(CAN1, CAN_1000KBPS, true, PIN('A', 11), PIN('A', 12));
     // On event of CAN bus initialization failure
     if(can1_status != SYS_OK){
@@ -98,15 +100,6 @@ void os_can_setup(void){
     CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_TX2] =
         xSemaphoreCreateBinaryStatic(&CAN1_TX_SemaphoreBuffer[CAN_TX_SEMAPHORE_TX2]);
     xSemaphoreGive(CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_TX2]);
-
-    // Create the RX buffer Task
-    // This task unloads the Streambuffers produced by the CAN interrupts
-    (void)xTaskCreate(
-        tsk_CAN_RXBufferHandler,
-        "CAN1RX",
-        configMINIMAL_STACK_SIZE,
-        NULL,
-        tskIDLE_PRIORITY, &tskh_CANRX_Handler);
 }
 
 // CAN1 RX IRQ Handler (loads rx stream buffer)
@@ -133,9 +126,11 @@ void CAN1_RX0_IRQHandler(void){
 
 }
 
-void tsk_CAN_RXBufferHandler(void *param){
+void vTask_CAN_RXBufferHandler(void *param){
     // Unused
     (void)(param);
+    printf("CAN Interface Task Running\n");
+    
 
     // Create the Recieve Stream buffers
     CAN1_RX.streamHandle = xStreamBufferCreateStatic(

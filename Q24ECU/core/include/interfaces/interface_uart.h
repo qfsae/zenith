@@ -8,14 +8,15 @@
  * @copyright Copyright (c) 2023
  * 
  */
+
+#pragma once
+
 #include "hal/hal_uart.h"
 #include "FreeRTOS.h"
 #include "semphr.h"
+#include "pins.h"
 #include "stream_buffer.h"
-
-#define UART_WRITE_OK 0
-#define UART_ERR_UNDEF 1
-#define UART_ERR_ACC 2
+#include "errors.h"
 
 
 /**
@@ -33,6 +34,7 @@ typedef struct uart_t {
 
 // UART OS Handlers
 extern uart_t port_uart2;
+extern uart_t port_uart4;
 
 /**
  * @brief OS UART Setup handler
@@ -54,14 +56,14 @@ extern void os_uart_setup(void);
  * @param uart the USARTx define from CMSIS headers
  * @param baud USART Baud Rate
  */
-static inline void uart_send_init(uart_t *port, USART_TypeDef *uart, unsigned long baud){
+static inline void uart_send_init(uart_t *port, USART_TypeDef *uart, unsigned long baud, uint16_t pin_tx, uint16_t pin_rx){
     port->semaphore = xSemaphoreCreateBinary();
     if(port->semaphore == NULL) return;
     port->rxbuffer = xStreamBufferCreate(64, 1);
     if(port->rxbuffer == NULL) return;
     port->port = uart;
     if(port->port == NULL) return;
-    hal_uart_init(port->port, baud, PIN('A', 2), PIN('A', 3));
+    hal_uart_init(port->port, baud, pin_tx, pin_rx);
     xSemaphoreGive(port->semaphore);
 }
 
@@ -77,15 +79,15 @@ extern void USART2_IRQHandler(void);
  * @param timeout The amount of ticks to wait for the interface to become available
  */
 static inline int uart_send_blocking(uart_t *port, uint8_t byte, TickType_t timeout){
-    if(port == NULL)            return UART_ERR_UNDEF;
-    if(port->port == NULL)      return UART_ERR_UNDEF;
-    if(port->semaphore == NULL) return UART_ERR_UNDEF;
+    if(port == NULL)            return UART_UNINIT_ERR;
+    if(port->port == NULL)      return UART_UNINIT_ERR;
+    if(port->semaphore == NULL) return UART_UNINIT_ERR;
     if(xSemaphoreTake(port->semaphore, timeout) == pdTRUE){
         hal_uart_write_byte(port->port, byte);
         xSemaphoreGive(port->semaphore);
-        return UART_WRITE_OK;
+        return SYS_OK;
     }
-    return UART_ERR_ACC;
+    return UART_ACC_ERR;
 }
 
 /**
@@ -97,14 +99,14 @@ static inline int uart_send_blocking(uart_t *port, uint8_t byte, TickType_t time
  * @param timeout The amount of ticks to wait for the interface to become available 
  */
 static inline int uart_send_buf_blocking(uart_t *port, char* buf, size_t len, TickType_t timeout){
-    if(port == NULL)            return UART_ERR_UNDEF;
-    if(port->port == NULL)      return UART_ERR_UNDEF;
-    if(port->semaphore == NULL) return UART_ERR_UNDEF;
+    if(port == NULL)            return UART_UNINIT_ERR;
+    if(port->port == NULL)      return UART_UNINIT_ERR;
+    if(port->semaphore == NULL) return UART_UNINIT_ERR;
     if(xSemaphoreTake(port->semaphore, timeout) == pdTRUE){
         hal_uart_write_buf(port->port, buf, len);
         xSemaphoreGive(port->semaphore);
-        return UART_WRITE_OK;
+        return SYS_OK;
     }
-    return UART_ERR_ACC;
+    return UART_ACC_ERR;
 }
 

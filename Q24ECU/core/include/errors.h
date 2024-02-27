@@ -21,6 +21,10 @@
 
 enum SYS_ERROR {
     SYS_OK = 0,
+    // Task has decided to shut down
+    TASK_SHUTDOWN,
+    // A Task has encountered a critical error and the system must shut down
+    TASK_SHUTDOWN_CRITICAL,
     // Invalid Flash Address given
     FLASH_WRITE_ADDR_INVALID,
     // Failed to assert write permissions to the flash memory
@@ -36,5 +40,12 @@ enum SYS_ERROR {
     // Mailbox selection out of range
     HAL_CAN_MAILBOX_SELRNG_ERR,
     // Fatal Error on bus
-    HAL_CAN_FATAL_ERR
+    HAL_CAN_FATAL_ERR,
+    // The UART port is not initialized
+    UART_UNINIT_ERR,
+    // The UART Semaphore could not be taken
+    UART_ACC_ERR,
+
+    // Maximum Error Number
+    SYS_ERROR_MAX // 99
 };

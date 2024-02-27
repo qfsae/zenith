@@ -7,58 +7,103 @@
  * 
  * @copyright Copyright (c) 2023
  * 
+ * vTaskDelete() is used to delete a task. The handle to the task to be deleted is passed in as the parameter.
+ * This can be used as a method to prevent a task from running at all.
+ * 
+ * Task information is displayed out to UART2 on startup (printed from main.c)
+ * 
  */
 
 #include "taskHandlers.h"
 #include <stdio.h>
 
+
 // Init global handles for tasks
 
-TaskHandle_t tskh_Test1 = NULL;
-TaskHandle_t tskh_BlinkLED = NULL;
-TaskHandle_t tskh_USART2_Handler = NULL;
-TaskHandle_t tskh_CANRX_Handler = NULL;
-TaskHandle_t tskh_CAN_send = NULL;
-TaskHandle_t tskh_CAN_recieve = NULL;
+TaskHandle_t xTaskHandles[eTask_TaskCount];
+
+StaticTask_t xTaskBuffers[eTask_TaskCount];
+
+StackType_t xTaskStacks[eTask_TaskCount][configMINIMAL_STACK_SIZE];
 
 void os_task_init(void){
-    // Create Sample Blink Task
-    (void)xTaskCreate(
-        tsk_BlinkLED,
-        "blink",
-        configMINIMAL_STACK_SIZE,
-        NULL,
-        tskIDLE_PRIORITY,
-        &tskh_BlinkLED
-    );
-    // Create Sample Print Task
-    (void)xTaskCreate(
-        tsk_Test1,
-        "tst1",
+
+    // Create Task to empty CAN RX Buffer (Part of interface_can.c)
+    xTaskHandles[eTask_CAN_rxBufferHandler] = xTaskCreateStatic(
+        vTask_CAN_RXBufferHandler,
+        "CAN IRQ RX",
         configMINIMAL_STACK_SIZE,
         NULL,
         tskIDLE_PRIORITY+2,
-        &tskh_Test1
+        xTaskStacks[eTask_CAN_rxBufferHandler],
+        &xTaskBuffers[eTask_CAN_rxBufferHandler]
     );
 
-    // Create Sample CAN TX task
-    (void)xTaskCreate(
-        tsk_CAN_send,
-        "cRtx",
+    // Create Sample Blink Task
+    xTaskHandles[eTask_Test1] = xTaskCreateStatic(
+        vTask_Test1,
+        "TEST1",
         configMINIMAL_STACK_SIZE,
         NULL,
         tskIDLE_PRIORITY,
-        &tskh_CAN_send
+        xTaskStacks[eTask_Test1],
+        &xTaskBuffers[eTask_Test1]
+    );
+    // vTaskDelete(xTaskHandles[eTask_Test1]);
+
+    // Create Sample Print Task
+    xTaskHandles[eTask_BlinkLED] = xTaskCreateStatic(
+        vTask_BlinkLED,
+        "BLINK",
+        configMINIMAL_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY,
+        xTaskStacks[eTask_BlinkLED],
+        &xTaskBuffers[eTask_BlinkLED]
+    );
+    vTaskDelete(xTaskHandles[eTask_BlinkLED]);
+
+    // Create Sample CAN TX task
+    xTaskHandles[eTask_CAN_send] = xTaskCreateStatic(
+        vTask_CAN_send,
+        "CANtx",
+        configMINIMAL_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY,
+        xTaskStacks[eTask_CAN_send],
+        &xTaskBuffers[eTask_CAN_send]
     );
 
     // Create Sample CAN RX Task
-    (void)xTaskCreate(
-        tsk_CAN_recieve,
-        "cRrx",
+    xTaskHandles[eTask_CAN_receive] = xTaskCreateStatic(
+        vTask_CAN_receive,
+        "CANrx",
         configMINIMAL_STACK_SIZE,
         NULL,
         tskIDLE_PRIORITY,
-        &tskh_CAN_recieve
+        xTaskStacks[eTask_CAN_receive],
+        &xTaskBuffers[eTask_CAN_receive]
     );
+
+    xTaskHandles[eTask_USART2_Handler] = xTaskCreateStatic(
+        vTask_USART2_Handler,
+        "USART2 IRQ RX",
+        configMINIMAL_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY,
+        xTaskStacks[eTask_USART2_Handler],
+        &xTaskBuffers[eTask_USART2_Handler]
+    );
+
+    xTaskHandles[eTask_SysError] = xTaskCreateStatic(
+        vTask_SysError,
+        "SysError",
+        configMINIMAL_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY,
+        xTaskStacks[eTask_SysError],
+        &xTaskBuffers[eTask_SysError]
+    );
+    // vTaskDelete(xTaskHandles[eTask_SysError]);
 }
 
