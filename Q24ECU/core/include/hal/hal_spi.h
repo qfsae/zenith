@@ -304,7 +304,7 @@ static inline void hal_spi_send(SPI_TypeDef *pSPIx, uint8_t *pTxBuffer, uint32_t
             // Load the data
             pSPIx->DR = *((uint16_t *)pTxBuffer);
             Len -= 2;
-            (uint16_t *)pTxBuffer++;
+            pTxBuffer = (uint8_t *)((uint16_t *)pTxBuffer + 1);
         }
         else
         {
@@ -339,7 +339,7 @@ static inline void hal_spi_receive(SPI_TypeDef *pSPIx, uint8_t *pRxBuffer, uint3
             // Load the data
             *((uint16_t *)pRxBuffer) = pSPIx->DR;
             Len -= 2;
-            (uint16_t *)pRxBuffer++;
+            pRxBuffer = (uint8_t *)((uint16_t *)pRxBuffer + 1);
         }
         else
         {
