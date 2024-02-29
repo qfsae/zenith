@@ -105,5 +105,15 @@ void os_task_init(void){
         &xTaskBuffers[eTask_SysError]
     );
     // vTaskDelete(xTaskHandles[eTask_SysError]);
+
+    xTaskHandles[eTask_ADCMonitor] = xTaskCreateStatic(
+        vTask_ADCMonitor,
+        "ADCMonitor",
+        configMINIMAL_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY+4,
+        xTaskStacks[eTask_ADCMonitor],
+        &xTaskBuffers[eTask_ADCMonitor]
+    );
 }
 

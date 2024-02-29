@@ -109,8 +109,8 @@ bool sysError_checkRuntime(enum SYS_ERROR error){
 // Task for handling system errors
 void vTask_SysError(void *param){
     (void)param;
-    // Delay for 1 tick to allow the system to start
-    vTaskDelay(1);
+    // Delay for 20 ms to allow the system to start
+    vTaskDelay(20);
 
     for(;;){
         // Initialize variable to check if there are any errors present

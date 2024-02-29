@@ -21,6 +21,8 @@
 
 enum SYS_ERROR {
     SYS_OK = 0,
+    // An invalid parameter was passed to a function
+    SYS_INVALID_ARG,
     // Task has decided to shut down
     TASK_SHUTDOWN,
     // A Task has encountered a critical error and the system must shut down
@@ -45,6 +47,8 @@ enum SYS_ERROR {
     UART_UNINIT_ERR,
     // The UART Semaphore could not be taken
     UART_ACC_ERR,
+    // ADC Overflow (ADC is running faster than the system can monitor it)
+    ADC_OVERFLOW,
 
     // Maximum Error Number
     SYS_ERROR_MAX // 99
