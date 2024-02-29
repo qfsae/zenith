@@ -111,6 +111,5 @@ void vTask_ADCMonitor(void *param) {
 extern double adc_fetch(enum ADC_CHANNEL channel){
     //if(channel > ADC_CHANNEL_MAX) return 0.0;
     // TODO: add scaling for 12v/5v
-    // return ADC_READINGS[channel];
     return ADC_READINGS[channel]*3.3/4096.0;
 }
