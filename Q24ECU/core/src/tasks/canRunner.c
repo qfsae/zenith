@@ -10,7 +10,7 @@
  * 
  */
 #include "main.h"
-#include "taskHandlers.h"
+#include "tasks/taskHandlers.h"
 #include "task.h"
 #include "interfaces/interface_can.h"
 #include "interfaces/interface_uart.h"

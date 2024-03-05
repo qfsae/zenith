@@ -14,7 +14,7 @@
  * 
  */
 
-#include "taskHandlers.h"
+#include "tasks/taskHandlers.h"
 #include <stdio.h>
 
 
@@ -26,7 +26,7 @@ StaticTask_t xTaskBuffers[eTask_TaskCount];
 
 StackType_t xTaskStacks[eTask_TaskCount][configMINIMAL_STACK_SIZE];
 
-void os_task_init(void){
+void runner_task_init(void){
 
     // Create Task to empty CAN RX Buffer (Part of interface_can.c)
     xTaskHandles[eTask_CAN_rxBufferHandler] = xTaskCreateStatic(
@@ -117,3 +117,33 @@ void os_task_init(void){
     );
 }
 
+void runner_displayInfo(void){
+    printf("Task:\t   Identifier\t    Priority\t\tState\n");
+    for (int i = 0; i < eTask_TaskCount; i++)
+    {
+        printf("%d: %16s\t\t%lu\t\t", i, pcTaskGetName(xTaskHandles[i]), uxTaskPriorityGet(xTaskHandles[i]));
+        switch(eTaskGetState(xTaskHandles[i])) {
+            case eRunning:
+                printf("RUNNING\n");
+                break;
+            case eReady:
+                printf("READY\n");
+                break;
+            case eBlocked:
+                printf("BLOCKED\n");
+                break;
+            case eSuspended:    
+                printf("SUSPENDED\n");
+                break;
+            case eDeleted:   
+                printf("DELETED\n");
+                break;
+            case eInvalid:   
+                printf("INVALID\n");
+                break;
+            default:
+                printf("UNKNOWN\n");
+                break;
+        }
+    }
+}

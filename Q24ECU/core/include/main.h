@@ -10,7 +10,7 @@
  */
 
 #include <stm32f4xx.h>
-#include "taskHandlers.h"
+#include "tasks/taskHandlers.h"
 #include "nvicConfig.h"
 #include "interrupts.h"
 

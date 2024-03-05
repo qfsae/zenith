@@ -17,6 +17,13 @@
 #include "interfaces/interface_sysError.h"
 #include "interfaces/interface_adc.h"
 #include "stm32f446xx.h"
+#include "tasks/runner.h"
+
+TaskHandle_t xRunnerTaskHandle;
+
+StaticTask_t xRunnerTaskBuffer;
+
+StackType_t xRunnerTaskStack[configMINIMAL_STACK_SIZE];
 
 int main(void){
 
@@ -47,42 +54,25 @@ int main(void){
 
     spin(9999999UL);
 
-    printf("System Starting Tasks...\n\n");
+    printf("System Starting Runner Task...\n\n");
+
+    xRunnerTaskHandle = xTaskCreateStatic(
+        vTask_Runner,
+        "Runner",
+        configMINIMAL_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY+10,
+        xRunnerTaskStack,
+        &xRunnerTaskBuffer
+    );
 
     spin(9999999UL);  
 
     // Initialize all the tasks
-    os_task_init();
+    // os_task_init();
 
     // Print out Task Information
-    printf("Task:\t   Identifier\t    Priority\t\tState\n");
-    for (int i = 0; i < eTask_TaskCount; i++)
-    {
-        printf("%d: %16s\t\t%lu\t\t", i, pcTaskGetName(xTaskHandles[i]), uxTaskPriorityGet(xTaskHandles[i]));
-        switch(eTaskGetState(xTaskHandles[i])) {
-            case eRunning:
-                printf("RUNNING\n");
-                break;
-            case eReady:
-                printf("READY\n");
-                break;
-            case eBlocked:
-                printf("BLOCKED\n");
-                break;
-            case eSuspended:    
-                printf("SUSPENDED\n");
-                break;
-            case eDeleted:   
-                printf("DELETED\n");
-                break;
-            case eInvalid:   
-                printf("INVALID\n");
-                break;
-            default:
-                printf("UNKNOWN\n");
-                break;
-        }
-    }
+
 
     printf("\n");
     printf("Total Heap Memory: %d B\n", configTOTAL_HEAP_SIZE);

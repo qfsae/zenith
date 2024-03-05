@@ -1,4 +1,5 @@
 # Tasks
+*outdated*
 
 Tasks are purely software tasks that may interact with interfaces. An example of this would be a throttle control task that retrieves data from the CAN bus and ADC interfaces, runs a computation, and then adds data to the que of messages waiting to get sent out over CAN bus.
 

@@ -9,7 +9,7 @@
  * 
  */
 
-#include "taskHandlers.h"
+#include "tasks/taskHandlers.h"
 #include "main.h"
 #include "task.h"
 #include "interfaces/interface_uart.h"

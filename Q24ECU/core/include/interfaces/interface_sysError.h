@@ -18,7 +18,7 @@
 #include "interfaces/interface_uart.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "taskHandlers.h"
+#include "tasks/taskHandlers.h"
 #include "stream_buffer.h"
 #include "errors.h"
 

@@ -30,7 +30,17 @@ enum Tasks{
 
 extern TaskHandle_t xTaskHandles[eTask_TaskCount];
 
-extern void os_task_init(void);
+/**
+ * @brief Called by the runner to initialize all tasks
+ * 
+ */
+extern void runner_task_init(void);
+
+/**
+ * @brief Can be called by the runner to print out task information
+ * 
+ */
+extern void runner_displayInfo(void);
 
 // Located in testTasks.c
 extern void vTask_Test1(void *param);
