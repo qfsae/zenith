@@ -3,7 +3,7 @@
 
 #include <sys/stat.h>
 #include <stm32f4xx.h>
-#include "interfaces/interface_uart.h"
+#include "drivers/uart.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
@@ -97,9 +97,9 @@ int _write(int fd, char *ptr, int len) {
     if(xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) callerID = pcTaskGetName(NULL);
     #endif
     if(port_uart2.port == NULL)          return -1;
-    if(port_uart2.semaphore == NULL)     return -1;
+    if(port_uart2.writeHandler == NULL)     return -1;
     // Take over the debug usart
-    if(xSemaphoreTake(port_uart2.semaphore, (TickType_t) 10) == pdTRUE){
+    if(xSemaphoreTake(port_uart2.writeHandler, (TickType_t) 10) == pdTRUE){
       #ifdef DEBUG_PRINTF_TASK_NAME
       // Write caller ID, followed by ": ", then the argument given to printf
       if(callerID != NULL){
@@ -108,7 +108,7 @@ int _write(int fd, char *ptr, int len) {
       }
       #endif
       hal_uart_write_buf(port_uart2.port, ptr, (size_t) len);
-      xSemaphoreGive(port_uart2.semaphore);
+      xSemaphoreGive(port_uart2.writeHandler);
     }
     // hal_uart_write_buf(UART_DEBUG, ptr, (size_t) len);
   } //hal_uart_write_buf(UART_DEBUG, ptr, (size_t) len);

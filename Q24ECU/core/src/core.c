@@ -28,24 +28,24 @@ enum SYS_STATE core_state = SYS_STATE_INIT;
 void vTask_Core(void *param){
     (void) param;
     
-    vTaskDelay(1);
-    printf("Runner Initalized...\nInitializing Tasks...\n");
-    taskENTER_CRITICAL();
+    // vTaskDelay(1);
+    // printf("Runner Initalized...\nInitializing Tasks...\n");
+    // taskENTER_CRITICAL();
 
-    // Initialize the system Tasks
-    runner_task_init();
+    // // Initialize the system Tasks
+    // runner_task_init();
 
-    // Ensure that all tasks are disabled on startup
-    for (int i = 0; i < eTask_TaskCount; i++)
-        taskSuspend(i);
+    // // Ensure that all tasks are disabled on startup
+    // for (int i = 0; i < eTask_TaskCount; i++)
+    //     taskSuspend(i);
 
-    // Manually resume all critical tasks
-    taskResume(eTask_ADCMonitor);
-    taskResume(eTask_CAN_rxBufferHandler);
-    taskResume(eTask_SysError);
-    taskResume(eTask_USART2_Handler);
-    // Display the info for all tasks on the system
-    runner_displayInfo();
+    // // Manually resume all critical tasks
+    // taskResume(eTask_ADCMonitor);
+    // taskResume(eTask_CAN_rxBufferHandler);
+    // taskResume(eTask_SysError);
+    // taskResume(eTask_USART2_Handler);
+    // // Display the info for all tasks on the system
+    // runner_displayInfo();
     
     
 }

@@ -16,13 +16,6 @@
  */
 #include "main.h"
 #include <stdio.h>
-#include "hal/hal_gpio.h"
-#include "hal/hal_tim_basic.h"
-#include "hal/hal_uart.h"
-#include "hal/hal_can.h"
-#include "interfaces/interface_uart.h"
-#include "interfaces/interface_can.h"
-#include "interfaces/interface_sysError.h"
 #include "stm32f4xx.h"
 
 /**

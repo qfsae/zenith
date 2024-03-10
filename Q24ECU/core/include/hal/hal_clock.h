@@ -57,3 +57,6 @@ static inline void clock_init(void){
     while (!(RCC->CFGR & RCC_CFGR_SWS_PLL)) __asm__("nop"); // Wait until done
 }
 
+static inline void spin(volatile uint32_t count) {
+  while (count--) __asm__("nop");
+}
