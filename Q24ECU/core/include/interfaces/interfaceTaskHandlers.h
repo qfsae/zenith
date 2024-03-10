@@ -1,6 +1,6 @@
 /**
  * @file taskHandlers.h
- * @author Jacob Chisholm (https://jchisholm204.github.io/)
+ * @author Jacob Chisholm
  * @brief Global definitions of all task handlers defined in main.c
  * @version 0.1
  * @date 2023-11-19
@@ -15,12 +15,8 @@
 #include "FreeRTOSConfig.h"
 #include "task.h"
 
-enum Tasks{
-    eTask_Test1,
-    eTask_BlinkLED,
+enum InterfaceTasks{
     eTask_USART2_Handler,
-    eTask_CAN_send,
-    eTask_CAN_receive,
     eTask_CAN_rxBufferHandler,
     eTask_SysError,
     eTask_ADCMonitor,
@@ -28,37 +24,19 @@ enum Tasks{
     eTask_TaskCount // Number of tasks running on the system (`taskHandlers.h`)
 };
 
-extern TaskHandle_t xTaskHandles[eTask_TaskCount];
+extern TaskHandle_t xInterfaceTaskHandles[eTask_TaskCount];
 
 /**
- * @brief Called by the runner to initialize all tasks
+ * @brief Called by the runner to initialize all tasks used by interfaces
  * 
  */
-extern void runner_task_init(void);
-
-/**
- * @brief Can be called by the runner to print out task information
- * 
- */
-extern void runner_displayInfo(void);
-
-// Located in testTasks.c
-extern void vTask_Test1(void *param);
-
-// Located in testTasks.c
-extern void vTask_BlinkLED(void *param);
+extern void interface_task_init(void);
 
 // Located in interface_uart.c
 extern void vTask_USART2_Handler(void *param);
 
 // Located in interface_can.c
 extern void vTask_CAN_RXBufferHandler(void *param);
-
-// Located in canRunner.c
-extern void vTask_CAN_send(void *param);
-
-// Located in canRunner.c
-extern void vTask_CAN_receive(void *param);
 
 // Located in interface_sysError.c
 extern void vTask_SysError(void *param);

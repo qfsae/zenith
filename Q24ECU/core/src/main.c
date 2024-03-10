@@ -17,13 +17,13 @@
 #include "interfaces/interface_sysError.h"
 #include "interfaces/interface_adc.h"
 #include "stm32f446xx.h"
-#include "tasks/runner.h"
+#include "core.h"
 
-TaskHandle_t xRunnerTaskHandle;
+TaskHandle_t xCoreTaskHandle;
 
-StaticTask_t xRunnerTaskBuffer;
+StaticTask_t xCoreTaskBuffer;
 
-StackType_t xRunnerTaskStack[configMINIMAL_STACK_SIZE];
+StackType_t xCoreTaskStack[configMINIMAL_STACK_SIZE];
 
 int main(void){
 
@@ -56,14 +56,14 @@ int main(void){
 
     printf("System Starting Runner Task...\n\n");
 
-    xRunnerTaskHandle = xTaskCreateStatic(
-        vTask_Runner,
-        "Runner",
+    xCoreTaskHandle = xTaskCreateStatic(
+        vTask_Core,
+        "Core",
         configMINIMAL_STACK_SIZE,
         NULL,
         tskIDLE_PRIORITY+10,
-        xRunnerTaskStack,
-        &xRunnerTaskBuffer
+        xCoreTaskStack,
+        &xCoreTaskBuffer
     );
 
     spin(9999999UL);  

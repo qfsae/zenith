@@ -18,7 +18,6 @@
 #include "hal/hal_gpio.h"
 #include "interfaces/interface_sysError.h"
 #include "nvicConfig.h"
-#include "interrupts.h"
 #include "hal/hal_dma.h"
 
 uint16_t ADC_READINGS[ADC_CHANNEL_MAX];

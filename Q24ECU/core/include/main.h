@@ -12,10 +12,15 @@
 #include <stm32f4xx.h>
 #include "tasks/taskHandlers.h"
 #include "nvicConfig.h"
-#include "interrupts.h"
 
 // Comment this out to remove task names from the debug print
 #define DEBUG_PRINTF_TASK_NAME
+
+
+/* Interrupts globally defined for linker */
+
+// Timer 6 IRQn
+extern void TIM6_DAC_IRQHandler(void);
 
 // Located in shutdown.c
 extern void system_critical_shutdown(void);

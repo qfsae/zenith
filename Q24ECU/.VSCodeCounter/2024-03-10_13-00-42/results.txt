@@ -1,0 +1,82 @@
+Date : 2024-03-10 13:00:42
+Directory : c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core
+Total : 44 files,  1800 codes, 1398 comments, 573 blanks, all 3771 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| C        |         22 |      1,008 |        625 |        314 |      1,947 |
+| C++      |         19 |        771 |        773 |        248 |      1,792 |
+| Markdown |          3 |         21 |          0 |         11 |         32 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                   |         44 |      1,800 |      1,398 |        573 |      3,771 |
+| config                                                                                              |          3 |         88 |        135 |         46 |        269 |
+| include                                                                                             |         22 |      1,006 |        855 |        308 |      2,169 |
+| include (Files)                                                                                     |          3 |         44 |         64 |         23 |        131 |
+| include\hal                                                                                         |         10 |        810 |        507 |        200 |      1,517 |
+| include\interfaces                                                                                  |          5 |        105 |        206 |         53 |        364 |
+| include\tasks                                                                                       |          4 |         47 |         78 |         32 |        157 |
+| src                                                                                                 |         19 |        706 |        408 |        219 |      1,333 |
+| src (Files)                                                                                         |          2 |         69 |         43 |         40 |        152 |
+| src\interfaces                                                                                      |          5 |        298 |        201 |         94 |        593 |
+| src\interrupts                                                                                      |          2 |         11 |         17 |          7 |         35 |
+| src\system                                                                                          |          4 |        142 |        100 |         39 |        281 |
+| src\tasks                                                                                           |          6 |        186 |         47 |         39 |        272 |
++-----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                            | language | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\config\FreeRTOSConfig.h                    | C++      |         46 |         79 |         19 |        144 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\config\nvicConfig.h                        | C++      |          3 |         20 |          4 |         27 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\config\pins.h                              | C++      |         39 |         36 |         23 |         98 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\core.h                             | C++      |         17 |         17 |         10 |         44 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\errors.h                           | C++      |         19 |         33 |          4 |         56 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\hal\hal_adc.h                      | C++      |        114 |         95 |         22 |        231 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\hal\hal_can.h                      | C        |        136 |         94 |         42 |        272 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\hal\hal_clock.h                    | C        |         24 |         26 |         10 |         60 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\hal\hal_dma.h                      | C++      |         54 |         46 |         18 |        118 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\hal\hal_flash.h                    | C++      |         54 |         57 |         26 |        137 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\hal\hal_gpio.h                     | C        |         52 |         21 |         16 |         89 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\hal\hal_spi.h                      | C++      |        241 |        114 |         34 |        389 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\hal\hal_tim_basic.h                | C++      |         13 |         21 |          5 |         39 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\hal\hal_uart.h                     | C        |         55 |         11 |         15 |         81 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\hal\legacy_hal_adc.h               | C++      |         67 |         22 |         12 |        101 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\interfaces\interfaceTaskHandlers.h | C++      |         17 |         19 |         11 |         47 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\interfaces\interface_adc.h         | C++      |         16 |         37 |          8 |         61 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\interfaces\interface_can.h         | C++      |         10 |         44 |          9 |         63 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\interfaces\interface_sysError.h    | C++      |         14 |         55 |         11 |         80 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\interfaces\interface_uart.h        | C        |         48 |         51 |         14 |        113 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\main.h                             | C        |          8 |         14 |          9 |         31 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\tasks\handler.h                    | C++      |         16 |         27 |          8 |         51 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\tasks\interfaces.h                 | C++      |          5 |         14 |          8 |         27 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\tasks\taskHandlers.h               | C++      |         26 |         27 |         16 |         69 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\include\tasks\tasks.h                      | C++      |          0 |         10 |          0 |         10 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\core.c                                 | C        |         20 |         21 |         13 |         54 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\interfaces\README.md                   | Markdown |          8 |          0 |          4 |         12 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\interfaces\interface_adc.c             | C        |         49 |         52 |         14 |        115 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\interfaces\interface_can.c             | C        |        120 |         66 |         42 |        228 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\interfaces\interface_sysError.c        | C        |         86 |         53 |         19 |        158 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\interfaces\interface_uart.c            | C        |         35 |         30 |         15 |         80 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\interrupts\README.md                   | Markdown |          6 |          0 |          3 |          9 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\interrupts\TIM6.c                      | C        |          5 |         17 |          4 |         26 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\main.c                                 | C        |         49 |         22 |         27 |         98 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\system\freertos.c                      | C        |         12 |         21 |          5 |         38 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\system\shutdown.c                      | C        |         21 |         35 |          7 |         63 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\system\startup.c                       | C        |          8 |         22 |          4 |         34 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\system\syscalls.c                      | C        |        101 |         22 |         23 |        146 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\tasks\README.md                        | Markdown |          7 |          0 |          4 |         11 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\tasks\atc_example.c                    | C        |          0 |          0 |          1 |          1 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\tasks\canRunner.c                      | C        |         36 |         14 |          6 |         56 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\tasks\sdc_locked.c                     | C        |          0 |          0 |          1 |          1 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\tasks\taskHandlers.c                   | C        |        110 |         23 |         19 |        152 |
+| c:\Users\Jacob\Documents\GitHub\QFSAE\zenith\Q24ECU\core\src\tasks\testTasks.c                      | C        |         33 |         10 |          8 |         51 |
+| Total                                                                                               |          |      1,800 |      1,398 |        573 |      3,771 |
++-----------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
