@@ -25,11 +25,11 @@
 #include "errors.h"
 
 
-struct uart_streamBuffer {
+typedef struct {
     char buffer[64];
     StaticStreamBuffer_t staticBuffer;
     StreamBufferHandle_t handle;
-};
+} UART_StreamBuffer_t;
 
 
 /**
@@ -40,16 +40,17 @@ struct uart_streamBuffer {
  * @param pbuffer Pointer to the receive buffer loaded by the UART IRQ Handler
  * 
  */
-struct uart_port {
-    USART_TypeDef *port;
+typedef struct {
+    USART_TypeDef *pUART;
     StaticSemaphore_t writeSemaphore;
     xSemaphoreHandle writeHandler;
     StaticSemaphore_t readSemaphore;
     xSemaphoreHandle readHandler;
     StreamBufferHandle_t *pBuffer;
-};
+} UART_Handle_t;
 
-extern struct uart_port port_uart2, port_uart4;
+extern UART_Handle_t Serial2, Serial4;
+
 
 /**
  * @brief UART Initialization Handler
@@ -63,40 +64,40 @@ extern void uart_init(unsigned long baud);
 /**
  * @brief Open a UART RX Buffer (enables RX Interrupts)
  * @note Buffer Handling must be done inside the calling function
- * @param port The UART Port to open
+ * @param pHandle Pointer to the UART Handle to open
  * @param stream A pointer to preallocated memory for the stream buffer
  * @param timeout The amount of ticks to wait for the interface to become available
  * @return SYS_OK if successful
  */
-extern enum SYS_ERROR uart_open_buffer(struct uart_port *port, struct uart_streamBuffer *stream, TickType_t timeout);
+extern enum SYS_ERROR uart_open_buffer(UART_Handle_t *pHandle, UART_StreamBuffer_t *stream, TickType_t timeout);
 
 /**
  * @brief Close a UART RX Buffer (disables RX Interrupts)
  * 
- * @param port The port to close
+ * @param pHandle Pointer to the Handle to close
  * @return SYS_OK if successful
  */
-extern enum SYS_ERROR uart_close_buffer(struct uart_port *port);
+extern enum SYS_ERROR uart_close_buffer(UART_Handle_t *pHandle);
 
 /**
  * @brief Write a byte to a UART port
  * 
- * @param port The port to write to
+ * @param pHandle Pointer to the Handle for the port to write to
  * @param byte byte to write
  * @param timeout The amount of ticks to wait for the interface to become available
  * @return SYS_OK if successful
  */
-extern enum SYS_ERROR uart_write_byte(struct uart_port *port, char byte, TickType_t timeout);
+extern enum SYS_ERROR uart_write_byte(UART_Handle_t *pHandle, char byte, TickType_t timeout);
 
 /**
  * @brief Write a buffer to a UART port
  * 
- * @param port The port to write to
+ * @param pHandle Pointer to the Handle for the port to write to
  * @param buf A pointer to the buffer to write
  * @param timeout The amount of ticks to wait for the interface to become available
  * @return SYS_OK if successful
  */
-extern enum SYS_ERROR uart_write(struct uart_port *port, char* buf, size_t len, TickType_t timeout);
+extern enum SYS_ERROR uart_write(UART_Handle_t *pHandle, char* buf, size_t len, TickType_t timeout);
 
 /* All IRQ Handlers must be globally accessible for linking purposes */
 
