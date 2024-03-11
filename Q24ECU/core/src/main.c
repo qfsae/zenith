@@ -21,57 +21,36 @@
 TaskHandle_t xCoreTaskHandle;
 
 StaticTask_t xCoreTaskBuffer;
-
-StackType_t xCoreTaskStack[configMINIMAL_STACK_SIZE];
+#define CoreTaskStackSize 0x200
+StackType_t xCoreTaskStack[CoreTaskStackSize];
 
 int main(void){
-
-    // Initialize Timer Interrupts
-
-    // Enable Timer 6 (Basic Timer) 1Hz (APB2/45000, count to 2000)
-    // TIM_basic_Init(TIM6, 45000U, 2000U);
-    // NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_Priority_MIN); // Enable Timer IRQ (lowest priority)
-    // NVIC_EnableIRQ(TIM6_DAC_IRQn);
-    
-    // Initialize OS Interfaces
-
-    // os_uart_setup();
+    // Initialize the Serial Interface (Baud = 9600 default)
+    uart_init(9600);
 
     // clear terminal
     printf("\033[2J");
     printf("\n");
+
+    // Initialize System Interfaces
     printf("USART Initialized..\n");
-
-    // os_sysError_setup();
-    printf("System Error Handler Initialized..\n");
-
-    // os_can_setup();
-    printf("CAN Bus Initialized..\n");
-
-    // os_adc_setup();
+    adc_init();
     printf("ADC Initialized..\n");
-
-    spin(9999999UL);
-
-    printf("System Starting Runner Task...\n\n");
+    can_init();
+    printf("CAN Bus Initialized..\n");
+    printf("Starting Core Task..\n");
 
     xCoreTaskHandle = xTaskCreateStatic(
         vTask_Core,
         "Core",
-        configMINIMAL_STACK_SIZE,
+        CoreTaskStackSize,
         NULL,
         tskIDLE_PRIORITY+10,
         xCoreTaskStack,
         &xCoreTaskBuffer
     );
 
-    spin(9999999UL);  
-
-    // Initialize all the tasks
-    // os_task_init();
-
-    // Print out Task Information
-
+    printf("Core Task Initialized..\n");
 
     printf("\n");
     printf("Total Heap Memory: %d B\n", configTOTAL_HEAP_SIZE);

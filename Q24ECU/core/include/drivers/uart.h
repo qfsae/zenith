@@ -25,7 +25,7 @@
 #include "errors.h"
 
 
-typedef struct {
+typedef struct UART_StreamBuffer {
     char buffer[64];
     StaticStreamBuffer_t staticBuffer;
     StreamBufferHandle_t handle;
@@ -40,7 +40,7 @@ typedef struct {
  * @param pbuffer Pointer to the receive buffer loaded by the UART IRQ Handler
  * 
  */
-typedef struct {
+typedef struct UART_Handle {
     USART_TypeDef *pUART;
     StaticSemaphore_t writeSemaphore;
     xSemaphoreHandle writeHandler;

@@ -15,11 +15,12 @@
 #include "stream_buffer.h"
 #include "task.h"
 #include "nvicConfig.h"
+#include <stdio.h>
 
 // Static arrays for storing CAN messages
 #define CAN_DATA_SIZE 1024
 can_msg_t CAN1_DATA[CAN_DATA_SIZE];
-can_msg_t CAN2_DATA[CAN_DATA_SIZE];
+// can_msg_t CAN2_DATA[CAN_DATA_SIZE];
 
 #define CAN2_HASH(id) (id % CAN_DATA_SIZE)
 #define CAN1_HASH(id) (id % CAN_DATA_SIZE)
@@ -67,13 +68,13 @@ void can_init(void){
     }
 
     // Zero out CAN2 Data
-    for(int i = 0; i < CAN_DATA_SIZE; i++){
-        CAN2_DATA[i].id = 0;
-        CAN2_DATA[i].len = 0;
-        for(int j = 0; j < 8; j++){
-            CAN2_DATA[i].data[j] = 0;
-        }
-    }
+    // for(int i = 0; i < CAN_DATA_SIZE; i++){
+    //     CAN2_DATA[i].id = 0;
+    //     CAN2_DATA[i].len = 0;
+    //     for(int j = 0; j < 8; j++){
+    //         CAN2_DATA[i].data[j] = 0;
+    //     }
+    // }
 
     // NOTE: NART (no automatic re-transmission) should be set to false in application
     gpio_set_mode(PIN('A', 10), GPIO_MODE_OUTPUT);

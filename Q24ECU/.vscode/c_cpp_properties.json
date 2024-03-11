@@ -13,6 +13,7 @@
                 "${workspaceFolder}/core/include",
                 "${workspaceFolder}/core/include",
                 "${workspaceFolder}/vendor/cmsis_f4/Include",
+                "${workspaceFolder}/core/include",
                 "${workspaceFolder}/core/include"
             ],
             "defines": [
