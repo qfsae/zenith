@@ -15,7 +15,7 @@
 #include "stream_buffer.h"
 #include "task.h"
 #include "nvicConfig.h"
-#include <stdio.h>
+// #include <stdio.h>
 
 // Static arrays for storing CAN messages
 #define CAN_DATA_SIZE 1024
@@ -76,13 +76,14 @@ void can_init(void){
     //     }
     // }
 
-    // NOTE: NART (no automatic re-transmission) should be set to false in application
+    // Specific to VCU V0 => Write CAN pin low before initialization
     gpio_set_mode(PIN('A', 10), GPIO_MODE_OUTPUT);
     gpio_write(PIN('A', 10), false);
+    // NOTE: NART (no automatic re-transmission) should be set to false in application
     uint8_t can1_status = hal_can_init(CAN1, CAN_1000KBPS, true, PIN('A', 11), PIN('A', 12));
     // On event of CAN bus initialization failure
     if(can1_status != SYS_OK){
-        printf("Initialization Failure: CAN Bus Error: %d", can1_status);
+        // printf("Initialization Failure: CAN Bus Error: %d", can1_status); // No printf statements in production code
         for(;;) __asm__("nop");
     }
 

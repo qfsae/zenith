@@ -34,10 +34,12 @@ int main(void){
 
     // Initialize System Interfaces
     printf("USART Initialized..\n");
+    printf("Initializing ADC..\n");
     adc_init();
-    printf("ADC Initialized..\n");
+    printf("ADC Initialized\n");
+    printf("Initializing CAN Bus..\n");
     can_init();
-    printf("CAN Bus Initialized..\n");
+    printf("CAN Bus Initialized\n");
     printf("Starting Core Task..\n");
 
     xCoreTaskHandle = xTaskCreateStatic(
@@ -50,7 +52,7 @@ int main(void){
         &xCoreTaskBuffer
     );
 
-    printf("Core Task Initialized..\n");
+    printf("Core Task Initialized\n");
 
     printf("\n");
     printf("Total Heap Memory: %d B\n", configTOTAL_HEAP_SIZE);

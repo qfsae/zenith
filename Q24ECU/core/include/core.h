@@ -21,7 +21,11 @@
 #include "FreeRTOSConfig.h"
 #include "task.h"
 #include "errors.h"
+#include <stdbool.h>
 
+/* BEGIN System State Control Code */
+
+// System State Tracker
 enum SYS_STATE {
     SYS_STATE_INIT,
     SYS_STATE_IDLE,
@@ -30,14 +34,34 @@ enum SYS_STATE {
     SYS_STATE_ERR
 };
 
-extern enum SYS_STATE core_get_state();
+extern enum SYS_STATE core_get_state(void);
+
+extern void core_set_state(enum SYS_STATE s);
+
+/* END System State Control Code */
+
+extern TaskHandle_t xCoreTaskHandle;
+extern void vTask_Core(void *param);
+
+/* BEGIN System State Functions */
+// There is no init state (Initialization should be done directly in the core task)
+extern void vState_Idle(void);
+extern void vState_Test(void);
+extern void vState_Run(void);
+extern void vState_Error(void);
+/* END System State Functions */
+
+/* BEGIN System Error Handling */
 
 extern void core_throw(enum SYS_ERROR e, TaskHandle_t *pTask);
 
 extern void core_throw_iqr(enum SYS_ERROR e);
 
-extern TaskHandle_t xCoreTaskHandle;
+extern bool core_check_error(enum SYS_ERROR e);
 
-extern void vTask_Core(void *param);
+extern bool core_check_fault(void);
+
+/* END System Error Handling */
+
 
 

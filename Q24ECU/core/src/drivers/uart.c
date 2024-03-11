@@ -12,7 +12,6 @@
 #include "drivers/uart.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "tasks/taskHandlers.h"
 #include "nvicConfig.h"
 
 

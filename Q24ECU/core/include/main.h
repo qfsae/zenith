@@ -10,7 +10,7 @@
  */
 
 #include <stm32f4xx.h>
-#include "tasks/taskHandlers.h"
+#include "tasks.h"
 #include "nvicConfig.h"
 
 // Comment this out to remove task names from the debug print
