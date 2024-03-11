@@ -43,20 +43,18 @@ extern void core_set_state(enum SYS_STATE s){
 void vTask_Core(void *param){
     (void) param;
 
+    // Enter a critical state during initialization
+    taskENTER_CRITICAL();
+    // Initialize all tasks to a disabled state
+    task_init();
+    // Enable the error task
+    vTaskResume(xTaskHandles[eTask_ErrorScreen]);
+    core_state = SYS_STATE_IDLE;
+    taskEXIT_CRITICAL();
 
     for(;;){
     /* BEGIN FSM (Finite State Machine) for system management */
         switch(core_state){
-            case SYS_STATE_INIT:
-                // Enter a critical state during initialization
-                taskENTER_CRITICAL();
-                // Initialize all tasks to a disabled state
-                task_init();
-                // Enable the error task
-                vTaskResume(xTaskHandles[eTask_ErrorScreen]);
-                core_state = SYS_STATE_IDLE;
-                taskEXIT_CRITICAL();
-                break;
             case SYS_STATE_IDLE:
                 vState_Idle();
                 break;
@@ -70,7 +68,7 @@ void vTask_Core(void *param){
                 vState_Error();
                 break;
             default:
-                core_state = SYS_STATE_INIT;    // Ensure initialization
+                core_state = SYS_STATE_IDLE;    // Ensure initialization
         }
     /* END FSM for system management */
     } // END Core Task for loop
