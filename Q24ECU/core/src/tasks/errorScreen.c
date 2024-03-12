@@ -11,6 +11,7 @@
 
 #include "tasks.h"
 #include "task.h"
+#include "core.h"
 
 void vTask_ErrorScreen(void *param){
     (void)param;

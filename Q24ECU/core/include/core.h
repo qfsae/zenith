@@ -30,13 +30,12 @@ enum SYS_STATE {
     SYS_STATE_INIT,
     SYS_STATE_IDLE,
     SYS_STATE_TEST,
-    SYS_STATE_RUN,
+    SYS_STATE_TS_ACTIVE,
+    SYS_STATE_RTD,
     SYS_STATE_ERR
 };
 
 extern enum SYS_STATE core_get_state(void);
-
-extern void core_set_state(enum SYS_STATE s);
 
 /* END System State Control Code */
 
@@ -44,15 +43,27 @@ extern TaskHandle_t xCoreTaskHandle;
 extern void vTask_Core(void *param);
 
 /* BEGIN System State Functions */
-// There is no init state (Initialization should be done directly in the core task)
-extern void vState_Idle(void);
-extern void vState_Test(void);
-extern void vState_Run(void);
-extern void vState_Error(void);
+
+/*  There is no initialization state, Initialization should happen directly within the core
+    function. Idle tasks should be resumed within the vState_Idle function
+
+    States run in the order specified below, and within the core task. Each state is responsible
+    for managing the system during its runtime. Once a state has completed, it must exit to the core task.
+    Upon returning to the core task, the system state will be checked against the error state before the
+    next state starts. States are looping, ie the Ready To Drive state returns to the idle state.
+*/
+
+extern void vState_Idle(enum SYS_STATE *state);
+
+extern void vState_Start(enum SYS_STATE *state);
+
+extern void vState_RTD(enum SYS_STATE *state);
+
+extern void vState_Error(enum SYS_STATE *state);
+
 /* END System State Functions */
 
 /* BEGIN System Error Handling */
-
 extern void core_throw(enum SYS_ERROR e, TaskHandle_t *pTask);
 
 extern void core_throw_iqr(enum SYS_ERROR e);

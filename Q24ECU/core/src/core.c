@@ -30,13 +30,6 @@ enum SYS_STATE core_get_state(void){
     return core_state;
 }
 
-extern void core_set_state(enum SYS_STATE s){
-    // Only allow the state to be set from within the Core task
-    if(xTaskGetCurrentTaskHandle() == xCoreTaskHandle){
-        core_state = s;
-    }
-}
-
 /* END System State Control Code */
 
 
@@ -47,30 +40,21 @@ void vTask_Core(void *param){
     taskENTER_CRITICAL();
     // Initialize all tasks to a disabled state
     task_init();
-    // Enable the error task
-    vTaskResume(xTaskHandles[eTask_ErrorScreen]);
     core_state = SYS_STATE_IDLE;
     taskEXIT_CRITICAL();
 
     for(;;){
-    /* BEGIN FSM (Finite State Machine) for system management */
-        switch(core_state){
-            case SYS_STATE_IDLE:
-                vState_Idle();
-                break;
-            case SYS_STATE_TEST:
-                vState_Test();
-                break;
-            case SYS_STATE_RUN:
-                vState_Run();
-                break;
-            case SYS_STATE_ERR:
-                vState_Error();
-                break;
-            default:
-                core_state = SYS_STATE_IDLE;    // Ensure initialization
-        }
-    /* END FSM for system management */
+        // Loop through system states, checking for errors after each state releases control
+        // More information in header file
+        vState_Idle(&core_state);
+        if(core_state == SYS_STATE_ERR)
+            vState_Error(&core_state);
+        vState_Start(&core_state);
+        if(core_state == SYS_STATE_ERR)
+            vState_Error(&core_state);
+        vState_RTD(&core_state);
+        if(core_state == SYS_STATE_ERR)
+            vState_Error(&core_state);
     } // END Core Task for loop
 } // END Core Task
 
