@@ -40,6 +40,7 @@ void vTask_Core(void *param){
     taskENTER_CRITICAL();
     // Initialize all tasks to a disabled state
     task_init();
+    task_printDebug(&Serial2);
     core_state = SYS_STATE_IDLE;
     taskEXIT_CRITICAL();
 
@@ -47,14 +48,13 @@ void vTask_Core(void *param){
         // Loop through system states, checking for errors after each state releases control
         // More information in header file
         vState_Idle(&core_state);
-        if(core_state == SYS_STATE_ERR)
-            vState_Error(&core_state);
+        vState_Error(&core_state);
+
         vState_Start(&core_state);
-        if(core_state == SYS_STATE_ERR)
-            vState_Error(&core_state);
+        vState_Error(&core_state);
+
         vState_RTD(&core_state);
-        if(core_state == SYS_STATE_ERR)
-            vState_Error(&core_state);
+        vState_Error(&core_state);
     } // END Core Task for loop
 } // END Core Task
 

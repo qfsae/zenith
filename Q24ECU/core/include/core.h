@@ -53,12 +53,38 @@ extern void vTask_Core(void *param);
     next state starts. States are looping, ie the Ready To Drive state returns to the idle state.
 */
 
+/**
+ * @brief System IDLE State
+ * 
+ * @param state Pointer to the current system state
+ * @returns When the Tractive System Enable Switch is ON
+ */
 extern void vState_Idle(enum SYS_STATE *state);
 
+/**
+ * @brief Tractive System Start State
+ * 
+ * @param state Pointer to the current system state
+ * 
+ * @returns When Pre-Charge has completed and the driver has completed the steps to enable driving
+ */
 extern void vState_Start(enum SYS_STATE *state);
 
+/**
+ * @brief Ready To Drive State (Runs while the car responds to APPS input)
+ * 
+ * @param state Pointer to the current system state
+ * @returns When the driver shuts down the car, or when an error is encountered
+ */
 extern void vState_RTD(enum SYS_STATE *state);
 
+/**
+ * @brief System Error Checking State
+ * This state function checks to see if an error is present,
+ * and attempts to solve it.
+ * @param state Pointer to the current system state
+ * @returns if the error is resolvable
+ */
 extern void vState_Error(enum SYS_STATE *state);
 
 /* END System State Functions */
