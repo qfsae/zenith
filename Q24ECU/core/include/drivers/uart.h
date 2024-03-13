@@ -104,3 +104,6 @@ extern enum SYS_ERROR uart_write(UART_Handle_t *pHandle, char* buf, size_t len, 
 // USART2 IQR Handler
 extern void USART2_IRQHandler(void);
 
+// USART2 IQR Handler
+extern void UART4_IRQHandler(void);
+

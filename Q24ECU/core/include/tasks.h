@@ -26,6 +26,16 @@ enum Tasks{
 /* Global define for all system task handles */
 extern TaskHandle_t xTaskHandles[eTask_TaskCount];
 
+static inline void task_Suspend(enum Tasks task){
+    if(eTaskGetState(xTaskHandles[task]) != eSuspended)
+        vTaskSuspend(xTaskHandles[task]);
+}
+
+static inline void task_Resume(enum Tasks task){
+    if(eTaskGetState(xTaskHandles[task]) == eSuspended)
+        vTaskResume(xTaskHandles[task]);
+}
+
 /**
  * @brief Used to initialize all system tasks 
  * Tasks are initialized to a halted state

@@ -25,8 +25,9 @@ void vState_Idle(enum SYS_STATE *state){
     // // Enable the SBSPD task
     // if(eTaskGetState(xTaskHandles[eTask_SBSPD]) == eSuspended)
     //     vTaskResume(xTaskHandles[eTask_SBSPD]);
-    if(eTaskGetState(xTaskHandles[eTask_TEST1]) == eSuspended)
-        vTaskResume(xTaskHandles[eTask_TEST1]);
+    task_Resume(eTask_TEST1);
+    printf("System is now in the Idle State\n");
+    task_printDebug(&Serial2);
     // disable inverters
     // disable shutdown circuit
     for(;;){

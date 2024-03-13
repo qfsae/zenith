@@ -13,6 +13,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "nvicConfig.h"
+#include "semphr.h"
 
 
 // UART OS Handlers
@@ -61,10 +62,23 @@ void uart_init(unsigned long baud){
 
 
 enum SYS_ERROR uart_open_buffer(UART_Handle_t *pHandle, UART_StreamBuffer_t *stream, TickType_t timeout) {
+    if(pHandle == NULL) return SYS_INVALID_ARG;
+    if(stream == NULL) return SYS_INVALID_ARG;
+    if(stream->handle == NULL) return SYS_INVALID_ARG;
+    if(xSemaphoreTake(pHandle->readHandler, timeout)){
+        hal_uart_enable_rxne(pHandle->pUART, true);
+        pHandle->pBuffer = &stream->handle;
+        return SYS_OK;
+    }
     return UART_UNINIT_ERR;
 }
 
 enum SYS_ERROR uart_close_buffer(UART_Handle_t *pHandle){
+    if(pHandle == NULL) return SYS_INVALID_ARG;
+    if(xSemaphoreGetMutexHolder(pHandle->readHandler) == xTaskGetCurrentTaskHandle()){
+        hal_uart_enable_rxne(pHandle->pUART, false);
+        pHandle->pBuffer = NULL;
+    }
     return UART_UNINIT_ERR;
 }
 
@@ -90,3 +104,29 @@ enum SYS_ERROR uart_write(UART_Handle_t *pHandle, char* buf, size_t len, TickTyp
     return UART_ACC_ERR;
 }
 
+
+/* BEGIN UART Interrupt Request Handlers */
+
+void USART2_IRQHandler(void){
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    uint8_t rxData = hal_uart_read_byte(Serial2.pUART);
+    // Null check stream buffer (disable IRQ and return on failure)
+    if(Serial2.pBuffer == NULL){
+        hal_uart_enable_rxne(Serial2.pUART, false);
+        return;
+    }
+    xStreamBufferSendFromISR(*Serial2.pBuffer, &rxData, sizeof(uint8_t), &xHigherPriorityTaskWoken);
+
+}
+
+void UART4_IRQHandler(void){
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    uint8_t rxData = hal_uart_read_byte(Serial4.pUART);
+    // Null check stream buffer (disable IRQ and return on failure)
+    if(Serial4.pBuffer == NULL){
+        hal_uart_enable_rxne(Serial4.pUART, false);
+        return;
+    }
+    xStreamBufferSendFromISR(*Serial4.pBuffer, &rxData, sizeof(uint8_t), &xHigherPriorityTaskWoken);
+
+}

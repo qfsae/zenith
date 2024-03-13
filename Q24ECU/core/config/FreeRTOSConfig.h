@@ -94,6 +94,7 @@ to exclude the API function. */
 #define INCLUDE_eTaskGetState                1
 
 #define INCLUDE_xTaskDelayUntil              1
+#define INCLUDE_xSemaphoreGetMutexHolder     1
 
 /* Cortex-M specific definitions. */
 #ifdef __NVIC_PRIO_BITS
