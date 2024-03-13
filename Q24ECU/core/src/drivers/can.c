@@ -15,7 +15,7 @@
 #include "stream_buffer.h"
 #include "task.h"
 #include "nvicConfig.h"
-// #include <stdio.h>
+#include <stdio.h>
 
 // Static arrays for storing CAN messages
 #define CAN_DATA_SIZE 1024
@@ -211,9 +211,9 @@ enum SYS_ERROR can_write(CAN_TypeDef *CAN, can_msg_t *tx_msg, TickType_t timeout
     for(uint8_t i = 1; i < 4; i++){
         if(xSemaphoreTake(CAN1_TX_Semaphore[i], 10) == pdTRUE){
             // Utilize the hal to load the selected mailbox
-            hal_can_send(CAN, tx_msg, (i-1)/*mailbox=0..2*/);
+            hal_can_send(CAN, tx_msg, (uint8_t)(i-1)/*mailbox=0..2*/);
             // Wait for mailbox to be empty
-            while(!hal_can_send_ready(CAN, (i-1)));
+            while(!hal_can_send_ready(CAN, (uint8_t)(i-1)));
             // Give back the semaphores
             xSemaphoreGive(CAN1_TX_Semaphore[i]);
             xSemaphoreGive(CAN1_TX_Semaphore[CAN_TX_SEMAPHORE_COUNT]);

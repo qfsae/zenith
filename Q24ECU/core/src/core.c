@@ -60,7 +60,7 @@ void vTask_Core(void *param){
 
 uint32_t errors[3];
 #define get_e(e) (bool)((errors[e/3] >> (e % 32)) & 0x01)
-#define set_e(e) ((errors[e/3] |= 0x1 << (e % 32)))
+#define set_e(e) ((errors[e/3] |= (uint32_t)(0x1UL << (e % 32))))
 
 void core_throw(enum SYS_ERROR e, TaskHandle_t *pTask){
     if(e == SYS_OK) return;

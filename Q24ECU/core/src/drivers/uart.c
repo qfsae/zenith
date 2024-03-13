@@ -19,9 +19,7 @@
 // UART OS Handlers
 UART_Handle_t Serial2 = {
     .pUART  = USART2,
-    .writeSemaphore = NULL,
     .writeHandler = NULL,
-    .readSemaphore = NULL,
     .readHandler  = NULL,
     .pBuffer = NULL
 };
@@ -29,9 +27,7 @@ UART_Handle_t Serial2 = {
 
 UART_Handle_t Serial4 = {
     .pUART  = UART4,
-    .writeSemaphore = NULL,
     .writeHandler = NULL,
-    .readSemaphore = NULL,
     .readHandler  = NULL,
     .pBuffer = NULL
 };
