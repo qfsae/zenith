@@ -14,4 +14,7 @@
 
 void vTask_SBSPD(void *param){
     (void)param;
+    for(;;){
+        vTaskDelay(200);
+    }
 }

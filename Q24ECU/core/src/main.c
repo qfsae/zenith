@@ -26,7 +26,7 @@ StackType_t xCoreTaskStack[CoreTaskStackSize];
 
 int main(void){
     // Initialize the Serial Interface (Baud = 9600 default)
-    uart_init(9600);
+    uart_init(250000);
 
     // clear terminal
     printf("\033[2J");

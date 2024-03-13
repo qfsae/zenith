@@ -49,9 +49,9 @@ void adc_init(void){
     hal_adc_startConversions(ADC1);
 }
 
-double adc_fetch(enum ADC_CHANNEL channel){
+double adc_read(enum ADC_CHANNEL channel){
     // Return obviously bad data if ADC is not enabled
-    if(READ_BIT(ADC1->CR2, ADC_CR2_ADON)) return 123.456;
+    if(!READ_BIT(ADC1->CR2, ADC_CR2_ADON)) return 123.456;
     // Return 0 if ADC has encountered an overrun
     if(READ_BIT(ADC1->SR, ADC_SR_OVR)) return 0.0;
     // Return 0 if channel is out of range

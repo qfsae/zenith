@@ -55,6 +55,19 @@ void task_init(void){
     );
     // Suspend the task after creation
     vTaskSuspend(xTaskHandles[eTask_ErrorScreen]);
+
+    // Create Test 1 Task
+    xTaskHandles[eTask_TEST1] = xTaskCreateStatic(
+        vTask_Test1,
+        "Test1",
+        configMINIMAL_STACK_SIZE,
+        NULL,
+        tskIDLE_PRIORITY,
+        xTaskStacks[eTask_TEST1],
+        &xTaskBuffers[eTask_TEST1]
+    );
+    // Suspend the task after creation
+    vTaskSuspend(xTaskHandles[eTask_TEST1]);
 }
 
 void task_printDebug(UART_Handle_t *Serial){

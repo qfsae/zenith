@@ -20,24 +20,17 @@ void vState_Idle(enum SYS_STATE *state){
     // Check to see if the system state matches the function state
     if(*state != SYS_STATE_IDLE) return;
     // Enable the error task
-    if(eTaskGetState(xTaskHandles[eTask_ErrorScreen]) == eSuspended)
-        vTaskResume(xTaskHandles[eTask_ErrorScreen]);
-    // Enable the SBSPD task
-    if(eTaskGetState(xTaskHandles[eTask_SBSPD]) == eSuspended)
-        vTaskResume(xTaskHandles[eTask_SBSPD]);
+    // if(eTaskGetState(xTaskHandles[eTask_ErrorScreen]) == eSuspended)
+    //     vTaskResume(xTaskHandles[eTask_ErrorScreen]);
+    // // Enable the SBSPD task
+    // if(eTaskGetState(xTaskHandles[eTask_SBSPD]) == eSuspended)
+    //     vTaskResume(xTaskHandles[eTask_SBSPD]);
+    if(eTaskGetState(xTaskHandles[eTask_TEST1]) == eSuspended)
+        vTaskResume(xTaskHandles[eTask_TEST1]);
     // disable inverters
     // disable shutdown circuit
     for(;;){
-        if(false){
-            *state = SYS_STATE_TS_ACTIVE;
-            return;
-        }
-        if(core_check_fault()){
-            // fault handling
-            *state = SYS_STATE_ERR;
-            return;
-        }
-        vTaskDelay(20);
+        vTaskDelay(200);
     }
 }
 

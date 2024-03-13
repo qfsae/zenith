@@ -35,14 +35,12 @@ enum SYS_STATE core_get_state(void){
 
 void vTask_Core(void *param){
     (void) param;
-
-    // Enter a critical state during initialization
-    taskENTER_CRITICAL();
+    uart_write(&Serial2, "Started Core Task\n", 18, 10);
     // Initialize all tasks to a disabled state
     task_init();
     task_printDebug(&Serial2);
+    printf("Core Task Started\n");
     core_state = SYS_STATE_IDLE;
-    taskEXIT_CRITICAL();
 
     for(;;){
         // Loop through system states, checking for errors after each state releases control
