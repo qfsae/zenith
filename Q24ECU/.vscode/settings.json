@@ -19,6 +19,7 @@
         "task.h": "c",
         "freertosconfig.h": "c",
         "hal_can.h": "c",
-        "uart.h": "c"
+        "uart.h": "c",
+        "tasker.h": "c"
     },
 }

@@ -99,6 +99,17 @@ extern enum SYS_ERROR uart_write_byte(UART_Handle_t *pHandle, char byte, TickTyp
  */
 extern enum SYS_ERROR uart_write(UART_Handle_t *pHandle, char* buf, size_t len, TickType_t timeout);
 
+/**
+ * @brief Write a String to a uart port
+ * 
+ * @param pHandle Pointer to the Handle for the port to write to
+ * @param str The String to write
+ * @param timeout The amount of ticks to wait for the interface to become available
+ * @return SYS_OK if successful
+ */
+extern enum SYS_ERROR uart_write_str(UART_Handle_t *pHandle, char* str,  TickType_t timeout);
+
+
 /* All IRQ Handlers must be globally accessible for linking purposes */
 
 // USART2 IQR Handler

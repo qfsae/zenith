@@ -13,8 +13,8 @@
  * 
  */
 
-#include "core.h"
-#include "tasks.h"
+#include "sys_state.h"
+#include "sys_tasks.h"
 
 void vState_Idle(enum SYS_STATE *state){
     // Check to see if the system state matches the function state
@@ -26,11 +26,16 @@ void vState_Idle(enum SYS_STATE *state){
     // if(eTaskGetState(xTaskHandles[eTask_SBSPD]) == eSuspended)
     //     vTaskResume(xTaskHandles[eTask_SBSPD]);
     task_Resume(eTask_TEST1);
+    task_Resume(eTask_CANSend);
     printf("System is now in the Idle State\n");
     task_printDebug(&Serial2);
     // disable inverters
     // disable shutdown circuit
     for(;;){
+        if(controller_check_fault() == true){
+            *state = SYS_STATE_ERR;
+            return;
+        }
         vTaskDelay(200);
     }
 }

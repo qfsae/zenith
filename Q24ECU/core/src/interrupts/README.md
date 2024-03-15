@@ -1,9 +1,7 @@
 # Interrupts
 
-This folder is for interrupt only functions. For interrupts that pass data into tasks, see `src/interrupts/README.md`
+Interrupts used on their own or for passing notifiers into tasks.
 
-## Structure
-Interrupts should be separated into their own `.c` files. All interrupt share a single `interrupts.h` file that allows the linker to find them.
+All Interrupts should be initialized similarly to tasks and should be shut down when not in use. Using interrupts on their own should be avoided when possible.
 
-## Initialization
-All interrupts that do not interact with tasks are initialized directly in the main function.
+Ensure that a global definition of the interrupt is placed in the `main.h` file so that it can be linked with the startup script.

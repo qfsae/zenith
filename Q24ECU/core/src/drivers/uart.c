@@ -14,6 +14,7 @@
 #include "task.h"
 #include "nvicConfig.h"
 #include "semphr.h"
+#include <string.h>
 
 
 // UART OS Handlers
@@ -100,6 +101,17 @@ enum SYS_ERROR uart_write(UART_Handle_t *pHandle, char* buf, size_t len, TickTyp
     return UART_ACC_ERR;
 }
 
+
+enum SYS_ERROR uart_write_str(UART_Handle_t *pHandle, char* str,  TickType_t timeout){
+    if(pHandle == NULL) return UART_UNINIT_ERR;
+    if(pHandle->writeHandler == NULL) return UART_UNINIT_ERR;
+    if(xSemaphoreTake(pHandle->writeHandler, timeout) == pdTRUE){
+        hal_uart_write_buf(pHandle->pUART, str, strlen(str));
+        xSemaphoreGive(pHandle->writeHandler);
+        return SYS_OK;
+    }
+    return UART_ACC_ERR;
+}
 
 /* BEGIN UART Interrupt Request Handlers */
 

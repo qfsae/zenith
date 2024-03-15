@@ -16,13 +16,12 @@
 #include "drivers/adc.h"
 #include "drivers/uart.h"
 #include "stm32f446xx.h"
-#include "core.h"
 
-TaskHandle_t xCoreTaskHandle;
+TaskHandle_t xControllerTaskHandle;
 
-StaticTask_t xCoreTaskBuffer;
-#define CoreTaskStackSize 0x200
-StackType_t xCoreTaskStack[CoreTaskStackSize];
+StaticTask_t xControllerTaskBuffer;
+#define ControllerTaskStackSize 0x200
+StackType_t xControllerTaskStack[ControllerTaskStackSize];
 
 int main(void){
     // Initialize the Serial Interface (Baud = 9600 default)
@@ -42,17 +41,17 @@ int main(void){
     printf("CAN Bus Initialized\n");
     printf("Starting Core Task..\n");
 
-    xCoreTaskHandle = xTaskCreateStatic(
-        vTask_Core,
-        "Core",
-        CoreTaskStackSize,
+    xControllerTaskHandle = xTaskCreateStatic(
+        vTask_Controller,
+        "Controller",
+        ControllerTaskStackSize,
         NULL,
         tskIDLE_PRIORITY+10,
-        xCoreTaskStack,
-        &xCoreTaskBuffer
+        xControllerTaskStack,
+        &xControllerTaskBuffer
     );
 
-    printf("Core Task Initialized\n");
+    printf("Controller Task Initialized\n");
 
     printf("\n");
     printf("Total Heap Memory: %d B\n", configTOTAL_HEAP_SIZE);

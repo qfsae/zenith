@@ -9,9 +9,9 @@
  * 
  */
 
-#include "tasks.h"
+#include "sys_tasks.h"
 #include "task.h"
-#include "core.h"
+#include "sys_state.h"
 
 void vTask_ErrorScreen(void *param){
     (void)param;

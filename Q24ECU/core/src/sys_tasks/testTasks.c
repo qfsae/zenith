@@ -11,7 +11,6 @@
 
 #include "main.h"
 #include "task.h"
-#include "tasks.h"
 #include "drivers/adc.h"
 #include "drivers/uart.h"
 #include <stdio.h>

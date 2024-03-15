@@ -16,8 +16,8 @@
  */
 
 #include <stdio.h>
-#include "core.h"
-#include "tasks.h"
+#include "sys_state.h"
+#include "sys_tasks.h"
 
 #define taskResume(tsk) vTaskResume(xTaskHandles[tsk])
 #define taskSuspend(tsk) vTaskSuspend(xTaskHandles[tsk])
@@ -33,62 +33,37 @@ enum SYS_STATE core_get_state(void){
 /* END System State Control Code */
 
 
-void vTask_Core(void *param){
+void vTask_Controller(void *param){
     (void) param;
     uart_write(&Serial2, "Started Core Task\n", 18, 10);
     // Initialize all tasks to a disabled state
-    task_init();
+    tasker_init();
     task_printDebug(&Serial2);
-    printf("Core Task Started\n");
+    uart_write_str(&Serial2, "Core Task Started\n", 10);
+    // Initialize the system into the idle state
     core_state = SYS_STATE_IDLE;
 
     for(;;){
         // Loop through system states, checking for errors after each state releases control
         // More information in header file
-        vState_Idle(&core_state);
-        vState_Error(&core_state);
-
-        vState_Start(&core_state);
-        vState_Error(&core_state);
-
-        vState_RTD(&core_state);
+        switch (core_state) {
+        case SYS_STATE_IDLE:
+            vState_Idle(&core_state);
+            break;
+        // Both test cases and active require running the same start sequences
+        case SYS_STATE_TEST:
+        case SYS_STATE_TS_ACTIVE:
+            vState_Start(&core_state);
+            break;
+        case SYS_STATE_RTD:
+            vState_RTD(&core_state);
+            break;
+        default:
+            vState_Error(&core_state);
+            break;
+        }
+        // Check to see if the system is in an error state
         vState_Error(&core_state);
     } // END Core Task for loop
 } // END Core Task
 
-/* BEGIN Error Handling Code */
-
-uint32_t errors[3];
-#define get_e(e) (bool)((errors[e/3] >> (e % 32)) & 0x01)
-#define set_e(e) ((errors[e/3] |= (uint32_t)(0x1UL << (e % 32))))
-
-void core_throw(enum SYS_ERROR e, TaskHandle_t *pTask){
-    if(e == SYS_OK) return;
-    set_e(e);
-    // Force an idle system state
-    core_state = SYS_STATE_IDLE;
-    /* If the error originated from the core task,
-     * return the system to an idle state.
-     * If the error was reported externally,
-     * suspend the offending task
-     */
-    if(pTask == &xCoreTaskHandle){
-        return;
-    }
-    vTaskSuspend(*pTask);
-}
-
-void core_throw_iqr(enum SYS_ERROR e){
-    if(e == SYS_OK) return;
-    set_e(e);
-}
-
-bool core_check_error(enum SYS_ERROR e){
-    return get_e(e);
-}
-
-bool core_check_fault(void){
-    return (errors[0] == 0 && errors[1] == 0 && errors[2] == 0);
-}
-
-/* END Error Handling Code */

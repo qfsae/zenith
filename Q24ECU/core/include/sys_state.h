@@ -35,12 +35,12 @@ enum SYS_STATE {
     SYS_STATE_ERR
 };
 
-extern enum SYS_STATE core_get_state(void);
+extern enum SYS_STATE controller_get_state(void);
 
 /* END System State Control Code */
 
-extern TaskHandle_t xCoreTaskHandle;
-extern void vTask_Core(void *param);
+extern TaskHandle_t xControllerTaskHandle;
+extern void vTask_Controller(void *param);
 
 /* BEGIN System State Functions */
 
@@ -90,13 +90,29 @@ extern void vState_Error(enum SYS_STATE *state);
 /* END System State Functions */
 
 /* BEGIN System Error Handling */
-extern void core_throw(enum SYS_ERROR e, TaskHandle_t *pTask);
 
-extern void core_throw_iqr(enum SYS_ERROR e);
+/**
+ * @brief Throw an error to the system state controller
+ * 
+ * @param e The SYS_ERROR to throw
+ */
+extern void controller_throw(enum SYS_ERROR e);
 
-extern bool core_check_error(enum SYS_ERROR e);
+/**
+ * @brief Check if an error is present in the system state controller
+ * 
+ * @param e The Error to check
+ * @return true if the error is present
+ * @return false if the error has not been reported
+ */
+extern bool controller_check_error(enum SYS_ERROR e);
 
-extern bool core_check_fault(void);
+/**
+ * @brief Check if any faults have been reported to the system state controller
+ * 
+ * @return true if an unresolved error has been reported
+ */
+extern bool controller_check_fault(void);
 
 /* END System Error Handling */
 

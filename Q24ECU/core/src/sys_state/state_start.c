@@ -9,7 +9,7 @@
  * 
  */
 
-#include "core.h"
+#include "sys_state.h"
 
 
 void vState_Start(enum SYS_STATE *state){
