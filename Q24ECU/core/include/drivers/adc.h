@@ -3,7 +3,7 @@
  * @file interface_adc.h
  * @author Jacob Chisholm (https://jchisholm204.github.io/)
  * @brief FreeRTOS ADC Interface for QFSAE VCU
- * @version 0.1
+ * @version 1.1
  * @date 2024-02-24
  * 
  * @copyright Copyright (c) 2024
@@ -14,7 +14,10 @@
 #include "stm32f4xx.h"
 #include "stdbool.h"
 #include "float.h"
+#include "inttypes.h"
 #include "hal/hal_adc.h"
+#include "hal/hal_dma.h"
+#include "hal/hal_gpio.h"
 #include "FreeRTOS.h"
 #include "pins.h"
 
@@ -40,21 +43,18 @@ enum ADC_CHANNEL {
 };
 
 /**
- * @brief OS ADC Setup Handler
+ * @brief ADC Initialization Handler
  * 
- * This function should be called to init the ADC bus and handler interfaces
+ * This function will initialize the ADC and DMA interfaces.
  * This function should not be called more than once
- * ALL CAN bus initialization should happen within this function
- * 
- * Called in main
  * 
  */
-extern void os_adc_setup(void);
+extern void adc_init(void);
 
 /**
- * @brief Fetch the last recorded voltage of an ADC channel
+ * @brief Read the last recorded voltage of an ADC channel
  * 
- * @param channel the channel to draw from
+ * @param channel the channel to read
  * @returns the voltage of the channel
  */
-extern double adc_fetch(enum ADC_CHANNEL channel);
+extern double adc_read(enum ADC_CHANNEL channel);

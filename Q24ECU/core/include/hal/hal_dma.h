@@ -17,7 +17,9 @@
 #pragma once
 
 #include "stm32f4xx.h"
+#include <inttypes.h>
 #include "errors.h"
+#include <stddef.h>
 
 enum DMA_CHANNEL {
     DMA_CHANNEL_0 = 0,
@@ -54,6 +56,8 @@ enum DMA_MEM_SIZE {
  * @param periph_addr Peripheral Address
  * @param mem_addr Memory Address
  */
+
+
 static inline enum SYS_ERROR hal_dma_init(DMA_TypeDef *dma, DMA_Stream_TypeDef *stream, enum DMA_CHANNEL ch, enum DMA_PRIORITY priority, enum DMA_MEM_SIZE mem_size, volatile void *periph_addr, void *mem_addr, size_t num_transfers) {
     // Enable DMA Clock
     if (dma == DMA1) {

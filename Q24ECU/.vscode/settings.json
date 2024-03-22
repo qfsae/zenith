@@ -18,6 +18,8 @@
         "interface_uart.h": "c",
         "task.h": "c",
         "freertosconfig.h": "c",
-        "hal_can.h": "c"
+        "hal_can.h": "c",
+        "uart.h": "c",
+        "tasker.h": "c"
     },
 }

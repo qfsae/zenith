@@ -12,77 +12,46 @@
 #include "hal/hal_gpio.h"
 #include "hal/hal_tim_basic.h"
 #include "hal/hal_uart.h"
-#include "interfaces/interface_uart.h"
-#include "interfaces/interface_can.h"
-#include "interfaces/interface_sysError.h"
-#include "interfaces/interface_adc.h"
+#include "drivers/can.h"
+#include "drivers/adc.h"
+#include "drivers/uart.h"
 #include "stm32f446xx.h"
 
+TaskHandle_t xControllerTaskHandle;
+
+StaticTask_t xControllerTaskBuffer;
+#define ControllerTaskStackSize 0x200
+StackType_t xControllerTaskStack[ControllerTaskStackSize];
+
 int main(void){
-
-    // Initialize Timer Interrupts
-
-    // Enable Timer 6 (Basic Timer) 1Hz (APB2/45000, count to 2000)
-    // TIM_basic_Init(TIM6, 45000U, 2000U);
-    // NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_Priority_MIN); // Enable Timer IRQ (lowest priority)
-    // NVIC_EnableIRQ(TIM6_DAC_IRQn);
-    
-    // Initialize OS Interfaces
-
-    os_uart_setup();
+    // Initialize the Serial Interface (Baud = 9600 default)
+    uart_init(250000);
 
     // clear terminal
     printf("\033[2J");
     printf("\n");
+
+    // Initialize System Interfaces
     printf("USART Initialized..\n");
+    printf("Initializing ADC..\n");
+    adc_init();
+    printf("ADC Initialized\n");
+    printf("Initializing CAN Bus..\n");
+    can_init();
+    printf("CAN Bus Initialized\n");
+    printf("Starting Core Task..\n");
 
-    os_sysError_setup();
-    printf("System Error Handler Initialized..\n");
+    xControllerTaskHandle = xTaskCreateStatic(
+        vTask_Controller,
+        "Controller",
+        ControllerTaskStackSize,
+        NULL,
+        tskIDLE_PRIORITY+10,
+        xControllerTaskStack,
+        &xControllerTaskBuffer
+    );
 
-    os_can_setup();
-    printf("CAN Bus Initialized..\n");
-
-    os_adc_setup();
-    printf("ADC Initialized..\n");
-
-    spin(9999999UL);
-
-    printf("System Starting Tasks...\n\n");
-
-    spin(9999999UL);  
-
-    // Initialize all the tasks
-    os_task_init();
-
-    // Print out Task Information
-    printf("Task:\t   Identifier\t    Priority\t\tState\n");
-    for (int i = 0; i < eTask_TaskCount; i++)
-    {
-        printf("%d: %16s\t\t%lu\t\t", i, pcTaskGetName(xTaskHandles[i]), uxTaskPriorityGet(xTaskHandles[i]));
-        switch(eTaskGetState(xTaskHandles[i])) {
-            case eRunning:
-                printf("RUNNING\n");
-                break;
-            case eReady:
-                printf("READY\n");
-                break;
-            case eBlocked:
-                printf("BLOCKED\n");
-                break;
-            case eSuspended:    
-                printf("SUSPENDED\n");
-                break;
-            case eDeleted:   
-                printf("DELETED\n");
-                break;
-            case eInvalid:   
-                printf("INVALID\n");
-                break;
-            default:
-                printf("UNKNOWN\n");
-                break;
-        }
-    }
+    printf("Controller Task Initialized\n");
 
     printf("\n");
     printf("Total Heap Memory: %d B\n", configTOTAL_HEAP_SIZE);
