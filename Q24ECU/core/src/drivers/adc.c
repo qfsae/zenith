@@ -59,3 +59,4 @@ double adc_read(enum ADC_CHANNEL channel){
     // TODO: add scaling for 12v/5v
     return ADC_READINGS[channel]*3.3/4096.0;
 }
+

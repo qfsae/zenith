@@ -60,3 +60,4 @@ static inline void clock_init(void){
 static inline void spin(volatile uint32_t count) {
   while (count--) __asm__("nop");
 }
+
