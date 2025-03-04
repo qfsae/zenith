@@ -265,3 +265,37 @@ class TelemetryWindow(QMainWindow):
             elapsed = self.time_data[-1] - self.startTime
             self.elapsedTimeLabel.setText(f"Elapsed: {elapsed:.1f} s")
 
+    def resetData(self):
+        # Set the time_offset to the last received raw time so that the next incoming
+        # data point's effective time will be zero.
+        self.time_offset = self.last_raw_time if hasattr(self, "last_raw_time") else 0.0
+
+        self.demoThread.reset()
+
+        # Clear data storage
+        self.time_data.clear()
+        self.cell_temp_data = [[] for _ in range(num_BMS_sensors)]
+        self.soc_data.clear()
+        self.wheel_speed_data.clear()
+        self.throttle_data.clear()
+        self.brake_data.clear()
+        self.startTime = 0.0
+
+        # Clear plots
+        self.cellTempPlot.clear()
+        self.wheelSpeedPlot.clear()
+        self.socPlot.clear()
+        self.throttlePlot.clear()
+        self.brakePlot.clear()
+
+        # Recreate curves after clearing plots
+        self.cellTemp_curves = []
+        colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w'][:num_BMS_sensors]
+        for i in range(num_BMS_sensors):
+            curve = self.cellTempPlot.plot([], [], pen=colors[i], name=f"Cell {i+1}")
+            self.cellTemp_curves.append(curve)
+        self.wheelSpeedCurve = self.wheelSpeedPlot.plot([], [], pen='w')
+        self.socCurve = self.socPlot.plot([], [], pen='c')
+        self.throttleCurve = self.throttlePlot.plot([], [], pen='g')
+        self.brakeCurve = self.brakePlot.plot([], [], pen='r')
+
