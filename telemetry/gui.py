@@ -44,6 +44,11 @@ class TelemetryWindow(QMainWindow):
         self.elapsedTimer = QTimer()
         self.elapsedTimer.timeout.connect(self.updateElapsedTime)
         self.elapsedTimer.start(50)
+
+        # Low battery sound
+        self.beepSound = QSoundEffect()
+        self.beepSound.setSource(QUrl.fromLocalFile("assets/lowBattery.wav"))
+
     def initUI(self):
         # The main widget is a box in the middle
         centralWidget = QWidget()
@@ -129,6 +134,15 @@ class TelemetryWindow(QMainWindow):
         faultLayout.addWidget(self.faultStatus)
         bottomLayout.addLayout(faultLayout)
 
+        # Battery Warning Light (hidden by default)
+        warningLayout = QVBoxLayout()
+        warningLabel = QLabel("Battery Low!")
+        warningLabel.setAlignment(Qt.AlignCenter)
+        warningLabel.setStyleSheet("background-color: orange; color: black;")
+        warningLabel.hide()  # start hidden
+        self.warningLight = warningLabel
+        warningLayout.addWidget(warningLabel)
+        bottomLayout.addLayout(warningLayout)
 
         self.mainLayout.addLayout(bottomLayout)
 
@@ -189,6 +203,11 @@ class TelemetryWindow(QMainWindow):
         # SOC
         soc = data.get("soc", 0)
         self.soc_data.append(soc)
+        if soc < 10:
+            self.warningLight.show()
+            self.beepSound.play()
+        else:
+            self.warningLight.hide()
 
         # Wheel speed
         wheel_speed = data.get("wheel_speed", 0)
