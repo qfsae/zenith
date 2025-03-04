@@ -8,6 +8,43 @@ This telemetry system is designed for the Q25FSAE race car, utilizing PyQt5 for 
 - **`main.py`**: Initializes and runs the telemetry system.
 - **`demo_data.py`**: Generates simulated telemetry data for testing.
 
+## Running the Project
+
+This project uses `pipenv` for dependency management. To set up and run the telemetry system, follow these steps:
+
+### 1. Install `pipenv`
+If you don’t already have `pipenv` installed, you can install it using:
+```sh
+pip install pipenv
+```
+### 2. Set Up the Virtual Environment
+
+Navigate to the project directory and install dependencies using pipenv:
+
+```sh
+pipenv install
+```
+This will create a virtual environment and install all necessary dependencies as specified in Pipfile and Pipfile.lock.
+
+### 3. Activate the Virtual Environment
+To enter the virtual environment, run:
+```sh
+pipenv shell
+```
+### 4. Run the Telemetry System
+Once inside the virtual environment, start the telemetry system with:
+
+```sh
+python telemetry/main.py
+```
+To run the system with simulated telemetry data, use:
+
+```sh
+python telemetry/main.py --demo
+```
+This will launch the GUI and display real-time demo data.
+
+
 ## Structure and Functionality
 
 ### `gui.py`
