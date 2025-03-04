@@ -168,3 +168,49 @@ class TelemetryWindow(QMainWindow):
         layout.addWidget(statLabel)
         container.setLayout(layout)
         return container
+
+    @pyqtSlot(dict)
+    def updateTelemetry(self, data):
+        # Get the raw timestamp from the incoming data.
+        raw_timestamp = data.get("time", len(self.time_data))
+        # Compute effective time relative to the current offset.
+        effective_timestamp = raw_timestamp - self.time_offset
+        self.time_data.append(effective_timestamp)
+        # Store the last raw time for reset purposes.
+        self.last_raw_time = raw_timestamp
+        if len(self.time_data) == 1:
+            self.startTime = effective_timestamp
+
+        # Cell temperatures
+        cell_temps = data.get("cell_temps", [0 for _ in range(num_BMS_sensors)])
+        for i in range(len(cell_temps)):
+            self.cell_temp_data[i].append(cell_temps[i])
+
+        # SOC
+        soc = data.get("soc", 0)
+        self.soc_data.append(soc)
+
+        # Wheel speed
+        wheel_speed = data.get("wheel_speed", 0)
+        self.wheel_speed_data.append(wheel_speed)
+
+        # Throttle
+        throttle = data.get("throttle", 0)
+        self.throttle_data.append(throttle)
+
+        # Brake
+        brake = data.get("brake", 0)
+        self.brake_data.append(brake)
+
+        # Speed (numeric display)
+        speed = data.get("speed", 0)
+        self.speedValueLabel.setText(f"{speed:.1f}")
+
+        # Fault
+        fault = data.get("fault", 0)
+        if fault:
+            self.faultStatus.setText("FAULT!")
+            self.faultStatus.setStyleSheet("background-color: red; color: white;")
+        else:
+            self.faultStatus.setText("OK")
+            self.faultStatus.setStyleSheet("background-color: green; color: white;")
