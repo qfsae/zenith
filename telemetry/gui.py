@@ -299,3 +299,20 @@ class TelemetryWindow(QMainWindow):
         self.throttleCurve = self.throttlePlot.plot([], [], pen='g')
         self.brakeCurve = self.brakePlot.plot([], [], pen='r')
 
+    def exportData(self):
+        filename = datetime.now().strftime("telemetry_%Y%m%d_%H%M%S.csv")
+        with open(filename, mode="w", newline="") as csv_file:
+            writer = csv.writer(csv_file)
+            # Write header
+            writer.writerow(["Time", "BMS", "SOC", "Wheel Speed", "Throttle%", "Brake%"])
+            for i, t in enumerate(self.time_data):
+                cell_temps = [self.cell_temp_data[j][i] if i < len(self.cell_temp_data[j]) else "" for j in range(num_BMS_sensors)]
+                writer.writerow([
+                    t,
+                    cell_temps,
+                    self.soc_data[i] if i < len(self.soc_data) else "",
+                    self.wheel_speed_data[i] if i < len(self.wheel_speed_data) else "",
+                    self.throttle_data[i] if i < len(self.throttle_data) else "",
+                    self.brake_data[i] if i < len(self.brake_data) else ""
+                ])
+        print(f"Exported data to {filename}")
