@@ -214,3 +214,54 @@ class TelemetryWindow(QMainWindow):
         else:
             self.faultStatus.setText("OK")
             self.faultStatus.setStyleSheet("background-color: green; color: white;")
+
+    def updatePlots(self):
+        if not self.time_data:
+            return
+
+        current_time = self.time_data[-1]
+        xmin = max(current_time - 60, 0)
+
+        # Update cell temperature curves and average
+        for i, curve in enumerate(self.cellTemp_curves):
+            curve.setData(self.time_data, self.cell_temp_data[i])
+        self.cellTempPlot.setXRange(xmin, current_time)
+        avgTemps = []
+        for i in range(num_BMS_sensors):
+            temps_in_window = [temp for j, temp in enumerate(self.cell_temp_data[i]) if self.time_data[j] >= xmin]
+            if temps_in_window:
+                avgTemps.append(sum(temps_in_window) / len(temps_in_window))
+        avgTemp = sum(avgTemps) / len(avgTemps) if avgTemps else 0
+        self.cellTempStat.setText(f"Avg: {avgTemp:.1f}")
+
+        # Update wheel speed
+        self.wheelSpeedCurve.setData(self.time_data, self.wheel_speed_data)
+        self.wheelSpeedPlot.setXRange(xmin, current_time)
+        speeds_in_window = [speed for j, speed in enumerate(self.wheel_speed_data) if self.time_data[j] >= xmin]
+        avgSpeed = sum(speeds_in_window) / len(speeds_in_window) if speeds_in_window else 0
+        self.wheelSpeedStat.setText(f"Avg: {avgSpeed:.1f}")
+
+        # SOC plot: full timeline
+        self.socCurve.setData(self.time_data, self.soc_data)
+        avgSOC = sum(self.soc_data) / len(self.soc_data) if self.soc_data else 0
+        self.socStat.setText(f"Avg: {avgSOC:.1f}")
+
+        # Update throttle
+        self.throttleCurve.setData(self.time_data, self.throttle_data)
+        self.throttlePlot.setXRange(xmin, current_time)
+        throttles_in_window = [val for j, val in enumerate(self.throttle_data) if self.time_data[j] >= xmin]
+        avgThrottle = sum(throttles_in_window) / len(throttles_in_window) if throttles_in_window else 0
+        self.throttleStat.setText(f"Avg: {avgThrottle:.1f}")
+
+        # Update brake
+        self.brakeCurve.setData(self.time_data, self.brake_data)
+        self.brakePlot.setXRange(xmin, current_time)
+        brakes_in_window = [val for j, val in enumerate(self.brake_data) if self.time_data[j] >= xmin]
+        avgBrake = sum(brakes_in_window) / len(brakes_in_window) if brakes_in_window else 0
+        self.brakeStat.setText(f"Avg: {avgBrake:.1f}")
+
+    def updateElapsedTime(self):
+        if self.time_data:
+            elapsed = self.time_data[-1] - self.startTime
+            self.elapsedTimeLabel.setText(f"Elapsed: {elapsed:.1f} s")
+
