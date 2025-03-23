@@ -289,7 +289,9 @@ class TelemetryWindow(QMainWindow):
         # data point's effective time will be zero.
         self.time_offset = self.last_raw_time if hasattr(self, "last_raw_time") else 0.0
 
-        self.demoThread.reset()
+        # Use UDP-based reset if available
+        if hasattr(self, "sendResetCommand"):
+            self.sendResetCommand()
 
         # Clear data storage
         self.time_data.clear()
@@ -317,6 +319,7 @@ class TelemetryWindow(QMainWindow):
         self.socCurve = self.socPlot.plot([], [], pen='c')
         self.throttleCurve = self.throttlePlot.plot([], [], pen='g')
         self.brakeCurve = self.brakePlot.plot([], [], pen='r')
+
 
     def exportData(self):
         filename = datetime.now().strftime("telemetry_%Y%m%d_%H%M%S.csv")

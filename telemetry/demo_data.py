@@ -1,24 +1,16 @@
-from PyQt5.QtCore import QThread, pyqtSignal
+import socket
+import json
 import time
-import random
 import math
+import random
 
-class DemoDataThread(QThread):
-    # This signal will emit a dict with telemetry data.
-    newData = pyqtSignal(dict)
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.running = True
+class DemoDataThread:
+    def __init__(self, server_ip="127.0.0.1", server_port=9999):
+        self.server_ip = server_ip
+        self.server_port = server_port
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.time_counter = 0.0
-        self.soc_value = 100.0  # Start with SOC at 100%
-
-    def run(self):
-        while self.running:
-            data = self.generate_data_dict()
-            self.newData.emit(data)
-            time.sleep(0.005)  # Update every 0.1 seconds
-            self.time_counter += 0.005
+        self.soc_value = 100.0
 
     def generate_data_dict(self):
         # Sine wave for throttle (0 to 100)
@@ -41,7 +33,7 @@ class DemoDataThread(QThread):
         
         # Fault: 1% random chance
         fault = 1 if random.random() < 0.01 else 0
-        
+
         return {
             "time": self.time_counter,
             "cell_temps": cell_temps,
@@ -52,8 +44,13 @@ class DemoDataThread(QThread):
             "speed": speed,
             "fault": fault
         }
-    def reset(self):
-        self.soc_value = 100.0
 
-    def stop(self):
-        self.running = False
+    def start(self):
+        while True:
+            data = self.generate_data_dict()
+            self.socket.sendto(json.dumps(data).encode("utf-8"), (self.server_ip, self.server_port))
+            time.sleep(0.05)
+            self.time_counter += 0.05
+
+if __name__ == "__main__":
+    DemoDataThread().start()
