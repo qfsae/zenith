@@ -34,6 +34,7 @@ int CAL::updatePackage(CAN_msg_t &CAN_msg) {
     }
 }
 
+// USED with updateVar
 CAN_msg_t &CAL::package(uint32_t id) {
     switch (id) {
       case CAN_ID::INVERTER:

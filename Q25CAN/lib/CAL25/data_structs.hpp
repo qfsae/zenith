@@ -48,6 +48,29 @@ namespace CAN_ID {
     static const uint32_t INVERTER = 2147485360u;
 }
 
+
+/**
+ * @brief Helper inline functions for CAN message processing
+ */
+inline int16_t toSigned(uint8_t lo, uint8_t hi) {
+    return static_cast<int16_t>((uint16_t(hi) << 8) | lo);
+}
+inline uint16_t toUnsigned(uint8_t lo, uint8_t hi) {
+    return static_cast<uint16_t>((uint16_t(hi) << 8) | lo);
+}
+inline uint32_t extractBits(const uint8_t *data, uint16_t start, uint8_t len) {
+    uint32_t v = 0;
+    for (uint8_t i = 0; i < len; ++i) {
+        uint16_t bit = start + i;
+        if (data[bit / 8] & (1 << (bit % 8))) v |= (1U << i);
+    }
+    return v;
+}
+// Helpers to split a 16‑bit value into low/high bytes
+inline uint8_t bb0(uint16_t v) { return uint8_t(v & 0xFF); }
+inline uint8_t bb1(uint16_t v) { return uint8_t((v >> 8) & 0xFF); }
+
+
 } // namespace CAL
 
 #endif // DATA_STRUCTS_HPP

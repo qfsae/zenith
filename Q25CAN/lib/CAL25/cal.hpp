@@ -14,6 +14,8 @@ class CAL {
 public:
     CAL();
 
+    Inverter inverter;
+
     /**
      * @brief Store an incoming CAN frame in the correct buffer.
      * @param CAN_msg  The raw frame to store.
@@ -46,8 +48,6 @@ public:
 private:
     CAN_msg_t inverter_data{};
     CAN_msg_t fallback_data{};
-
-    Inverter inverter;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
